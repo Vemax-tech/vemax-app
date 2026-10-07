@@ -1,0 +1,22 @@
+/* Design tokens compartilhados (site + portal) */
+:root {
+  --bg: #0A0805;
+  --bg-2: #0D0A06;
+  --bg-3: #110D07;
+  --bg-4: #140F08;
+  --surface: rgba(40, 28, 10, .35);
+  --amber: #D99A00;
+  --amber-hi: #F5B301;
+  --copper: #B8740A;
+  --bronze: #8A5A00;
+  --gold-hi: #F5C542;
+  --ok: #A3C16A;
+  --text: #FFF8E7;
+  --muted: #B8AD98;
+  --line: rgba(245, 179, 1, .18);
+  --line-strong: rgba(245, 179, 1, .45);
+  --grad: linear-gradient(120deg, #F5C542 0%, #D99A00 55%, #9A6200 100%);
+  --glow: 0 0 28px rgba(245, 179, 1, .28);
+  --r: 18px;
+  --font: 'Sora', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}

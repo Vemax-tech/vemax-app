@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Entrar — Vemax Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../css/app.css">
+</head>
+<body>
+<main class="login">
+  <div class="card">
+    <a class="brand" href="../../" style="padding:0"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8.66 5v10L12 22l-8.66-5V7z"/><path d="M8 9l4 7 4-7"/></svg>Vemax</a>
+    <h1>Portal da <span class="grad">equipe</span></h1>
+    <p class="muted small" id="sub">Acesso restrito a membros autorizados.</p>
+
+    <form id="fLogin" novalidate>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="pass">Senha</label>
+      <input id="pass" type="password" autocomplete="current-password" required>
+      <p class="err" id="err" role="alert" hidden></p>
+      <button class="btn primary" type="submit">Entrar</button>
+      <button class="linkbtn" type="button" id="forgot">Esqueci minha senha</button>
+    </form>
+
+    <form id="fNew" novalidate hidden>
+      <label for="np">Nova senha (mín. 10 caracteres)</label>
+      <input id="np" type="password" autocomplete="new-password" minlength="10" required>
+      <p class="err" id="err2" role="alert" hidden></p>
+      <button class="btn primary" type="submit">Salvar nova senha</button>
+    </form>
+  </div>
+</main>
+<script type="module" src="../js/login.js"></script>
+</body>
+</html>
