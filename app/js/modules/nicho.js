@@ -58,7 +58,8 @@ export const init = () => start('mercado/', 'Ficha do nicho', async (ctx, view) 
   } });
 
   view.append(
-    pageHead('Nicho', nicho.nome, nicho.descricao || null, h('a', { class: 'btn', href: 'nichos.html' }, 'Voltar ao comparador'),
+    pageHead('Nicho', (nicho.alvo ? '★ ' : '') + nicho.nome, nicho.descricao || null, h('a', { class: 'btn', href: 'nichos.html' }, 'Voltar ao comparador'),
+      canEdit && h('button', { class: 'btn', onclick: async () => { if (await run(sb.from('nichos').update({ alvo: !nicho.alvo }).eq('id', id), nicho.alvo ? 'Nicho removido dos alvos.' : 'Nicho marcado como alvo.')) location.reload(); } }, nicho.alvo ? 'Remover dos alvos' : 'Marcar como alvo'),
       canEdit && h('button', { class: 'btn', onclick: () => formModal({ title: 'Editar nicho', fields: [{ name: 'nome', label: 'Nome', required: true, value: nicho.nome }, { name: 'descricao', label: 'Descrição', type: 'textarea', value: nicho.descricao }],
         onSubmit: async (v) => { const r = await run(sb.from('nichos').update(v).eq('id', id).select().single(), 'Salvo.'); if (!r) return false; location.reload(); } }) }, 'Editar')),
     h('div', { class: 'grid g2' }, TEXTS.map(([k, l]) => textCard(k, l))),

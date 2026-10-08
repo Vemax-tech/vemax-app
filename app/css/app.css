@@ -112,3 +112,16 @@ pre.prompt { white-space: pre-wrap; background: rgba(10, 8, 5, .7); border: 1px 
   .card, .tw { background: none; border-color: #bbb; box-shadow: none; }
   h1, h2, h3, td a.t, .me b { color: #000; } th, .eyebrow { color: #7a5200; } td, p { color: #222; }
 }
+
+/* Projetos (kanban) e base de conhecimento */
+.kanban { display: grid; grid-template-columns: repeat(4, minmax(240px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 8px; align-items: start; }
+.kcol { background: rgba(10, 8, 5, .45); border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 12px; min-height: 120px; transition: .2s; }
+.kcol.over { border-color: var(--amber-hi); box-shadow: var(--glow); }
+.kcol h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .14em; color: var(--amber-hi); }
+.kcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.kcard[draggable="true"] { cursor: grab; }
+.kcard h3 { font-size: .95rem; }
+.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+select.sm { width: auto; padding: 4px 8px; font-size: .8rem; }
+.kn summary { cursor: pointer; list-style: none; } .kn summary::-webkit-details-marker { display: none; }
+.kn summary b { color: var(--text); }

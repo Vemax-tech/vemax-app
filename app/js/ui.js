@@ -40,6 +40,17 @@ export function h(tag, props = {}, ...kids) {
 export const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('pt-BR') : '—');
 export const STATUS = { planejada: 'Planejada', andamento: 'Em andamento', concluida: 'Concluída', revisao: 'Em revisão' };
 export const CONF = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
+export const PROJ_STATUS = { planejado: 'Planejado', andamento: 'Em andamento', pausado: 'Pausado', concluido: 'Concluído' };
+export const CONTATO_STATUS = { novo: 'Novo', em_contato: 'Em contato', concluido: 'Concluído', descartado: 'Descartado' };
+/** Prazo (date 'YYYY-MM-DD') já passou? Compara por dia, sem fuso. */
+export const overdue = (d) => Boolean(d) && d < new Date().toLocaleDateString('sv-SE');
+/** Link de contato seguro: e-mail vira mailto, telefone vira WhatsApp; senão null. */
+export function contactHref(c) {
+  const s = String(c || '').trim();
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) return 'mailto:' + s;
+  const d = s.replace(/\D/g, '');
+  return d.length >= 10 && d.length <= 13 ? 'https://wa.me/' + (d.length <= 11 ? '55' + d : d) : null;
+}
 
 export function toast(msg, err = false) {
   let box = document.querySelector('.toasts');
@@ -47,6 +58,8 @@ export function toast(msg, err = false) {
   const t = h('div', { class: 'toast' + (err ? ' err' : '') }, msg);
   box.append(t); setTimeout(() => t.remove(), 4200);
 }
+
+export const copyText = async (t) => { try { await navigator.clipboard.writeText(t); toast('Copiado.'); } catch { toast('Não foi possível copiar automaticamente.', true); } };
 
 /** Aguarda uma promise do Supabase; mostra erro amigável e devolve os dados (ou null). */
 export async function run(p, okMsg) {
@@ -60,7 +73,7 @@ export async function run(p, okMsg) {
   return data ?? true;
 }
 
-function modal(title, body, actions) {
+export function modal(title, body, actions) {
   const ov = h('div', { class: 'ov', role: 'dialog', 'aria-modal': 'true', 'aria-label': title });
   const esc = (e) => e.key === 'Escape' && close();
   const close = () => { ov.remove(); document.removeEventListener('keydown', esc); };

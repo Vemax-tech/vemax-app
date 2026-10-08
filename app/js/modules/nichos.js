@@ -10,7 +10,7 @@ const sv = (tag, attrs = {}, ...kids) => { const e = document.createElementNS(SV
 export const init = () => start('mercado/', 'Nichos e comparador', async (ctx, view) => {
   const canEdit = ctx.can('mercado', 'editar');
   const [nichos, crit, notas, fontes] = await Promise.all([
-    run(sb.from('nichos').select('id,nome').order('nome')),
+    run(sb.from('nichos').select('id,nome,alvo').order('nome')),
     run(sb.from('criterios').select('*').order('ordem')),
     run(sb.from('notas_nicho').select('*')),
     run(sb.from('fontes').select('id,titulo,nicho_id')),
@@ -73,14 +73,14 @@ export const init = () => start('mercado/', 'Nichos e comparador', async (ctx, v
           : h('span', { class: 'small muted' }, 'peso ' + c.peso))),
         ), h('th', {}, 'Pontuação'))),
       h('tbody', {}, ranked.map((r) => h('tr', {},
-        h('td', {}, h('a', { class: 't', href: 'nicho.html?id=' + r.id }, r.nome), h('div', { class: 'small muted' }, `${r.rated}/${C.length} critérios · ${r.verified} verificados`)),
+        h('td', {}, h('a', { class: 't', href: 'nicho.html?id=' + r.id }, (r.alvo ? '★ ' : '') + r.nome), h('div', { class: 'small muted' }, `${r.rated}/${C.length} critérios · ${r.verified} verificados`)),
         C.map((c) => { const n = notaMap.get(r.id + c.id);
           return h('td', {}, h('button', { class: 'cell' + (n ? (unverified(n) ? ' unv' : '') : ' none'), style: 'background:none', disabled: !canEdit && !n, title: n ? (unverified(n) ? 'Não verificada: sem evidência/fonte' : n.evidencia || 'Com fonte') : 'Sem nota', onclick: () => canEdit && editCell(r, c) }, n ? n.nota : '+')); }),
         h('td', {}, r.score != null ? h('b', { class: 'grad' }, r.score.toFixed(2)) : '—'))))));
 
     out.replaceChildren(
       h('div', { class: 'card' }, h('h2', {}, 'Ranking ponderado'), h('p', { class: 'small muted' }, 'Média das notas ponderada pelos pesos, considerando só os critérios avaliados. Notas tracejadas ainda não têm evidência ou fonte.'),
-        h('div', { class: 'bars', style: 'margin-top:16px' }, ranked.map((r) => h('div', { class: 'bar' }, h('span', {}, r.nome), h('div', { style: 'background:rgba(245,179,1,.08);border-radius:7px' }, h('i', { style: `width:${r.score != null ? r.score * 10 : 0}%` })), h('b', {}, r.score != null ? r.score.toFixed(1) : '—'))))),
+        h('div', { class: 'bars', style: 'margin-top:16px' }, ranked.map((r) => h('div', { class: 'bar' }, h('span', {}, (r.alvo ? '★ ' : '') + r.nome), h('div', { style: 'background:rgba(245,179,1,.08);border-radius:7px' }, h('i', { style: `width:${r.score != null ? r.score * 10 : 0}%` })), h('b', {}, r.score != null ? r.score.toFixed(1) : '—'))))),
       top.length ? h('div', { class: 'card' }, h('h2', {}, 'Perfil dos mais bem pontuados'), h('div', { class: 'row', style: 'align-items:flex-start;margin-top:10px' }, radar(top),
         h('div', { class: 'legend' }, top.map((t, k) => h('span', { style: `--c:${COLORS[k]}` }, `${t.nome} (${t.score.toFixed(1)})`))))) : null,
       h('div', {}, h('h2', { style: 'margin-bottom:12px' }, 'Matriz de notas'), matrix));

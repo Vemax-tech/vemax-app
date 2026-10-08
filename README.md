@@ -26,7 +26,7 @@ Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
 
 1. Crie um projeto em supabase.com.
 2. **Authentication → Providers → Email**: desative *Allow new users to sign up* (não há cadastro público).
-3. **SQL Editor**: execute `supabase/migrations/001_init.sql`.
+3. **SQL Editor**: execute, em ordem, `supabase/migrations/001_init.sql` até `004_portal_fases.sql`.
 4. **Project Settings → API**: copie a *Project URL* e a chave *anon/publishable* para `app/js/config.js`.
    Nunca use a `service_role` no front-end.
 5. **Authentication → Users → Add user**: crie o seu usuário. **O primeiro usuário criado vira administrador**; os demais entram como *Membro*.
