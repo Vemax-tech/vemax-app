@@ -416,3 +416,8 @@ textarea:focus, input:focus { outline: none; border-color: var(--amber-hi); box-
 .qual legend { padding: 0 8px; font-size: .86rem; font-weight: 600; color: var(--text); } .qual legend small { color: var(--muted); font-weight: 400; }
 .qual-grid { display: grid; gap: 4px 14px; grid-template-columns: 1fr; } .qual select { width: 100%; }
 @media (min-width: 600px) { .qual-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Proposta pública */
+.prop-info { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin: 0; }
+.prop-info > div { padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: rgba(20, 32, 56, .4); }
+.prop-info dt { font-size: .7rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--amber-hi); margin-bottom: 2px; } .prop-info dd { margin: 0; font-weight: 600; }

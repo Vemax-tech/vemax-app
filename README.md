@@ -302,7 +302,7 @@ Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
 
 1. Crie um projeto no Supabase.
 2. Em **Authentication → Providers → Email**, mantenha *Allow new users to sign up* ativado e *Confirm email* ligado.
-3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `008_agil.sql`.
+3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `010_funil_propostas.sql`.
 4. Em **Project Settings → API**, copie a *Project URL* e a chave *anon/publishable* para `app/js/config.js`.
 5. Em **Authentication → Users → Add user**, crie o seu usuário. **O primeiro usuário vira administrador.**
 6. Entre em `/app/` e ajuste cargos e permissões em **Equipe**.

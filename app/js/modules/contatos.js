@@ -1,8 +1,9 @@
 // Contatos do site: leads recebidos pelo formulário, com status, responsável, notas e conversão em projeto
 import { sb } from '../supabase.js';
+import { openPropostas } from './propostas.js';
 import { start, h, run, pageHead, empty, formModal, confirmDlg, fmtDate, contactHref, CONTATO_STATUS } from '../ui.js';
 
-const BADGE = { novo: '', em_contato: '', concluido: ' ok', descartado: ' dim' };
+const BADGE = { novo: '', em_contato: '', proposta: '', concluido: ' ok', descartado: ' dim' };
 
 export const init = () => start('contatos/', 'Contatos do site', async (ctx, view) => {
   const canEdit = ctx.can('contatos', 'editar');
@@ -15,7 +16,7 @@ export const init = () => start('contatos/', 'Contatos do site', async (ctx, vie
   const list = rows || [], team = equipe || [];
   const nameOf = (id) => team.find((t) => t.id === id)?.nome || '—';
   const hasProj = (c) => projs.some((p) => p.contato_id === c.id);
-  const f = { q: '', status: '' };
+  const f = { q: '', status: '', view: 'lista' };
   const body = h('div'), chips = h('div', { class: 'row', style: 'margin-bottom:16px' });
 
   const edit = (c) => formModal({
@@ -41,6 +42,26 @@ export const init = () => start('contatos/', 'Contatos do site', async (ctx, vie
     draw();
   };
 
+  const perfilBadges = (c) => c.perfil && h('div', { class: 'row', style: 'gap:6px;margin-top:6px' }, ['segmento', 'porte', 'prazo', 'orcamento'].filter((k) => c.perfil[k]).map((k) => h('span', { class: 'badge' + (k === 'prazo' && c.perfil[k] === 'O quanto antes' ? ' warn' : ' dim') }, String(c.perfil[k]).slice(0, 40))));
+  const move = async (c, st) => { const r = await run(sb.from('contatos_site').update({ status: st }).eq('id', c.id).select().single(), 'Lead movido.'); if (r) { Object.assign(c, r); draw(); } };
+  const leadCard = (c) => h('article', { class: 'kcard', draggable: canEdit ? 'true' : null, ondragstart: (e) => e.dataTransfer.setData('text/plain', c.id) },
+    h('h3', {}, c.nome), h('p', { class: 'small' }, c.contato), h('p', { class: 'small muted clamp' }, c.mensagem), perfilBadges(c),
+    h('p', { class: 'small muted', style: 'margin-top:6px' }, fmtDate(c.criado_em) + (nameOf(c.responsavel_id) !== '—' ? ' · ' + nameOf(c.responsavel_id) : '')),
+    h('div', { class: 'row', style: 'margin-top:8px' },
+      canEdit && h('button', { class: 'btn sm', onclick: () => edit(c) }, 'Gerenciar'),
+      h('button', { class: 'btn sm', onclick: () => openPropostas(c, { canEdit, onChange: draw }) }, 'Propostas')));
+  const funnel = (shown) => h('div', { class: 'kanban', style: 'grid-template-columns:repeat(5,minmax(230px,1fr))' }, Object.entries(CONTATO_STATUS).map(([st, label]) => {
+    const items = shown.filter((c) => c.status === st);
+    const col = h('section', { class: 'kcol', 'aria-label': label,
+      ondragover: (e) => { if (canEdit) { e.preventDefault(); col.classList.add('over'); } },
+      ondragleave: () => col.classList.remove('over'),
+      ondrop: (e) => { e.preventDefault(); col.classList.remove('over'); const c = list.find((x) => x.id === e.dataTransfer.getData('text/plain')); if (c && canEdit && c.status !== st) move(c, st); } },
+      h('h2', {}, label, h('span', { class: 'small muted' }, ' ' + items.length)),
+      items.length ? items.map(leadCard) : h('p', { class: 'small muted' }, 'Vazio'));
+    return col;
+  }));
+  const viewBtn = (v, l) => h('button', { class: 'btn sm' + (f.view === v ? ' primary' : ''), 'aria-pressed': String(f.view === v), onclick: () => { f.view = v; draw(); } }, l);
+
   const draw = () => {
     const q = f.q.toLowerCase();
     const shown = list.filter((c) => (!f.status || c.status === f.status) && (!q || [c.nome, c.contato, c.mensagem, c.problema].join(' ').toLowerCase().includes(q)));
@@ -48,6 +69,8 @@ export const init = () => start('contatos/', 'Contatos do site', async (ctx, vie
       const n = v ? list.filter((c) => c.status === v).length : list.length;
       return h('button', { class: 'btn sm' + (f.status === v ? ' primary' : ''), 'aria-pressed': String(f.status === v), onclick: () => { f.status = v; draw(); } }, `${l} (${n})`);
     }));
+    chips.append(h('span', { style: 'flex:1' }), viewBtn('lista', 'Lista'), viewBtn('quadro', 'Quadro'));
+    if (f.view === 'quadro') { body.replaceChildren(shown.length || !list.length ? funnel(shown) : empty('Nenhum contato com esses filtros.')); return; }
     body.replaceChildren(shown.length ? h('div', { class: 'tw' }, h('table', {},
       h('thead', {}, h('tr', {}, ['Quem', 'Mensagem', 'Status', 'Responsável', 'Recebido', ''].map((t) => h('th', {}, t)))),
       h('tbody', {}, shown.map((c) => {
@@ -64,6 +87,7 @@ export const init = () => start('contatos/', 'Contatos do site', async (ctx, vie
           h('td', {}, fmtDate(c.criado_em)),
           h('td', {}, h('div', { class: 'row' },
             canEdit && h('button', { class: 'btn sm', onclick: () => edit(c) }, 'Gerenciar'),
+            h('button', { class: 'btn sm', onclick: () => openPropostas(c, { canEdit, onChange: draw }) }, 'Propostas'),
             canEdit && canProj && (hasProj(c) ? h('a', { class: 'btn sm', href: '../projetos/' }, 'Ver projeto') : h('button', { class: 'btn sm primary', onclick: () => convert(c) }, 'Converter em projeto')),
             ctx.isAdmin && h('button', { class: 'btn sm danger', onclick: async () => { if (await confirmDlg('Excluir este contato definitivamente?') && await run(sb.from('contatos_site').delete().eq('id', c.id), 'Contato excluído.')) { list.splice(list.indexOf(c), 1); draw(); } } }, 'Excluir'))));
       })))) : empty(list.length ? 'Nenhum contato com esses filtros.' : 'Nenhum contato recebido ainda.'));

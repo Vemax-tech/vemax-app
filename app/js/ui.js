@@ -43,7 +43,7 @@ export const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('pt-BR') : '�
 export const STATUS = { planejada: 'Planejada', andamento: 'Em andamento', concluida: 'Concluída', revisao: 'Em revisão' };
 export const CONF = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
 export const PROJ_STATUS = { planejado: 'Planejado', andamento: 'Em andamento', pausado: 'Pausado', concluido: 'Concluído' };
-export const CONTATO_STATUS = { novo: 'Novo', em_contato: 'Em contato', concluido: 'Concluído', descartado: 'Descartado' };
+export const CONTATO_STATUS = { novo: 'Novo', em_contato: 'Em contato', proposta: 'Proposta enviada', concluido: 'Fechado', descartado: 'Perdido' };
 /** Prazo (date 'YYYY-MM-DD') já passou? Compara por dia, sem fuso. */
 export const overdue = (d) => Boolean(d) && d < new Date().toLocaleDateString('sv-SE');
 /** Link de contato seguro: e-mail vira mailto, telefone vira WhatsApp; senão null. */
