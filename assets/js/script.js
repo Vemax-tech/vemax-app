@@ -141,7 +141,14 @@
     }, reduce ? 300 : 2600);
   });
   txt.addEventListener('input', () => { err.hidden = true; });
-  $('#resReset').addEventListener('click', () => { txt.value = ''; show(form); txt.focus(); });
+  $('#resReset').addEventListener('click', () => { txt.value = ''; ['#qSeg', '#qPorte', '#qPrazo', '#qOrc'].forEach((s) => { $(s).value = ''; }); show(form); txt.focus(); });
+  // Perfil opcional do diagnóstico guiado (só campos preenchidos)
+  const perfil = () => {
+    const p = { segmento: $('#qSeg').value, porte: $('#qPorte').value, prazo: $('#qPrazo').value, orcamento: $('#qOrc').value };
+    Object.keys(p).forEach((k) => { if (!p[k]) delete p[k]; });
+    return Object.keys(p).length ? p : null;
+  };
+  const perfilTexto = () => { const p = perfil(); return p ? '\n\nPerfil: ' + Object.values(p).join(' · ') + '.' : ''; };
 
   /* ---------- Formulário de contato / WhatsApp ---------- */
   const cForm = $('#cForm'), ctaBtn = $('#ctaBtn'), cMsg = $('#cMsg'), cErr = $('#cErr');
@@ -158,7 +165,7 @@
   });
   $('#resCta').addEventListener('click', () => {
     const s = state.solution;
-    openForm(`Olá! Meu problema: ${state.problem}\n\nSolução sugerida no site: ${s.items.join(', ')}.\n\nGostaria de conversar sobre isso.`);
+    openForm(`Olá! Meu problema: ${state.problem}\n\nSolução sugerida no site: ${s.items.join(', ')}.${perfilTexto()}\n\nGostaria de conversar sobre isso.`);
     setTimeout(() => $('#cName').focus({ preventScroll: true }), 600);
   });
   const readForm = () => {
@@ -177,13 +184,17 @@
   const saveContact = (d) => {
     if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey || spammy()) return;
     try { sessionStorage.setItem('vx_last', String(Date.now())); } catch { /* ignora */ }
-    fetch(CONFIG.supabaseUrl + '/rest/v1/contatos_site', {
+    const row = { nome: d.nome.slice(0, 120), contato: d.contato.slice(0, 160), mensagem: d.msg.slice(0, 2000),
+      problema: state.problem ? state.problem.slice(0, 2000) : null,
+      solucao_sugerida: state.solution ? state.solution.items.join(', ').slice(0, 600) : null };
+    const send = (body) => fetch(CONFIG.supabaseUrl + '/rest/v1/contatos_site', {
       method: 'POST', keepalive: true,
       headers: { apikey: CONFIG.supabaseAnonKey, Authorization: 'Bearer ' + CONFIG.supabaseAnonKey, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ nome: d.nome.slice(0, 120), contato: d.contato.slice(0, 160), mensagem: d.msg.slice(0, 2000),
-        problema: state.problem ? state.problem.slice(0, 2000) : null,
-        solucao_sugerida: state.solution ? state.solution.items.join(', ').slice(0, 600) : null }),
-    }).catch(() => {});
+      body: JSON.stringify(body),
+    });
+    const p = state.solution ? perfil() : null;
+    // Se a coluna "perfil" ainda não existe no banco (migration 009), reenvia sem ela para não perder o lead.
+    send(p ? { ...row, perfil: p } : row).then((r) => { if (!r.ok && p) return send(row); }).catch(() => {});
   };
   const body = (d) => `Olá! Sou ${d.nome} (${d.contato}).\n\n${d.msg}`;
   cForm.addEventListener('submit', (e) => {

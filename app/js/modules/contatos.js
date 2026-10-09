@@ -57,6 +57,7 @@ export const init = () => start('contatos/', 'Contatos do site', async (ctx, vie
           h('td', { style: 'max-width:420px' }, h('div', {}, c.mensagem),
             c.problema && h('div', { class: 'small muted' }, 'Problema: ' + c.problema),
             c.solucao_sugerida && h('div', { class: 'small muted' }, 'Sugestão: ' + c.solucao_sugerida),
+            c.perfil && h('div', { class: 'row', style: 'gap:6px;margin-top:6px' }, ['segmento', 'porte', 'prazo', 'orcamento'].filter((k) => c.perfil[k]).map((k) => h('span', { class: 'badge' + (k === 'prazo' && c.perfil[k] === 'O quanto antes' ? ' warn' : ' dim') }, String(c.perfil[k]).slice(0, 40)))),
             c.notas && h('div', { class: 'small', style: 'color:var(--amber-hi)' }, 'Nota: ' + c.notas)),
           h('td', {}, h('span', { class: 'badge' + BADGE[c.status] }, CONTATO_STATUS[c.status])),
           h('td', {}, nameOf(c.responsavel_id)),

@@ -219,6 +219,15 @@
         <div class="st st-res" id="pRes" hidden>
           <div class="res-head"><span class="ico ok"><svg class="i"><use href="#i-check"/></svg></span><div><h3>Entendemos sua necessidade.</h3><p id="resText"></p></div></div>
           <div class="res-box"><p class="mini-label">Possível solução</p><ul id="resList"></ul></div>
+          <fieldset class="qual">
+            <legend>Para sugerir um caminho mais certeiro <small>(opcional)</small></legend>
+            <div class="qual-grid">
+              <div><label for="qSeg">Segmento</label><select id="qSeg"><option value="">Prefiro não dizer</option><option>Comércio</option><option>Prestador de serviços</option><option>Condomínio</option><option>Clínica ou saúde</option><option>Empresa</option><option>Novo negócio ou ideia</option><option>Outro</option></select></div>
+              <div><label for="qPorte">Tamanho da equipe</label><select id="qPorte"><option value="">Prefiro não dizer</option><option>Só eu</option><option>2 a 10 pessoas</option><option>11 a 50 pessoas</option><option>Mais de 50 pessoas</option></select></div>
+              <div><label for="qPrazo">Quando quer resolver?</label><select id="qPrazo"><option value="">Prefiro não dizer</option><option>O quanto antes</option><option>Em 1 a 3 meses</option><option>Em mais de 3 meses</option><option>Só estou pesquisando</option></select></div>
+              <div><label for="qOrc">Faixa de investimento</label><select id="qOrc"><option value="">Prefiro não dizer</option><option>Até R$ 5 mil</option><option>R$ 5 a 15 mil</option><option>R$ 15 a 50 mil</option><option>Acima de R$ 50 mil</option><option>Prefiro conversar</option></select></div>
+            </div>
+          </fieldset>
           <div class="actions">
             <a class="btn btn-primary" id="resCta" href="#contato">Quero conversar sobre essa solução <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             <button class="btn btn-outline" type="button" id="resReset">Tentar outro problema</button>

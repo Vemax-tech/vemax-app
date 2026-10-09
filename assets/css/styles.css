@@ -410,3 +410,9 @@ textarea:focus, input:focus { outline: none; border-color: var(--amber-hi); box-
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .cpriv { margin-top: 12px; color: var(--muted); } .cpriv a { color: var(--amber-hi); text-decoration: underline; }
 .legal h2 { margin-top: 18px; font-size: 1.1rem; } .legal p { color: var(--muted); }
+
+/* Diagnóstico guiado: perfil opcional */
+.qual { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px 16px; margin: 18px 0 4px; min-width: 0; }
+.qual legend { padding: 0 8px; font-size: .86rem; font-weight: 600; color: var(--text); } .qual legend small { color: var(--muted); font-weight: 400; }
+.qual-grid { display: grid; gap: 4px 14px; grid-template-columns: 1fr; } .qual select { width: 100%; }
+@media (min-width: 600px) { .qual-grid { grid-template-columns: 1fr 1fr; } }
