@@ -143,3 +143,16 @@ select.sm { width: auto; padding: 4px 8px; font-size: .8rem; }
 .et { display: grid; gap: 6px; margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
 .et b { color: var(--amber-hi); font-size: .82rem; }
 .pfimg { display: flex; align-items: center; gap: 14px; margin: 8px 0; } .pfimg img { border-radius: 8px; border: 1px solid var(--line); height: auto; }
+
+/* Ágil: métricas de fluxo, WIP, bloqueio */
+.kstats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.ktile { padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 2px; align-content: center; }
+.ktile b { font-size: 1.5rem; line-height: 1.1; color: var(--text); } .ktile span { font-size: .76rem; color: var(--muted); }
+.ktile.warn { border-color: rgba(255, 155, 138, .5); } .ktile.warn b { color: #ff9b8a; }
+.kweeks { grid-template-columns: auto 1fr; align-items: end; column-gap: 12px; }
+.kweeks span { grid-column: 1 / -1; }
+.bars4 { display: flex; align-items: flex-end; gap: 6px; height: 34px; }
+.bars4 i { display: block; width: 14px; border-radius: 4px 4px 0 0; background: var(--grad); min-height: 3px; }
+.kcol.wip-over { border-color: rgba(255, 155, 138, .6); box-shadow: 0 0 0 1px rgba(255, 155, 138, .25) inset; }
+.kcol.wip-over h2 { color: #ff9b8a; }
+.kcard.blocked { border-color: rgba(255, 155, 138, .6); background: linear-gradient(0deg, rgba(255, 155, 138, .06), rgba(255, 155, 138, .06)), var(--surface); }

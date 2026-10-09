@@ -145,7 +145,9 @@
 
   /* ---------- Formulário de contato / WhatsApp ---------- */
   const cForm = $('#cForm'), ctaBtn = $('#ctaBtn'), cMsg = $('#cMsg'), cErr = $('#cErr');
+  let openedAt = 0;   // anti-spam: robôs preenchem e enviam em menos de 3 s
   const openForm = (prefill) => {
+    if (!openedAt) openedAt = Date.now();
     cForm.hidden = false; ctaBtn.setAttribute('aria-expanded', 'true');
     if (prefill) cMsg.value = prefill;
   };
@@ -166,8 +168,15 @@
     return ok ? d : null;
   };
   // Registra o contato no portal (best effort: nunca bloqueia o envio ao WhatsApp/e-mail)
+  const COOLDOWN = 60 * 1000;
+  const spammy = () => {
+    if ($('#cSite').value || Date.now() - openedAt < 3000) return true;   // honeypot preenchido ou rápido demais
+    try { const last = +sessionStorage.getItem('vx_last') || 0; if (Date.now() - last < COOLDOWN) return true; } catch { /* sem storage: segue */ }
+    return false;
+  };
   const saveContact = (d) => {
-    if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey) return;
+    if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey || spammy()) return;
+    try { sessionStorage.setItem('vx_last', String(Date.now())); } catch { /* ignora */ }
     fetch(CONFIG.supabaseUrl + '/rest/v1/contatos_site', {
       method: 'POST', keepalive: true,
       headers: { apikey: CONFIG.supabaseAnonKey, Authorization: 'Bearer ' + CONFIG.supabaseAnonKey, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
