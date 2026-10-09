@@ -26,6 +26,21 @@
       <p class="err" id="err" role="alert" hidden></p>
       <button class="btn primary" type="submit">Entrar</button>
       <button class="linkbtn" type="button" id="forgot">Esqueci minha senha</button>
+      <button class="linkbtn" type="button" id="toSignup" style="display:block">Sou funcionário e quero me cadastrar</button>
+    </form>
+
+    <form id="fSignup" novalidate hidden>
+      <label for="sn">Nome completo</label>
+      <input id="sn" type="text" autocomplete="name" maxlength="120" required>
+      <label for="sc">Cargo</label>
+      <input id="sc" type="text" maxlength="120">
+      <label for="se">E-mail</label>
+      <input id="se" type="email" autocomplete="email" required>
+      <label for="sp">Senha (mín. 10 caracteres)</label>
+      <input id="sp" type="password" autocomplete="new-password" minlength="10" required>
+      <p class="err" id="err3" role="alert" hidden></p>
+      <button class="btn primary" type="submit">Solicitar cadastro</button>
+      <button class="linkbtn" type="button" id="toLogin">Já tenho conta</button>
     </form>
 
     <form id="fNew" novalidate hidden>

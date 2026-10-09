@@ -1,22 +1,22 @@
 /* Design tokens compartilhados (site + portal) */
 :root {
-  --bg: #0A0805;
-  --bg-2: #0D0A06;
-  --bg-3: #110D07;
-  --bg-4: #140F08;
-  --surface: rgba(40, 28, 10, .35);
-  --amber: #D99A00;
-  --amber-hi: #F5B301;
-  --copper: #B8740A;
-  --bronze: #8A5A00;
-  --gold-hi: #F5C542;
-  --ok: #A3C16A;
-  --text: #FFF8E7;
-  --muted: #B8AD98;
-  --line: rgba(245, 179, 1, .18);
-  --line-strong: rgba(245, 179, 1, .45);
-  --grad: linear-gradient(120deg, #F5C542 0%, #D99A00 55%, #9A6200 100%);
-  --glow: 0 0 28px rgba(245, 179, 1, .28);
+  --bg: #070B14;
+  --bg-2: #0A101C;
+  --bg-3: #0D1524;
+  --bg-4: #101A2C;
+  --surface: rgba(20, 32, 56, .35);
+  --amber: #3B82F6;
+  --amber-hi: #5B9DFF;
+  --copper: #2563EB;
+  --bronze: #1E40AF;
+  --gold-hi: #7DD3FC;
+  --ok: #34D399;
+  --text: #E8F0FF;
+  --muted: #94A3B8;
+  --line: rgba(91, 157, 255, .18);
+  --line-strong: rgba(91, 157, 255, .45);
+  --grad: linear-gradient(120deg, #7DD3FC 0%, #3B82F6 55%, #1D4ED8 100%);
+  --glow: 0 0 28px rgba(91, 157, 255, .28);
   --r: 18px;
   --font: 'Sora', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }

@@ -4,7 +4,7 @@ import { start, h, run, pageHead, tabs, empty, formModal, toast, icon } from '..
 import { MERCADO_TABS } from './mercado.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
-const COLORS = ['#F5B301', '#A3C16A', '#D9794A', '#8FB8C9'];
+const COLORS = ['#5B9DFF', '#34D399', '#A78BFA', '#22D3EE'];
 const sv = (tag, attrs = {}, ...kids) => { const e = document.createElementNS(SVG, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); kids.forEach((k2) => e.append(k2)); return e; };
 
 export const init = () => start('mercado/', 'Nichos e comparador', async (ctx, view) => {
@@ -80,7 +80,7 @@ export const init = () => start('mercado/', 'Nichos e comparador', async (ctx, v
 
     out.replaceChildren(
       h('div', { class: 'card' }, h('h2', {}, 'Ranking ponderado'), h('p', { class: 'small muted' }, 'Média das notas ponderada pelos pesos, considerando só os critérios avaliados. Notas tracejadas ainda não têm evidência ou fonte.'),
-        h('div', { class: 'bars', style: 'margin-top:16px' }, ranked.map((r) => h('div', { class: 'bar' }, h('span', {}, (r.alvo ? '★ ' : '') + r.nome), h('div', { style: 'background:rgba(245,179,1,.08);border-radius:7px' }, h('i', { style: `width:${r.score != null ? r.score * 10 : 0}%` })), h('b', {}, r.score != null ? r.score.toFixed(1) : '—'))))),
+        h('div', { class: 'bars', style: 'margin-top:16px' }, ranked.map((r) => h('div', { class: 'bar' }, h('span', {}, (r.alvo ? '★ ' : '') + r.nome), h('div', { style: 'background:rgba(91, 157, 255,.08);border-radius:7px' }, h('i', { style: `width:${r.score != null ? r.score * 10 : 0}%` })), h('b', {}, r.score != null ? r.score.toFixed(1) : '—'))))),
       top.length ? h('div', { class: 'card' }, h('h2', {}, 'Perfil dos mais bem pontuados'), h('div', { class: 'row', style: 'align-items:flex-start;margin-top:10px' }, radar(top),
         h('div', { class: 'legend' }, top.map((t, k) => h('span', { style: `--c:${COLORS[k]}` }, `${t.nome} (${t.score.toFixed(1)})`))))) : null,
       h('div', {}, h('h2', { style: 'margin-bottom:12px' }, 'Matriz de notas'), matrix));

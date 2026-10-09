@@ -10,7 +10,10 @@ if (!configured) {
   show(err, 'Configuração pendente: preencha app/js/config.js (veja o README).');
   $('#fLogin button[type=submit]').disabled = true;
 } else {
-  if (new URLSearchParams(location.search).get('erro') === 'inativo') show(err, 'Conta desativada. Fale com o administrador.');
+  const erro = new URLSearchParams(location.search).get('erro');
+  if (erro === 'inativo') show(err, 'Conta desativada. Fale com o administrador.');
+  if (erro === 'pendente') show(err, 'Seu cadastro ainda aguarda aprovação do administrador.');
+  if (erro === 'recusado') show(err, 'Seu cadastro não foi aprovado. Fale com o administrador.');
 
   // Fluxo de redefinição de senha (link recebido por e-mail)
   sb.auth.onAuthStateChange((ev) => {
@@ -34,6 +37,28 @@ if (!configured) {
     if (!email) return show(err, 'Digite seu e-mail acima para receber o link.');
     await sb.auth.resetPasswordForEmail(email, { redirectTo: LOGIN });
     show(err, ''); $('#sub').textContent = 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.';
+  });
+
+  // Cadastro de funcionário: entra como "pendente" até o admin aprovar (trigger no banco).
+  const swap = (signup) => {
+    $('#fLogin').hidden = signup; $('#fSignup').hidden = !signup;
+    $('#sub').textContent = signup ? 'Preencha seus dados. O acesso só é liberado após aprovação do administrador.' : 'Acesso restrito a membros autorizados.';
+  };
+  $('#toSignup').addEventListener('click', () => swap(true));
+  $('#toLogin').addEventListener('click', () => swap(false));
+  $('#fSignup').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err3 = $('#err3'); show(err3, '');
+    const nome = $('#sn').value.trim(), cargo = $('#sc').value.trim(), email = $('#se').value.trim(), password = $('#sp').value;
+    if (!nome || !email) return show(err3, 'Informe nome e e-mail.');
+    if (password.length < 10) return show(err3, 'Use pelo menos 10 caracteres na senha.');
+    const btn = e.submitter; btn.disabled = true;
+    const { error } = await sb.auth.signUp({ email, password, options: { data: { nome, cargo }, emailRedirectTo: LOGIN } });
+    btn.disabled = false;
+    if (error) return show(err3, 'Não foi possível concluir o cadastro. Verifique os dados e tente novamente.');
+    await sb.auth.signOut();
+    $('#fSignup').reset(); swap(false);
+    $('#sub').textContent = 'Cadastro enviado! Confirme seu e-mail (se receber a mensagem) e aguarde a aprovação do administrador.';
   });
 
   $('#fNew').addEventListener('submit', async (e) => {

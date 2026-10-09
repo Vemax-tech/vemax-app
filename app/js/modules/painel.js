@@ -7,7 +7,7 @@ const count = async (table, filter) => {
   const { count: c } = await q; return c ?? 0;
 };
 const bars = (items) => h('div', { class: 'bars' }, items.map(([label, pct, val]) =>
-  h('div', { class: 'bar' }, h('span', {}, label), h('div', { style: 'background:rgba(245,179,1,.08);border-radius:7px' }, h('i', { style: `width:${pct}%` })), h('b', {}, val))));
+  h('div', { class: 'bar' }, h('span', {}, label), h('div', { style: 'background:rgba(91, 157, 255,.08);border-radius:7px' }, h('i', { style: `width:${pct}%` })), h('b', {}, val))));
 
 export const init = () => start('', 'Painel', async (ctx, view) => {
   const first = (ctx.profile.nome || '').split(' ')[0] || 'equipe';

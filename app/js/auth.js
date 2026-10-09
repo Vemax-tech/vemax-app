@@ -11,7 +11,11 @@ export async function requireSession() {
     sb.from('profiles').select('*').eq('id', session.user.id).single(),
     sb.from('permissoes').select('*'),
   ]);
-  if (!profile || !profile.ativo) { await sb.auth.signOut(); location.replace(LOGIN + '?erro=inativo'); return { redirect: true }; }
+  if (!profile || !profile.ativo) {
+    await sb.auth.signOut();
+    const motivo = profile?.status === 'pendente' ? 'pendente' : profile?.status === 'recusado' ? 'recusado' : 'inativo';
+    location.replace(LOGIN + '?erro=' + motivo); return { redirect: true };
+  }
   const isAdmin = profile.papel === 'admin';
   const can = (modulo, acao = 'ver') => isAdmin || Boolean(perms?.find((p) => p.modulo === modulo)?.[acao === 'ver' ? 'pode_ver' : 'pode_editar']);
   return { user: session.user, profile, perms: perms || [], isAdmin, can };
