@@ -125,3 +125,13 @@ pre.prompt { white-space: pre-wrap; background: rgba(7, 11, 20, .7); border: 1px
 select.sm { width: auto; padding: 4px 8px; font-size: .8rem; }
 .kn summary { cursor: pointer; list-style: none; } .kn summary::-webkit-details-marker { display: none; }
 .kn summary b { color: var(--text); }
+
+/* Cadastro / selos */
+.pw { position: relative; } .pw input { padding-right: 84px; }
+.eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: 0; color: var(--amber-hi); font-size: .78rem; font-weight: 600; padding: 6px 8px; border-radius: 8px; }
+.eye:hover { background: rgba(91, 157, 255, .1); }
+.meter { height: 4px; margin-top: 8px; border-radius: 4px; background: rgba(91, 157, 255, .12); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: #ff9b8a; transition: width .25s, background .25s; }
+.meter i[data-s="2"] { background: #f5c26b; } .meter i[data-s="3"] { background: var(--amber-hi); } .meter i[data-s="4"] { background: var(--ok); }
+.done h2 { margin: 18px 0 8px; } .done ol { margin: 12px 0 0 18px; display: grid; gap: 6px; color: var(--muted); } .done .btn { margin-top: 20px; }
+.pill { margin-left: auto; min-width: 20px; padding: 1px 7px; border-radius: 999px; background: var(--amber-hi); color: var(--bg); font-size: .72rem; font-weight: 700; text-align: center; }

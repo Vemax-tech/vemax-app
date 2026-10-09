@@ -1,5 +1,6 @@
 // Helpers de interface: criação segura de DOM (sem innerHTML com dados), shell, modal, toast.
 import { requireSession, logout } from './auth.js';
+import { sb } from './supabase.js';
 
 const ROOT = new URL('../', import.meta.url).href;
 const SVG = 'http://www.w3.org/2000/svg';
@@ -160,6 +161,12 @@ export async function start(key, title, render) {
       h('b', {}, ctx.profile.nome || ctx.user.email),
       h('span', { class: 'small' }, (ctx.isAdmin ? 'Administrador' : 'Membro') + (ctx.profile.cargo ? ' · ' + ctx.profile.cargo : '')),
       h('button', { class: 'btn sm', onclick: logout }, icon('out'), 'Sair')));
+  if (ctx.isAdmin) {   // selo com o nº de cadastros aguardando aprovação
+    sb.from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'pendente').then(({ count }) => {
+      const a = [...side.querySelectorAll('a.navi')].find((x) => x.getAttribute('href') === ROOT + 'equipe/');
+      if (a && count) a.append(h('span', { class: 'pill', 'aria-label': `${count} cadastro(s) pendente(s)` }, String(count)));
+    });
+  }
   const view = h('main', { class: 'content', id: 'view' });
   const top = h('div', { class: 'topbar' },
     h('a', { class: 'brand', href: ROOT, style: 'padding:0' }, icon('logo'), 'Vemax'),

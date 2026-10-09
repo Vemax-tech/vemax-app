@@ -22,7 +22,7 @@
       <label for="email">E-mail</label>
       <input id="email" type="email" autocomplete="username" required>
       <label for="pass">Senha</label>
-      <input id="pass" type="password" autocomplete="current-password" required>
+      <div class="pw"><input id="pass" type="password" autocomplete="current-password" required><button class="eye" type="button" data-eye="pass" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
       <p class="err" id="err" role="alert" hidden></p>
       <button class="btn primary" type="submit">Entrar</button>
       <button class="linkbtn" type="button" id="forgot">Esqueci minha senha</button>
@@ -37,11 +37,26 @@
       <label for="se">E-mail</label>
       <input id="se" type="email" autocomplete="email" required>
       <label for="sp">Senha (mín. 10 caracteres)</label>
-      <input id="sp" type="password" autocomplete="new-password" minlength="10" required>
+      <div class="pw"><input id="sp" type="password" autocomplete="new-password" minlength="10" required aria-describedby="spHint"><button class="eye" type="button" data-eye="sp" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+      <div class="meter" aria-hidden="true"><i id="spBar"></i></div>
+      <p class="small muted" id="spHint" aria-live="polite">Use 10+ caracteres, misturando letras, números e símbolos.</p>
+      <label for="sp2">Confirmar senha</label>
+      <input id="sp2" type="password" autocomplete="new-password" minlength="10" required>
       <p class="err" id="err3" role="alert" hidden></p>
       <button class="btn primary" type="submit">Solicitar cadastro</button>
       <button class="linkbtn" type="button" id="toLogin">Já tenho conta</button>
     </form>
+
+    <section id="done" class="done" hidden aria-live="polite">
+      <h2>Cadastro enviado</h2>
+      <p>Recebemos seu pedido. O que acontece agora:</p>
+      <ol class="small">
+        <li>Se receber um e-mail de confirmação, clique no link.</li>
+        <li>O administrador analisa e aprova seu acesso.</li>
+        <li>Depois disso, entre aqui com seu e-mail e senha.</li>
+      </ol>
+      <button class="btn primary" type="button" id="doneBack">Voltar ao login</button>
+    </section>
 
     <form id="fNew" novalidate hidden>
       <label for="np">Nova senha (mín. 10 caracteres)</label>
