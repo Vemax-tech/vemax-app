@@ -1,0 +1,89 @@
+# Pendências para fazer em casa
+
+Marque `[x]` conforme for concluindo. Tudo aqui depende de você: são ações no painel do Supabase, no Resend, no domínio ou decisões de conteúdo. O código já está escrito.
+
+> **Estado do código:** as mudanças mais recentes (propostas, acompanhamento, avaliação, notificações, PDF, função de e-mail) podem estar **sem commit**. Veja `git status` antes de começar.
+
+---
+
+## 1. Aplicar as migrations no Supabase (obrigatório, nesta ordem)
+
+Painel do Supabase → **SQL Editor** → cole o conteúdo de cada arquivo de `supabase/migrations/` e execute. A `005` já foi aplicada.
+
+- [ ] `006_portfolio.sql` — tabela de cases do portfólio, bucket público de imagens
+- [ ] `007_contato_antispam.sql` — limite de mensagens por hora no formulário
+- [ ] `008_agil.sql` — WIP, bloqueio, ciclos, retrospectiva e datas de fluxo em Projetos
+- [ ] `009_contato_perfil.sql` — perfil opcional do diagnóstico guiado
+- [ ] `010_funil_propostas.sql` — etapa "Proposta enviada" e propostas online
+- [ ] `011_notificacoes_cliente.sql` — sino de notificações, acompanhamento do cliente, avaliação pós-entrega
+
+Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `011` precisa da `008` e da `010`.
+
+## 2. Configurações no painel do Supabase
+
+- [ ] **Authentication → Providers → Email**: "Allow new users to sign up" ligado e "Confirm email" ligado (já funcionando, só confirme)
+- [ ] **Equipe → Permissões** no portal: definir o que o papel Membro pode ver e editar nos módulos novos (Portfólio do site, Projetos, Contatos)
+
+## 3. Aviso por e-mail (opcional, mas recomendado)
+
+Detalhes também no `README.md`, seção da Edge Function `notificar-email`.
+
+- [ ] Criar conta no **Resend** (resend.com) e gerar uma API key
+- [ ] Definir os segredos da função no Supabase:
+  - `RESEND_API_KEY`
+  - `NOTIFY_TO` (seus e-mails, separados por vírgula)
+  - `NOTIFY_FROM` (para testar sem domínio: `Vemax <onboarding@resend.dev>`; nesse caso o `NOTIFY_TO` precisa ser o e-mail da sua conta no Resend)
+  - `WEBHOOK_SECRET` (invente uma senha longa e aleatória)
+  - `SITE_URL` (opcional, ex.: `https://seudominio.com.br`)
+- [ ] Publicar a função (terminal, com o Supabase CLI logado e o projeto vinculado):
+  ```
+  supabase functions deploy notificar-email --no-verify-jwt
+  ```
+- [ ] **Database → Webhooks**: criar webhook na tabela **`notificacoes`**, evento INSERT, método POST, URL da função, header `x-webhook-secret: <o mesmo WEBHOOK_SECRET>`
+- [ ] Se existir webhook antigo em `contatos_site`, apagar (senão o aviso de lead chega em dobro)
+- [ ] Testar: enviar um contato pelo site e conferir o e-mail e o sino do portal
+
+## 4. Testar de ponta a ponta (rodar `npx serve .` na pasta do projeto)
+
+Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
+
+- [ ] Formulário de contato: abre o WhatsApp com o número certo e o lead aparece no portal (Contatos)
+- [ ] Diagnóstico guiado: preencher o perfil opcional e ver as etiquetas no lead
+- [ ] Portfólio: criar um case com imagem no portal, publicar, ver na home e na página própria (`portfolio/caso.html?c=...`)
+- [ ] Funil: arrastar o lead pelas colunas na visão "Quadro"
+- [ ] Proposta: criar, liberar o link, abrir em janela anônima, aceitar e conferir a resposta e o sino
+- [ ] PDF da proposta: botão PDF no portal e "Baixar em PDF" na página do cliente
+- [ ] Projetos: limite de WIP, bloquear/desbloquear, criar um ciclo e encerrar com retrospectiva
+- [ ] Acompanhamento: ativar o link de um projeto, registrar uma atualização pública, abrir em janela anônima
+- [ ] Avaliação: pedir avaliação, responder pelo link autorizando o depoimento e usar "Usar no portfólio"
+- [ ] Testar tudo no **celular**
+
+## 5. Conteúdo do site
+
+- [ ] Cadastrar **cases reais** no portal (Portfólio do site) e publicar. Sem eles o site mostra 3 exemplos marcados como "Case ilustrativo"
+- [ ] Links do **LinkedIn** e do **GitHub** no rodapé (foram removidos por falta do endereço)
+- [ ] Imagem de compartilhamento (`og:image`, 1200×630) para a prévia do link no WhatsApp e redes sociais
+- [ ] Revisar os textos do site e do diagnóstico guiado
+
+## 6. Privacidade e jurídico
+
+- [ ] Preencher `privacidade.html`: data, razão social, CNPJ e prazo de retenção dos dados (campos `[entre colchetes]`)
+- [ ] Peça uma **revisão jurídica** da política antes de divulgar
+- [ ] Acrescentar na política o acompanhamento do cliente e a avaliação pós-entrega
+- [ ] Lembrar que o aceite de proposta é só um registro de nome e data, não um contrato
+
+## 7. Publicação
+
+- [ ] Escolher a hospedagem (Vercel, por exemplo) e registrar o **domínio**
+- [ ] Depois do domínio: `sitemap.xml`, `og:url`, canonical e o `Sitemap:` no `robots.txt`
+- [ ] Atualizar `SITE_URL` (segredo da função de e-mail) com o domínio final
+- [ ] `git add`, `git commit` e `git push` das mudanças pendentes
+- [ ] Rodar o Lighthouse (desempenho e acessibilidade) no site publicado; o hero tem muita animação
+
+## 8. Ideias para depois (não urgentes)
+
+- [ ] Agendamento de conversa (Cal.com ou Calendly embutido)
+- [ ] Área do cliente com login (hoje o acompanhamento é por link privado)
+- [ ] Painel financeiro simples
+- [ ] Blog ou newsletter
+- [ ] Trocar a "análise" por palavras-chave do diagnóstico por uma IA de verdade (cuidar de custo e abuso)
