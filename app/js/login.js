@@ -80,7 +80,12 @@ if (!configured) {
     const btn = e.submitter; btn.disabled = true;
     const { error } = await sb.auth.signUp({ email, password, options: { data: { nome, cargo }, emailRedirectTo: LOGIN } });
     btn.disabled = false;
-    if (error) return show(err3, 'Não foi possível concluir o cadastro. Verifique os dados e tente novamente.');
+    if (error) {
+      console.warn('signUp:', error.code || error.status, error.message);   // diagnóstico no console; a tela segue neutra
+      if (error.code === 'signup_disabled') return show(err3, 'Cadastros estão desativados no momento. Fale com o administrador.');
+      if (error.code === 'over_email_send_rate_limit' || error.status === 429) return show(err3, 'Muitas tentativas. Aguarde alguns minutos e tente de novo.');
+      return show(err3, 'Não foi possível concluir o cadastro. Verifique os dados e tente novamente.');
+    }
     await sb.auth.signOut();
     $('#fSignup').reset(); $('#spBar').style.width = '0';
     $('#fSignup').hidden = true; $('#done').hidden = false;
