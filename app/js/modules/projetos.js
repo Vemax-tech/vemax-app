@@ -1,5 +1,6 @@
 // Projetos: quadro kanban por status, prazos, responsáveis e anexos de entregáveis
 import { sb } from '../supabase.js';
+import { openCliente } from './cliente.js';
 import { start, h, run, pageHead, empty, formModal, confirmDlg, modal, fmtDate, overdue, toast, icon, PROJ_STATUS } from '../ui.js';
 
 const BUCKET = 'projetos';
@@ -101,6 +102,7 @@ export const init = () => start('projetos/', 'Projetos', async (ctx, view) => {
         canEdit && h('select', { class: 'sm', 'aria-label': 'Mover ' + p.titulo, onchange: (e) => move(p, e.target.value) },
           Object.entries(PROJ_STATUS).map(([v, l]) => h('option', { value: v, selected: v === p.status }, l))),
         h('button', { class: 'btn sm', onclick: () => anexos(p) }, 'Anexos'),
+        h('button', { class: 'btn sm', onclick: () => openCliente(p, { canEdit, canPortfolio: ctx.can('portfolio', 'editar'), onChange: draw }) }, 'Cliente'),
         canEdit && p.status !== 'concluido' && h('button', { class: 'btn sm', onclick: () => block(p) }, p.bloqueado ? 'Desbloquear' : 'Bloquear'),
         canEdit && h('button', { class: 'btn sm', onclick: () => edit(p) }, 'Editar'),
         canEdit && h('button', { class: 'btn sm danger', 'aria-label': 'Excluir ' + p.titulo, onclick: async () => {

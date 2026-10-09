@@ -1,6 +1,7 @@
 // Helpers de interface: criação segura de DOM (sem innerHTML com dados), shell, modal, toast.
 import { requireSession, logout } from './auth.js';
 import { sb } from './supabase.js';
+import { initNotifs } from './notifs.js';
 
 const ROOT = new URL('../', import.meta.url).href;
 const SVG = 'http://www.w3.org/2000/svg';
@@ -16,6 +17,7 @@ const ICONS = {
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
 };
 export const icon = (n) => {
@@ -169,6 +171,7 @@ export async function start(key, title, render) {
       if (a && count) a.append(h('span', { class: 'pill', 'aria-label': `${count} cadastro(s) pendente(s)` }, String(count)));
     });
   }
+  initNotifs({ sb, h, modal, icon, side, ctx, root: ROOT });
   const view = h('main', { class: 'content', id: 'view' });
   const top = h('div', { class: 'topbar' },
     h('a', { class: 'brand', href: ROOT, style: 'padding:0' }, icon('logo'), 'Vemax'),

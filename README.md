@@ -302,7 +302,7 @@ Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
 
 1. Crie um projeto no Supabase.
 2. Em **Authentication → Providers → Email**, mantenha *Allow new users to sign up* ativado e *Confirm email* ligado.
-3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `010_funil_propostas.sql`.
+3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `011_notificacoes_cliente.sql`.
 4. Em **Project Settings → API**, copie a *Project URL* e a chave *anon/publishable* para `app/js/config.js`.
 5. Em **Authentication → Users → Add user**, crie o seu usuário. **O primeiro usuário vira administrador.**
 6. Entre em `/app/` e ajuste cargos e permissões em **Equipe**.
@@ -326,6 +326,15 @@ node build.js
 1. Defina os secrets `RESEND_API_KEY`, `NOTIFY_TO` (e-mails separados por vírgula), `NOTIFY_FROM` e `WEBHOOK_SECRET`.
 2. Faça o deploy da função no Supabase.
 3. Em **Database → Webhooks**, crie um webhook na tabela `contatos_site`, evento `INSERT`, com o header `x-webhook-secret: <WEBHOOK_SECRET>`.
+
+**Edge Function `notificar-email` (recomendada; substitui a `notificar-contato`):**
+Envia por e-mail tudo o que aparece no sino do portal: lead novo, proposta aceita ou recusada, avaliação recebida e cadastro pendente.
+1. Aplique a migration `011_notificacoes_cliente.sql` (cria a tabela `notificacoes`).
+2. Defina os secrets `RESEND_API_KEY`, `NOTIFY_TO`, `NOTIFY_FROM` e `WEBHOOK_SECRET` (os mesmos da função anterior) e, opcionalmente, `SITE_URL` para incluir o link do portal no e-mail.
+3. Publique sem verificação de JWT, porque quem chama é o webhook: `supabase functions deploy notificar-email --no-verify-jwt`.
+4. Em **Database → Webhooks**, crie um webhook na tabela **`notificacoes`**, evento `INSERT`, método `POST`, URL da função e o header `x-webhook-secret: <WEBHOOK_SECRET>`.
+5. Remova o webhook de `contatos_site` para não receber o aviso de lead duas vezes.
+6. Com o domínio do Resend ainda não verificado, o Resend só entrega para o e-mail da sua própria conta; use `NOTIFY_FROM="Vemax <onboarding@resend.dev>"` e `NOTIFY_TO` com esse e-mail para testar.
 
 </details>
 

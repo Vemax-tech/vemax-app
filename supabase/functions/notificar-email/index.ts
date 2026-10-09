@@ -1,0 +1,45 @@
+// Edge Function: envia por e-mail (Resend) cada notificação criada no portal
+// (lead novo, proposta aceita/recusada, avaliação recebida, cadastro pendente).
+//
+// Disparo: Database > Webhooks > tabela `notificacoes`, evento INSERT, método POST,
+// URL da função, header "x-webhook-secret: <WEBHOOK_SECRET>". Desative a função `notificar-contato`
+// (e o webhook de `contatos_site`) para não receber o aviso de lead duas vezes.
+//
+// Secrets: RESEND_API_KEY, NOTIFY_TO (e-mails separados por vírgula), NOTIFY_FROM, WEBHOOK_SECRET.
+// Opcional: SITE_URL (ex.: https://seudominio.com.br, sem barra final) para incluir o link do portal no e-mail.
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+const oneLine = (s: unknown, max: number) => String(s ?? '').replace(/[\r\n\t]+/g, ' ').trim().slice(0, max);
+const LINK_OK = /^[a-z0-9\/_-]{0,60}$/;   // só caminhos internos do portal, ex.: contatos/
+
+Deno.serve(async (req) => {
+  if (req.method !== 'POST') return new Response('method not allowed', { status: 405 });
+  const secret = Deno.env.get('WEBHOOK_SECRET');
+  if (!secret || req.headers.get('x-webhook-secret') !== secret) return new Response('forbidden', { status: 403 });
+
+  let body: any;
+  try { body = await req.json(); } catch { return new Response('bad request', { status: 400 }); }
+  const n = body?.record ?? body;   // webhook do Supabase envia { type, table, record }
+  const titulo = oneLine(n?.titulo, 200);
+  if (!titulo) return new Response('ignored');
+
+  const key = Deno.env.get('RESEND_API_KEY');
+  const from = Deno.env.get('NOTIFY_FROM');
+  const to = (Deno.env.get('NOTIFY_TO') ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  if (!key || !from || !to.length) return new Response('not configured', { status: 500 });
+
+  const link = LINK_OK.test(String(n?.link ?? '')) ? String(n.link) : '';
+  const site = (Deno.env.get('SITE_URL') ?? '').replace(/\/$/, '');
+  const url = site && link ? `${site}/app/${link}` : site ? `${site}/app/` : '';
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from, to,
+      subject: `[Vemax] ${titulo}`,
+      html: `<p>${esc(titulo)}</p>${url ? `<p><a href="${esc(url)}">Abrir no portal</a></p>` : ''}`,
+      text: titulo + (url ? `\n\nAbrir no portal: ${url}` : ''),
+    }),
+  });
+  return new Response(res.ok ? 'ok' : 'erro no envio', { status: res.ok ? 200 : 502 });
+});

@@ -38,7 +38,8 @@
     const info = [['Investimento', p.valor != null ? brl(p.valor) : 'A combinar'], ['Prazo estimado', p.prazo_texto || 'A combinar'], ['Válida até', p.validade ? dia(p.validade) : 'Sem data limite']];
 
     const out = [
-      h('header', { class: 'caso-head' }, h('p', { class: 'eyebrow' }, 'Proposta'), h('h1', {}, p.titulo), status),
+      h('header', { class: 'caso-head' }, h('p', { class: 'eyebrow' }, 'Proposta'), h('h1', {}, p.titulo), status,
+        h('button', { class: 'btn btn-outline no-print', type: 'button', style: 'margin-top:12px', onclick: () => window.print() }, 'Baixar em PDF')),
       h('dl', { class: 'prop-info' }, info.map(([k, v]) => h('div', {}, h('dt', {}, k), h('dd', {}, v)))),
       paras.length > 0 && h('section', { class: 'caso-story' }, h('h2', {}, 'Escopo'), paras.map((x) => h('p', {}, x))),
     ];
@@ -74,6 +75,7 @@
     } else if (p.status === 'aceita') {
       out.push(h('p', { style: 'color:var(--muted)' }, 'Obrigado! Nossa equipe vai entrar em contato para os próximos passos.'));
     }
+    out.push(h('p', { class: 'small no-print', style: 'color:var(--muted)' }, 'Dica: na janela de impressão, escolha “Salvar como PDF”.'));
     root.replaceChildren(...out.filter(Boolean));
   }
   main();
