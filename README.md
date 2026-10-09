@@ -16,9 +16,6 @@
 <sub>SITE INSTITUCIONAL · PORTAL INTERNO DA EQUIPE</sub></p>
 
 <p align="center">
-  <img alt="Último commit" src="https://img.shields.io/github/last-commit/Vemax-tech/vemax-app?style=flat-square&color=3B82F6&labelColor=0A101C">
-  <img alt="Commits" src="https://img.shields.io/github/commit-activity/t/Vemax-tech/vemax-app?style=flat-square&color=5B9DFF&labelColor=0A101C">
-  <img alt="Tamanho do repositório" src="https://img.shields.io/github/repo-size/Vemax-tech/vemax-app?style=flat-square&color=94A3B8&labelColor=0A101C">
   <a href="https://vemax-app.kraazynino.workers.dev"><img alt="Produção" src="https://img.shields.io/website?url=https%3A%2F%2Fvemax-app.kraazynino.workers.dev&label=produ%C3%A7%C3%A3o&style=flat-square&labelColor=0A101C"></a>
   <img alt="Projeto pessoal" src="https://img.shields.io/badge/projeto-pessoal-3B82F6?style=flat-square&labelColor=0A101C">
 </p>
@@ -115,6 +112,8 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | [`supabase/migrations/`](supabase/migrations/) | Esquema do banco, RLS, triggers e buckets, em ordem de `001` a `006` |
 | [`research/README.md`](research/README.md) | Pesquisa de mercado: entregáveis e como regenerar |
 | [`research/output/powerbi/LEIA-ME.md`](research/output/powerbi/LEIA-ME.md) | Montagem do modelo Power BI e medidas DAX |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) e [`SECURITY.md`](SECURITY.md) | Fluxo de trabalho e commits; como reportar vulnerabilidade |
+| [`docs/RELEASE_NOTES_v1.0.0.md`](docs/RELEASE_NOTES_v1.0.0.md) | O que a primeira versão entrega |
 | [`docs/README_ANTERIOR.md`](docs/README_ANTERIOR.md) | README anterior, com o passo a passo de configuração do Supabase (cita migrations só até a 006) |
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
@@ -144,7 +143,8 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | Log de atividades | ✅ entregue | `log_atividade()` e triggers `t_log_*` em `001_init.sql` |
 | E-mail ao chegar contato novo | 🚧 código pronto | `supabase/functions/notificar-contato/index.ts` (precisa ser implantada no Supabase) |
 | Relatório, planilha e pacote Power BI de nichos | ✅ entregue | `research/` (o `.pbix` não foi gerado) |
-| Testes automatizados e CI | 📋 planejado | não existe ainda |
+| Verificação de links dos `.md` e dos SVGs (GitHub Actions) | ✅ entregue | `.github/workflows/qualidade.yml` |
+| Testes automatizados | 📋 planejado | não existe ainda |
 | Dados de contato do site (WhatsApp, e-mail, cidade, Instagram) | ✅ entregue | `assets/js/config.js`, rodapé do `index.html` |
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
@@ -220,7 +220,9 @@ sequenceDiagram
 │   ├── migrations/         # 001 a 008: tabelas, RLS, triggers, buckets, anti-spam, ágil
 │   └── functions/notificar-contato/   # Edge Function (Deno)
 ├── research/               # pesquisa de mercado (scripts Node + relatório, planilha, CSVs)
-└── docs/                   # prompt do portal, README anterior e imagens (assets/)
+├── docs/                   # prompt do portal, notas da release, README anterior e imagens (assets/)
+├── .github/                # workflow de qualidade, templates de issue e PR, CODEOWNERS
+└── CONTRIBUTING.md  SECURITY.md
 ```
 
 <a id="componentes-principais"></a>
@@ -357,7 +359,7 @@ Não há `.env`. A configuração fica em arquivos JavaScript públicos e em sec
 <a id="qualidade-e-seguranca"></a>
 ## 🔒 Qualidade e segurança
 
-**Testes e CI:** o repositório ainda não tem testes automatizados nem workflow de CI. Para um site estático sem build, a verificação hoje é manual. Está no [Roadmap](#roadmap).
+**Testes e CI:** não há testes automatizados. O workflow `Qualidade` (`.github/workflows/qualidade.yml`) roda em push e Pull Request na `main` e verifica os links dos `.md` e se os SVGs de `docs/assets` são XML válido. Ele só dispara quando `.md`, `docs/assets/` ou o próprio workflow mudam, para gastar poucos minutos do Actions. Sem segredos e sem deploy. O resto da verificação é manual.
 
 **O que protege o sistema de verdade:**
 - RLS ativa nas tabelas, com política padrão de negar. As permissões por módulo vivem na tabela `permissoes` e são avaliadas por `can()`.
@@ -394,7 +396,6 @@ O repositório não tem issues nem TODOs no código. Os itens abaixo vêm do que
 - [ ] Quando o domínio estiver definido, adicionar o `Sitemap:` ao `robots.txt`.
 - [ ] Implantar a Edge Function `notificar-contato` no Supabase e criar o webhook.
 - [ ] Cadastrar os primeiros cases reais no portal (hoje o site mostra 3 exemplos ilustrativos).
-- [ ] Adicionar um workflow no GitHub Actions para validar HTML e links.
 - [ ] Gerar o arquivo `.pbix` do Power BI (hoje só há o modelo de dados em CSV).
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
@@ -402,10 +403,13 @@ O repositório não tem issues nem TODOs no código. Os itens abaixo vêm do que
 <a id="como-contribuir"></a>
 ## 🤝 Como contribuir
 
-1. Crie uma branch a partir da `main`: `git switch -c feat/nome-curto`.
-2. Faça mudanças pequenas e teste com `npx serve .`.
-3. Faça commits no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/) (`feat`, `fix`, `docs`, `chore`, `style`, `refactor`, `test`).
-4. Abra um Pull Request para a `main` explicando o que mudou e como testar.
+1. Antes de começar, atualize a `main`: `git switch main && git pull`.
+2. Crie uma branch: `feature/nome-curto` ou `fix/nome-curto`.
+3. Faça mudanças pequenas e teste com `npx serve .`.
+4. Faça commits no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/) (`feat`, `fix`, `docs`, `chore`, `style`, `refactor`, `test`).
+5. Abra um Pull Request para a `main`. O [template](.github/pull_request_template.md) pede o que mudou, por quê e como testar.
+
+Guias completos: [CONTRIBUTING.md](CONTRIBUTING.md) e [SECURITY.md](SECURITY.md) (como reportar uma vulnerabilidade de forma privada).
 
 Exemplos do histórico do repositório:
 
@@ -417,7 +421,7 @@ feat: paleta fria, portfólio dinâmico, anti-spam, privacidade e práticas áge
 ```
 
 > [!NOTE]
-> Mudanças no banco entram como uma nova migration numerada (`007_...sql`). Não edite as migrations já executadas.
+> Mudanças no banco entram como uma nova migration numerada (`009_...sql`). Não edite as migrations já executadas.
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
 
@@ -435,7 +439,7 @@ feat: paleta fria, portfólio dinâmico, anti-spam, privacidade e práticas áge
 - **Site:** [vemax-app.kraazynino.workers.dev](https://vemax-app.kraazynino.workers.dev)
 - **Código:** [github.com/Vemax-tech/vemax-app](https://github.com/Vemax-tech/vemax-app)
 - **Commits:** [histórico completo](https://github.com/Vemax-tech/vemax-app/commits/main)
-- **Releases:** ainda não há tags nem releases.
+- **Versão:** `v1.0.0`. Notas em [docs/RELEASE_NOTES_v1.0.0.md](docs/RELEASE_NOTES_v1.0.0.md).
 
 <a id="licenca"></a>
 ## 📄 Licença
