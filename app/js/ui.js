@@ -16,6 +16,7 @@ const ICONS = {
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
 };
 export const icon = (n) => {
   const s = document.createElementNS(SVG, 'svg');
@@ -131,6 +132,7 @@ const NAV = [
   ['projetos/', 'Projetos', 'box', 'projetos'],
   ['contatos/', 'Contatos do site', 'mail', 'contatos'],
   ['conhecimento/', 'Base de conhecimento', 'book', 'conhecimento'],
+  ['portfolio/', 'Portfólio do site', 'image', 'portfolio'],
   ['equipe/', 'Equipe', 'users', 'ADMIN'],
 ];
 

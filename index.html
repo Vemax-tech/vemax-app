@@ -73,10 +73,10 @@
       <svg class="i" aria-hidden="true"><use href="#i-logo"/></svg><span>Vemax</span>
     </a>
     <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#portfolio">Portfólio</a>
       <a href="#solucoes">Soluções</a>
       <a href="#processo">Como funciona</a>
       <a href="#desenvolvemos">Projetos</a>
-      <a href="#portfolio">Portfólio</a>
       <a href="#porque">Sobre</a>
       <a href="#contato">Contato</a>
       <a class="btn btn-ghost nav-cta" href="#contato">Falar com a equipe <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
@@ -100,7 +100,7 @@
       <p class="lead">Criamos soluções digitais sob medida para transformar problemas reais em processos mais simples, inteligentes e eficientes.</p>
       <div class="actions">
         <a class="btn btn-primary" href="#problema">Quero resolver um problema <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        <a class="btn btn-outline" href="#solucoes">Conhecer soluções</a>
+        <a class="btn btn-outline" href="#portfolio">Ver portfólio</a>
       </div>
     </div>
 
@@ -135,6 +135,38 @@
         <div class="mini glass mc3"><svg class="i"><use href="#i-db"/></svg>Dados centralizados</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ PORTFÓLIO ============ -->
+<!-- Os cases vêm do portal (módulo Portfólio) via assets/js/portfolio.js.
+     Sem cases publicados, a página mostra 3 exemplos ILUSTRATIVOS (com selo visível). -->
+<section class="sec" id="portfolio" aria-labelledby="t-pf">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <p class="eyebrow">Portfólio</p>
+      <h2 id="t-pf">Veja como um problema vira <span class="grad">uma solução.</span></h2>
+      <p class="lead">Cada projeto segue o mesmo caminho. Abra o processo de cada case e acompanhe o que fizemos em cada etapa.</p>
+    </header>
+
+    <div class="pf-stats reveal" id="pfStats" hidden></div>
+    <div class="pf-filters" id="pfFilters" role="group" aria-label="Filtrar por segmento" hidden></div>
+    <div class="pf-grid" id="pfGrid" aria-busy="true" aria-live="polite"></div>
+    <noscript><p class="small" style="text-align:center">Ative o JavaScript para ver os projetos do portfólio.</p></noscript>
+
+    <div class="pf-cta glass reveal">
+      <div><h3>O próximo case pode ser o seu.</h3><p>Conte o problema. Mostramos como seria o caminho até a solução.</p></div>
+      <a class="btn btn-primary" href="#contato">Quero começar <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+
+    <figure class="manifesto reveal">
+      <blockquote>Não vendemos tecnologia. <span class="grad">Resolvemos problemas</span> com a tecnologia certa.</blockquote>
+      <ul class="mf-list">
+        <li><b>Clareza</b><span>Você entende cada etapa, sem jargão e sem surpresas.</span></li>
+        <li><b>Autoria</b><span>Cada solução é pensada do zero para o seu negócio, não adaptada de um modelo.</span></li>
+        <li><b>Continuidade</b><span>Acompanhamos o produto depois da entrega e evoluímos junto com você.</span></li>
+      </ul>
+    </figure>
   </div>
 </section>
 
@@ -314,95 +346,6 @@
   </div>
 </section>
 
-<!-- ============ PORTFÓLIO ============ -->
-<!-- ATENÇÃO: os 3 cases abaixo são ILUSTRATIVOS (selo visível no card). Troque pelos projetos reais
-     e remova o selo "Case ilustrativo" ao publicar. Só afirme resultados que possam ser comprovados. -->
-<section class="sec" id="portfolio" aria-labelledby="t-pf">
-  <div class="wrap">
-    <header class="sec-head reveal">
-      <p class="eyebrow">Portfólio</p>
-      <h2 id="t-pf">Veja como um problema vira <span class="grad">uma solução.</span></h2>
-      <p class="lead">Cada projeto segue o mesmo caminho. Abra o processo de cada case e acompanhe o que fizemos em cada etapa.</p>
-    </header>
-
-    <div class="pf-grid">
-      <article class="card glass pf reveal">
-        <div class="pf-top"><span class="pf-seg"><svg class="i" aria-hidden="true"><use href="#i-bag"/></svg>Comércio</span><span class="pf-tag">Case ilustrativo</span></div>
-        <h3>Estoque e pedidos em um só painel</h3>
-        <dl class="pf-dl">
-          <div><dt>Problema</dt><dd>Estoque em planilhas e pedidos pelo WhatsApp, com vendas perdidas e dados duplicados.</dd></div>
-          <div><dt>Solução</dt><dd>Sistema único de estoque e pedidos, com alertas de reposição e painel de vendas.</dd></div>
-          <div><dt>Resultado</dt><dd>Dados centralizados e menos retrabalho manual no dia a dia.</dd></div>
-        </dl>
-        <details class="pf-proc">
-          <summary>Ver o processo</summary>
-          <ol>
-            <li><b>Entendemos</b> Mapeamos como os pedidos chegavam e onde o estoque se perdia.</li>
-            <li><b>Pensamos</b> Definimos o mínimo que resolvia a dor principal antes de qualquer extra.</li>
-            <li><b>Construímos</b> Entregas curtas, com o cliente validando cada versão.</li>
-            <li><b>Evoluímos</b> Ajustes e novos recursos a partir do uso real.</li>
-          </ol>
-        </details>
-        <ul class="pf-tags"><li>Sistema</li><li>Dashboard</li><li>Automação</li></ul>
-      </article>
-
-      <article class="card glass pf reveal">
-        <div class="pf-top"><span class="pf-seg"><svg class="i" aria-hidden="true"><use href="#i-heart"/></svg>Clínicas</span><span class="pf-tag">Case ilustrativo</span></div>
-        <h3>Agenda com lembretes automáticos</h3>
-        <dl class="pf-dl">
-          <div><dt>Problema</dt><dd>Agenda manual, faltas frequentes e recepção sobrecarregada com confirmações.</dd></div>
-          <div><dt>Solução</dt><dd>Agendamento online com confirmação e lembretes automáticos por mensagem.</dd></div>
-          <div><dt>Resultado</dt><dd>Recepção liberada das confirmações e agenda mais organizada.</dd></div>
-        </dl>
-        <details class="pf-proc">
-          <summary>Ver o processo</summary>
-          <ol>
-            <li><b>Entendemos</b> Acompanhamos a rotina da recepção e levantamos os motivos das faltas.</li>
-            <li><b>Pensamos</b> Escolhemos o canal de aviso que os pacientes já usam.</li>
-            <li><b>Construímos</b> Agenda, lembretes e um painel simples para a equipe.</li>
-            <li><b>Evoluímos</b> Ajustamos horários e mensagens com base nas respostas.</li>
-          </ol>
-        </details>
-        <ul class="pf-tags"><li>Plataforma</li><li>Automação</li><li>Presença digital</li></ul>
-      </article>
-
-      <article class="card glass pf reveal">
-        <div class="pf-top"><span class="pf-seg"><svg class="i" aria-hidden="true"><use href="#i-building"/></svg>Condomínios</span><span class="pf-tag">Case ilustrativo</span></div>
-        <h3>Comunicação e ocorrências organizadas</h3>
-        <dl class="pf-dl">
-          <div><dt>Problema</dt><dd>Avisos espalhados em grupos de mensagem e ocorrências sem registro nem acompanhamento.</dd></div>
-          <div><dt>Solução</dt><dd>Portal com mural de avisos, registro de ocorrências e histórico por unidade.</dd></div>
-          <div><dt>Resultado</dt><dd>Comunicação em um só lugar e ocorrências com responsável e prazo.</dd></div>
-        </dl>
-        <details class="pf-proc">
-          <summary>Ver o processo</summary>
-          <ol>
-            <li><b>Entendemos</b> Ouvimos síndico, portaria e moradores sobre o que mais travava.</li>
-            <li><b>Pensamos</b> Priorizamos o que dava mais ganho com menos mudança de hábito.</li>
-            <li><b>Construímos</b> Lançamos por etapas, começando pelo mural de avisos.</li>
-            <li><b>Evoluímos</b> Incluímos novos recursos conforme o condomínio pediu.</li>
-          </ol>
-        </details>
-        <ul class="pf-tags"><li>Portal</li><li>Sistema</li><li>Comunicação</li></ul>
-      </article>
-    </div>
-
-    <div class="pf-cta glass reveal">
-      <div><h3>O próximo case pode ser o seu.</h3><p>Conte o problema. Mostramos como seria o caminho até a solução.</p></div>
-      <a class="btn btn-primary" href="#contato">Quero começar <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-    </div>
-
-    <figure class="manifesto reveal">
-      <blockquote>Não vendemos tecnologia. <span class="grad">Resolvemos problemas</span> com a tecnologia certa.</blockquote>
-      <ul class="mf-list">
-        <li><b>Clareza</b><span>Você entende cada etapa, sem jargão e sem surpresas.</span></li>
-        <li><b>Autoria</b><span>Cada solução é pensada do zero para o seu negócio, não adaptada de um modelo.</span></li>
-        <li><b>Continuidade</b><span>Acompanhamos o produto depois da entrega e evoluímos junto com você.</span></li>
-      </ul>
-    </figure>
-  </div>
-</section>
-
 <!-- ============ POR QUE NOS ESCOLHER ============ -->
 <section class="sec" id="porque" aria-labelledby="t-why">
   <div class="wrap">
@@ -470,7 +413,7 @@
       </div>
     </div>
     <nav class="foot-nav" aria-label="Rodapé">
-      <a href="#solucoes">Soluções</a><a href="#processo">Como funciona</a><a href="#desenvolvemos">Projetos</a><a href="#portfolio">Portfólio</a><a href="#porque">Sobre</a><a href="#contato">Contato</a>
+      <a href="#portfolio">Portfólio</a><a href="#solucoes">Soluções</a><a href="#processo">Como funciona</a><a href="#desenvolvemos">Projetos</a><a href="#porque">Sobre</a><a href="#contato">Contato</a>
     </nav>
     <address class="foot-contact">
       <a href="mailto:contato@seudominio.com.br"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>contato@seudominio.com.br</a>
@@ -481,6 +424,8 @@
   <p class="copy wrap"><a href="app/" style="color:inherit">Área da equipe</a> · © <span id="year">2026</span> Vemax. Todos os direitos reservados.</p>
 </footer>
 
+<script src="assets/js/config.js"></script>
+<script src="assets/js/portfolio.js"></script>
 <script src="assets/js/script.js"></script>
 </body>
 </html>

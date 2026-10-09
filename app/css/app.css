@@ -135,3 +135,11 @@ select.sm { width: auto; padding: 4px 8px; font-size: .8rem; }
 .meter i[data-s="2"] { background: #f5c26b; } .meter i[data-s="3"] { background: var(--amber-hi); } .meter i[data-s="4"] { background: var(--ok); }
 .done h2 { margin: 18px 0 8px; } .done ol { margin: 12px 0 0 18px; display: grid; gap: 6px; color: var(--muted); } .done .btn { margin-top: 20px; }
 .pill { margin-left: auto; min-width: 20px; padding: 1px 7px; border-radius: 999px; background: var(--amber-hi); color: var(--bg); font-size: .72rem; font-weight: 700; text-align: center; }
+
+/* Portfólio (formulário do case) */
+.pfform textarea { resize: vertical; }
+.chk { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 0; font-weight: 400; cursor: pointer; }
+.chk input { width: auto; margin-top: 3px; flex: none; } .chk b { color: var(--text); }
+.et { display: grid; gap: 6px; margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.et b { color: var(--amber-hi); font-size: .82rem; }
+.pfimg { display: flex; align-items: center; gap: 14px; margin: 8px 0; } .pfimg img { border-radius: 8px; border: 1px solid var(--line); height: auto; }

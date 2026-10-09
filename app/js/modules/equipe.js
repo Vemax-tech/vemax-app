@@ -2,7 +2,7 @@
 import { sb } from '../supabase.js';
 import { start, h, run, pageHead, empty, fmtDate, formModal, confirmDlg } from '../ui.js';
 
-const MODS = { mercado: 'Inteligência de Mercado', projetos: 'Projetos', contatos: 'Contatos do site', conhecimento: 'Base de conhecimento' };
+const MODS = { mercado: 'Inteligência de Mercado', projetos: 'Projetos', contatos: 'Contatos do site', conhecimento: 'Base de conhecimento', portfolio: 'Portfólio do site' };
 
 export const init = () => start('equipe/', 'Equipe', async (ctx, view) => {
   const all = (await run(sb.from('profiles').select('*').order('criado_em'))) || [];
