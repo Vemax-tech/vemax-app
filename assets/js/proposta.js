@@ -42,6 +42,8 @@
         h('button', { class: 'btn btn-outline no-print', type: 'button', style: 'margin-top:12px', onclick: () => window.print() }, 'Baixar em PDF')),
       h('dl', { class: 'prop-info' }, info.map(([k, v]) => h('div', {}, h('dt', {}, k), h('dd', {}, v)))),
       paras.length > 0 && h('section', { class: 'caso-story' }, h('h2', {}, 'Escopo'), paras.map((x) => h('p', {}, x))),
+      p.servicos && h('section', { class: 'caso-story' }, h('h2', {}, 'Serviços e entregas incluídos'), String(p.servicos).split(/\n{2,}/).map((x) => x.trim()).filter(Boolean).map((x) => h('p', {}, x))),
+      p.condicoes_pagamento && h('section', { class: 'caso-story' }, h('h2', {}, 'Condições de pagamento'), h('p', {}, p.condicoes_pagamento)),
     ];
 
     if (p.status === 'enviada' && !p.expirada) {

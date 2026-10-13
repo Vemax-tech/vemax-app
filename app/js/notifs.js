@@ -17,7 +17,8 @@ export async function initNotifs({ sb, h, modal, icon, side, ctx, root }) {
   const load = async () => {
     const { data, error } = await sb.from('notificacoes').select('*').order('criado_em', { ascending: false }).limit(30);
     if (error) return;   // migration 011 ainda não aplicada: o sino simplesmente não aparece
-    items = data || [];
+    const prefs = ctx.profile.notif_prefs || {};           // Configurações > Notificações: {contatos: false} silencia o módulo
+    items = (data || []).filter((n) => prefs[n.modulo] !== false);
     if (!mounted) { side.querySelector('.spacer')?.before(btn); mounted = true; }
     paint();
   };

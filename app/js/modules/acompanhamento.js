@@ -1,4 +1,4 @@
-// Projeto x cliente: link de acompanhamento, atualizações públicas/internas e avaliação pós-entrega
+// Acompanhamento do projeto pelo cliente (sem login): link de acompanhamento, atualizações públicas/internas e avaliação pós-entrega
 import { sb } from '../supabase.js';
 import { h, run, modal, confirmDlg, toast, fmtDate, copyText } from '../ui.js';
 
@@ -7,7 +7,7 @@ const pub = (file, token) => new URL(`../../${file}?t=${token}`, location.href).
 const newToken = () => [...crypto.getRandomValues(new Uint8Array(32))].map((b) => b.toString(16).padStart(2, '0')).join('');
 
 /** p: linha de projetos (atualizada em memória). onChange(): redesenha o quadro. */
-export async function openCliente(p, { canEdit, canPortfolio, onChange }) {
+export async function openAcompanhamento(p, { canEdit, canPortfolio, onChange }) {
   const [ups, avs] = await Promise.all([
     run(sb.from('projeto_updates').select('*').eq('projeto_id', p.id).order('criado_em', { ascending: false })),
     run(sb.from('avaliacoes').select('*').eq('projeto_id', p.id).order('criado_em', { ascending: false })),
@@ -96,5 +96,5 @@ export async function openCliente(p, { canEdit, canPortfolio, onChange }) {
 
   const paint = () => body.replaceChildren(linkBox(), updBox(), avalBox());
   paint();
-  modal('Cliente — ' + p.titulo, body, (close) => h('div', { class: 'row' }, h('button', { class: 'btn', onclick: close }, 'Fechar')));
+  modal('Acompanhamento do cliente — ' + p.titulo, body, (close) => h('div', { class: 'row' }, h('button', { class: 'btn', onclick: close }, 'Fechar')));
 }

@@ -16,13 +16,17 @@ Painel do Supabase → **SQL Editor** → cole o conteúdo de cada arquivo de `s
 - [ ] `009_contato_perfil.sql` — perfil opcional do diagnóstico guiado
 - [ ] `010_funil_propostas.sql` — etapa "Proposta enviada" e propostas online
 - [ ] `011_notificacoes_cliente.sql` — sino de notificações, acompanhamento do cliente, avaliação pós-entrega
+- [ ] `012_area_interna.sql` — clientes, funil ampliado, tarefas, suporte, financeiro, configurações, lixeira e auditoria (a nova área interna; só adiciona, não apaga nada)
 
-Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `011` precisa da `008` e da `010`.
+Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `011` precisa da `008` e da `010`, e a `012` precisa de todas as anteriores. **A nova área interna só funciona depois da `012`.** Faça um backup (Supabase → Database → Backups) antes de aplicar.
 
 ## 2. Configurações no painel do Supabase
 
 - [ ] **Authentication → Providers → Email**: "Allow new users to sign up" ligado e "Confirm email" ligado (já funcionando, só confirme)
-- [ ] **Equipe → Permissões** no portal: definir o que o papel Membro pode ver e editar nos módulos novos (Portfólio do site, Projetos, Contatos)
+- [ ] **Equipe → Permissões** no portal: definir o que o papel Membro pode ver e editar nos módulos novos (Leads e propostas, Clientes, Projetos e tarefas, Suporte, Financeiro, Portfólio). Padrão da `012`: Clientes só leitura, Suporte editável, Financeiro fechado. Quem atende chamados precisa também **ver** Clientes; quem move tarefas precisa **editar** Projetos.
+- [ ] **Decidir sobre o cadastro de funcionário pela tela de login** (`005`). O prompt da área interna diz “sem cadastro público”. Hoje o pedido cria uma conta pendente e sem acesso até o admin aprovar. Se quiser fechar de vez: desligue *Allow new users to sign up* e crie as contas por convite (Authentication → Users). Se mantiver, ative captcha.
+- [ ] **Configurações** (como administrador): revisar os nomes das etapas, as categorias de serviço, as origens de lead, os motivos de perda e os 7 modelos de projeto que já vêm prontos
+- [ ] Testar a nova área interna no Supabase real (ela foi testada com banco e API simulados): criar cliente, lead, proposta aprovada → projeto, tarefa, chamado, cobrança com pagamento, lixeira e restaurar
 
 ## 3. Aviso por e-mail (opcional, mas recomendado)
 
@@ -84,6 +88,7 @@ Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
 
 - [ ] Agendamento de conversa (Cal.com ou Calendly embutido)
 - [ ] Área do cliente com login (hoje o acompanhamento é por link privado)
-- [ ] Painel financeiro simples
+- [x] Painel financeiro simples (feito em Financeiro; falta só testar com dados reais)
+- [ ] Etapa posterior da área interna: integrações oficiais (WhatsApp, e-mail, calendário), portal do cliente, assinatura eletrônica, bancos e nota fiscal, apontamento de horas, planejamento de capacidade, relatórios para BI, automações de cobrança e contratos recorrentes (lista completa em `docs/AREA_INTERNA.md`)
 - [ ] Blog ou newsletter
 - [ ] Trocar a "análise" por palavras-chave do diagnóstico por uma IA de verdade (cuidar de custo e abuso)
