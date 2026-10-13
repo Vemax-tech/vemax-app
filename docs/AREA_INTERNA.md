@@ -8,7 +8,9 @@ Tecnologia (inalterada): HTML + JavaScript com ES modules, sem build, falando di
 
 | Quero… | Vá em… |
 |---|---|
-| Ver o que precisa de atenção hoje | **Visão geral** |
+| Ver o que precisa de atenção hoje na empresa | **Visão geral** |
+| Ver só o que é meu, por data, e assumir o que está sem responsável | **Minhas pendências** |
+| Achar qualquer cliente, lead, proposta, projeto, tarefa ou chamado | **Buscar** (botão no menu ou Ctrl+K) |
 | Registrar um contato comercial ou acompanhar o funil | **Leads** (quadro ou lista) |
 | Enviar uma proposta e registrar a resposta | **Propostas** |
 | Ver tudo de uma empresa | **Clientes** → ficha do cliente |
@@ -24,6 +26,10 @@ Tecnologia (inalterada): HTML + JavaScript com ES modules, sem build, falando di
 ## O que cada módulo faz
 
 **Visão geral.** Pendências e indicadores reais, com filtro de período e de responsável: leads novos sem responsável ou sem primeiro contato, retornos atrasados, propostas aguardando resposta e vencidas, tarefas atrasadas/bloqueadas/sem responsável, prazos dos próximos 7 dias, projetos por etapa (em andamento, aguardando cliente, em revisão, parados) e os que consomem mais horas ou custo que o previsto, chamados abertos/sem responsável/fora do prazo, valores a receber, vencidos e recebidos no período, e atividade recente. Sem dados, mostra orientação de por onde começar. Cada bloco só aparece para quem tem permissão no módulo.
+
+**Minhas pendências.** Uma lista única, por data (atrasado, hoje, próximos 7 dias, mais adiante, sem data), com as tarefas, os retornos de lead, os chamados, as propostas aguardando resposta e os projetos atrasados ou bloqueados em que você é o responsável. Tarefas podem ser concluídas ali mesmo, e o que está sem responsável pode ser assumido com um clique.
+
+**Busca global.** Procura ao mesmo tempo em clientes, leads, propostas, projetos, tarefas e chamados (só nos módulos a que a pessoa tem acesso) e abre o registro direto. A busca é por parte do texto, sem ignorar acentos (“pão” não acha “pao”).
 
 **Leads.** Cadastro com empresa, pessoa de contato, e-mail, telefone, necessidade, serviço de interesse, origem, responsável, valor estimado, próximo contato e observações. Funil **Novo → Primeiro contato → Reunião ou levantamento → Proposta enviada → Negociação → Ganho / Perdido** em quadro (arrastar ou “Mover para”) e lista com busca, filtros, ordenação e paginação. Destaca *sem responsável*, *sem primeiro contato*, *sem próxima ação*, *contato atrasado* e *parado há 14+ dias*. Ao marcar como perdido pede o **motivo**. Há uma análise de **origem × conversão** e de **motivos de perda**. Cada lead tem histórico (contatos, notas, decisões) e pode ser convertido em cliente sem perder o histórico.
 
@@ -98,6 +104,7 @@ A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `delete
 | `supabase/migrations/012_area_interna.sql` | Clientes, funil ampliado, propostas↔clientes, projetos (escopo, entregas, equipe), tarefas, chamados, cobranças, despesas, linha do tempo, configurações, lixeira, auditoria, funções `projeto_de_proposta`, `aplicar_modelo_projeto`, `atualizar_vencimentos` |
 | `app/js/lib.js` | Regras puras: datas, dinheiro, parcelas, status calculados, alertas, duplicados, leitura de modelos |
 | `app/js/core.js` | Peças compartilhadas: tabela ordenável/paginada, Kanban, linha do tempo, lixeira, filtros, CSV |
+| `app/js/busca.js` | Busca global (Ctrl+K) |
 | `app/js/modules/` | `painel`, `contatos` (leads), `propostas`, `clientes`, `projetos`, `projeto`, `tarefas`, `suporte`, `financeiro`, `configuracoes`, `equipe`, `acompanhamento` (link do cliente) e os módulos de mercado/conhecimento/portfólio já existentes |
 | `tests/lib.test.js` | Testes das regras de negócio |
 | `scripts/verificar.mjs` | Verificação estática (`npm run check`) |

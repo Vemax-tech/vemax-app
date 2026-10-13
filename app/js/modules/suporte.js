@@ -147,4 +147,6 @@ export const init = () => start('suporte/', 'Suporte', async (ctx, view) => {
     { tipo: 'select', chave: 'canal', rotulo: 'Todos os canais', opcoes: Object.entries(L.CANAIS) }], f, draw),
   h('div', { class: 'row between', style: 'margin-bottom:12px' }, h('span', { class: 'small muted' }, 'Integração automática com WhatsApp e e-mail ainda não está configurada: registre os pedidos manualmente.'), viewBtns), body);
   draw();
+  const alvo = qs('abrir') && list.find((x) => x.id === qs('abrir'));   // vindo da busca global
+  if (alvo) abrir(alvo);
 });

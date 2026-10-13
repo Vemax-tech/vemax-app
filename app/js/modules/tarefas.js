@@ -144,4 +144,6 @@ export const init = () => start('tarefas/', 'Tarefas', async (ctx, view) => {
   h('div', { class: 'row between', style: 'margin-bottom:12px' }, h('span', { class: 'row' }, toggle('Só em aberto', () => Boolean(f.abertas), () => { f.abertas = f.abertas ? '' : '1'; }), grupoSel), viewBtns),
   body);
   draw();
+  const alvo = qs('abrir') && list.find((x) => x.id === qs('abrir'));   // vindo da busca global
+  if (alvo) { if (canEdit) editarTarefa(alvo, env()); else { f.q = alvo.titulo; draw(); } }
 });

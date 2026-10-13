@@ -136,6 +136,7 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | Cadastro com aprovação do administrador | ✅ entregue | `005_cadastro_aprovacao.sql`, `app/js/modules/equipe.js` |
 | Papéis admin/membro e permissões por módulo | ✅ entregue | `001_init.sql` (`permissoes`, `can()`), `app/js/auth.js` |
 | Visão geral com pendências e indicadores reais (período e responsável) | ✅ entregue | `app/js/modules/painel.js` |
+| Minhas pendências (tudo que é seu, por data) e busca global (Ctrl+K) | ✅ entregue | `app/js/modules/minhas.js`, `app/js/busca.js` |
 | Leads: funil em 7 etapas, quadro e lista, próxima ação, motivo de perda e origem | ✅ entregue | `app/js/modules/contatos.js`, `012_area_interna.sql` |
 | Clientes: ficha, contatos, links, linha do tempo e conversão de lead sem duplicar | ✅ entregue | `app/js/modules/clientes.js` |
 | Propostas: status, vencimento, aprovação e criação de projeto a partir da aprovada | ✅ entregue | `app/js/modules/propostas.js`, `projeto_de_proposta()` |

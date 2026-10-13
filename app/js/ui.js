@@ -2,6 +2,22 @@
 import { requireSession, logout } from './auth.js';
 import { sb } from './supabase.js';
 import { initNotifs } from './notifs.js';
+import { initBusca } from './busca.js';
+
+/**
+ * append/prepend/replaceChildren do DOM escrevem "false" ou "null" na tela quando recebem esses valores
+ * (comum em `cond && h(...)`) e viram "[object HTMLElement]" quando recebem uma lista.
+ * Aqui eles passam a aceitar listas e a ignorar null/undefined/false, como o h() já faz.
+ */
+export function instalarDom(El = globalThis.Element) {
+  if (!El || El.prototype.__vemax) return;
+  for (const m of ['append', 'prepend', 'replaceChildren']) {
+    const orig = El.prototype[m];
+    El.prototype[m] = function (...kids) { return orig.apply(this, kids.flat(Infinity).filter((k) => k != null && k !== false)); };
+  }
+  El.prototype.__vemax = true;
+}
+instalarDom();
 
 const ROOT = new URL('../', import.meta.url).href;
 const SVG = 'http://www.w3.org/2000/svg';
@@ -25,6 +41,8 @@ const ICONS = {
   life: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"/>',
   wallet: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
   sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
   target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
 };
 export const icon = (n) => {
@@ -155,6 +173,7 @@ export function formModal({ title, fields, onSubmit, validate, onClose, submitLa
 // [pasta, rótulo, ícone, permissão (módulo | 'ADMIN' | null = todos), grupo do menu]
 const NAV = [
   ['', 'Visão geral', 'home', null, ''],
+  ['minhas/', 'Minhas pendências', 'inbox', null, ''],
   ['contatos/', 'Leads', 'target', 'contatos', 'Comercial'],
   ['propostas/', 'Propostas', 'file', 'contatos', 'Comercial'],
   ['clientes/', 'Clientes', 'briefcase', 'clientes', ''],
@@ -204,6 +223,7 @@ export async function start(key, title, render) {
     });
   }
   initNotifs({ sb, h, modal, icon, side, ctx, root: ROOT });
+  initBusca({ sb, h, modal, icon, side, ctx, root: ROOT });
   const view = h('main', { class: 'content', id: 'view' });
   const top = h('div', { class: 'topbar' },
     h('a', { class: 'brand', href: ROOT, style: 'padding:0' }, icon('logo'), 'Vemax'),

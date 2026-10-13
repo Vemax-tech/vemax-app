@@ -3,7 +3,7 @@ import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, dataTable, filtros, contem, loadBase, loadClientes, clienteOpts, lixeira, quiet, timeline, registrarMudancas } from '../core.js';
 import { converterLead } from './clientes.js';
-import { start, h, run, toast, modal, formModal, confirmDlg, pageHead, empty, fmtDate, copyText } from '../ui.js';
+import { start, h, run, toast, modal, formModal, confirmDlg, pageHead, empty, fmtDate, copyText, qs } from '../ui.js';
 
 const KIND = { rascunho: 'dim', enviada: '', aceita: 'ok', recusada: 'warn', vencida: 'warn' };
 // O portal está em /app/<módulo>/; a página pública fica na raiz do site.
@@ -226,4 +226,6 @@ export const init = () => start('propostas/', 'Propostas', async (ctx, view) => 
     { tipo: 'select', chave: 'status', rotulo: 'Todas as situações', opcoes: Object.entries(L.PROPOSTA_STATUS) },
     { tipo: 'select', chave: 'resp', rotulo: 'Todos os responsáveis', opcoes: base.team.map((t) => [t.id, t.nome]) }], f, draw), body);
   draw();
+  const alvo = qs('abrir') && env.lista.find((x) => x.id === qs('abrir'));   // vindo da busca global
+  if (alvo) detalheProposta(alvo, env);
 });

@@ -196,3 +196,7 @@ button.card.on { border-color: var(--amber-hi); }
 *::-webkit-scrollbar-thumb:hover { background: rgba(91, 157, 255, .55); background-clip: content-box; }
 *::-webkit-scrollbar-corner { background: transparent; }
 html { color-scheme: dark; }
+
+/* Busca global */
+.busca-btn { width: 100%; background: rgba(91, 157, 255, .04); border-color: var(--line); color: var(--muted); cursor: pointer; font: inherit; text-align: left; }
+.busca-btn kbd { margin-left: auto; font: inherit; font-size: .68rem; padding: 1px 6px; border: 1px solid var(--line); border-radius: 6px; }

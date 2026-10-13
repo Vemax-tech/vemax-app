@@ -5,7 +5,7 @@ import { badge, dataTable, filtros, contem, kanban, colunas, loadBase, loadClien
 import { openPropostas } from './propostas.js';
 import { converterLead, fichaHref } from './clientes.js';
 import { novoProjeto } from './projetos.js';
-import { start, h, run, pageHead, empty, formModal, modal, confirmDlg, fmtDate, contactHref } from '../ui.js';
+import { start, h, run, pageHead, empty, formModal, modal, confirmDlg, fmtDate, contactHref, qs } from '../ui.js';
 
 const ETAPA_KIND = { concluido: 'ok', descartado: 'dim' };
 const PERFIL = ['segmento', 'porte', 'prazo', 'orcamento'];
@@ -194,4 +194,6 @@ export const init = () => start('contatos/', 'Leads', async (ctx, view) => {
       { tipo: 'select', chave: 'cat', rotulo: 'Todos os serviços', opcoes: base.catOpts() }], f, draw),
     bar, body, analise);
   draw();
+  const alvo = qs('abrir') && list.find((l) => l.id === qs('abrir'));   // vindo da busca global
+  if (alvo) abrir(alvo);
 });
