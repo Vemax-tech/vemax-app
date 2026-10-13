@@ -75,6 +75,7 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 - Formulário de contato com proteção anti-spam e [política de privacidade](privacidade.html). Ele grava o lead em `contatos_site` e abre o WhatsApp ou o e-mail.
 - Portfólio do site editado no portal (`portfolio_cases`) e exibido na home e em `portfolio/caso.html?c=<slug>`.
 - Portal com login, cadastro aprovado pelo administrador e permissões por módulo.
+- Área interna de gestão (`/app/`): leads e funil, propostas, clientes, projetos com tarefas e escopo, suporte e financeiro básico, com lixeira, auditoria e configurações editáveis. Veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md).
 - Quadro de projetos com práticas ágeis: limite de WIP, bloqueio, lead time e ciclos de 2 semanas com retrospectiva.
 - Pesquisa de mercado de nichos (`research/`) com relatório, planilha e modelo para Power BI.
 
@@ -108,8 +109,9 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 
 | Documento | Para quê |
 |---|---|
+| [`docs/AREA_INTERNA.md`](docs/AREA_INTERNA.md) | **Área interna atual:** o que cada módulo faz, como usar, segurança, limitações e o que fica para depois |
 | [`docs/prompt-area-interna.md`](docs/prompt-area-interna.md) | Prompt original que descreve o portal: objetivo, autenticação, permissões e módulos |
-| [`supabase/migrations/`](supabase/migrations/) | Esquema do banco, RLS, triggers e buckets, em ordem de `001` a `006` |
+| [`supabase/migrations/`](supabase/migrations/) | Esquema do banco, RLS, triggers e buckets, em ordem de `001` a `012` |
 | [`research/README.md`](research/README.md) | Pesquisa de mercado: entregáveis e como regenerar |
 | [`research/output/powerbi/LEIA-ME.md`](research/output/powerbi/LEIA-ME.md) | Montagem do modelo Power BI e medidas DAX |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) e [`SECURITY.md`](SECURITY.md) | Fluxo de trabalho e commits; como reportar vulnerabilidade |
@@ -133,18 +135,26 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | Login, recuperação de senha, mostrar/ocultar senha, indicador de força | ✅ entregue | `app/js/login.js`, `app/login/index.html` |
 | Cadastro com aprovação do administrador | ✅ entregue | `005_cadastro_aprovacao.sql`, `app/js/modules/equipe.js` |
 | Papéis admin/membro e permissões por módulo | ✅ entregue | `001_init.sql` (`permissoes`, `can()`), `app/js/auth.js` |
-| Painel com contatos, projetos, prazos e nichos | ✅ entregue | `app/js/modules/painel.js` |
+| Visão geral com pendências e indicadores reais (período e responsável) | ✅ entregue | `app/js/modules/painel.js` |
+| Leads: funil em 7 etapas, quadro e lista, próxima ação, motivo de perda e origem | ✅ entregue | `app/js/modules/contatos.js`, `012_area_interna.sql` |
+| Clientes: ficha, contatos, links, linha do tempo e conversão de lead sem duplicar | ✅ entregue | `app/js/modules/clientes.js` |
+| Propostas: status, vencimento, aprovação e criação de projeto a partir da aprovada | ✅ entregue | `app/js/modules/propostas.js`, `projeto_de_proposta()` |
+| Projetos: entregas, equipe, valor, esforço, alterações de escopo e modelos configuráveis | ✅ entregue | `app/js/modules/projetos.js`, `projeto.js` |
+| Tarefas por projeto, responsável e prazo | ✅ entregue | `app/js/modules/tarefas.js` |
+| Suporte: chamados com notas internas separadas de mensagens ao cliente | ✅ entregue | `app/js/modules/suporte.js` |
+| Financeiro básico: parcelas, pagamentos manuais, despesas e custo por projeto | ✅ entregue | `app/js/modules/financeiro.js` |
+| Configurações (categorias, etapas, prioridades, modelos), lixeira e auditoria detalhada | ✅ entregue | `app/js/modules/configuracoes.js`, `log_mudancas()` |
+| Integração com WhatsApp, e-mail recebido, calendário e bancos | 📋 planejado | não configurada; veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md) |
 | Inteligência de Mercado (pesquisas, nichos, comparador com pesos) | ✅ entregue | `app/js/modules/mercado.js`, `nichos.js`, `nicho.js`, `pesquisa.js` |
 | Projetos em quadro, com anexos | ✅ entregue | `app/js/modules/projetos.js`, `004_portal_fases.sql` |
 | Projetos ágil: limite de WIP, bloqueio, métricas de fluxo e ciclos com retrospectiva | ✅ entregue | `projetos.js` (`openWip`, `openCiclos`, `drawStats`), `008_agil.sql` |
-| Contatos do site (status, responsável, notas) | ✅ entregue | `app/js/modules/contatos.js` |
 | Base de conhecimento | ✅ entregue | `app/js/modules/conhecimento.js` |
 | Gestão do portfólio (imagem, antes/depois, etapas, depoimento) | ✅ entregue | `app/js/modules/portfolio.js` |
 | Log de atividades | ✅ entregue | `log_atividade()` e triggers `t_log_*` em `001_init.sql` |
 | E-mail ao chegar contato novo | 🚧 código pronto | `supabase/functions/notificar-contato/index.ts` (precisa ser implantada no Supabase) |
 | Relatório, planilha e pacote Power BI de nichos | ✅ entregue | `research/` (o `.pbix` não foi gerado) |
 | Verificação de links dos `.md` e dos SVGs (GitHub Actions) | ✅ entregue | `.github/workflows/qualidade.yml` |
-| Testes automatizados | 📋 planejado | não existe ainda |
+| Testes automatizados das regras de negócio e verificação estática | ✅ entregue | `tests/`, `scripts/verificar.mjs`, `.github/workflows/testes.yml` |
 | Dados de contato do site (WhatsApp, e-mail, cidade, Instagram) | ✅ entregue | `assets/js/config.js`, rodapé do `index.html` |
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
@@ -213,14 +223,17 @@ sequenceDiagram
 ├── shared/tokens.css       # design tokens usados pelo site e pelo portal
 ├── app/                    # portal interno
 │   ├── login/              # login, cadastro e redefinição de senha
-│   ├── mercado/ projetos/ contatos/ conhecimento/ portfolio/ equipe/
+│   ├── contatos/ propostas/ clientes/ projetos/ tarefas/ suporte/ financeiro/   # operação
+│   ├── mercado/ conhecimento/ portfolio/ equipe/ configuracoes/
+│   │   (clientes/ficha.html e projetos/detalhe.html são as fichas)
 │   ├── css/app.css
-│   └── js/                 # auth.js, supabase.js, ui.js, login.js, config.js, modules/
+│   └── js/                 # auth.js, supabase.js, ui.js, core.js, lib.js, login.js, config.js, modules/
 ├── supabase/
-│   ├── migrations/         # 001 a 008: tabelas, RLS, triggers, buckets, anti-spam, ágil
+│   ├── migrations/         # 001 a 012: tabelas, RLS, triggers, buckets, anti-spam, ágil, área interna
 │   └── functions/notificar-contato/   # Edge Function (Deno)
 ├── research/               # pesquisa de mercado (scripts Node + relatório, planilha, CSVs)
-├── docs/                   # prompt do portal, notas da release, README anterior e imagens (assets/)
+├── tests/  scripts/        # testes unitários (npm test) e verificação estática (npm run check)
+├── docs/                   # AREA_INTERNA.md, prompt do portal, notas da release, README anterior e imagens (assets/)
 ├── .github/                # workflow de qualidade, templates de issue e PR, CODEOWNERS
 └── CONTRIBUTING.md  SECURITY.md
 ```
@@ -236,7 +249,8 @@ sequenceDiagram
 - **Cliente Supabase (`app/js/supabase.js`)**: `createClient` com sessão persistente e renovação automática do token.
 - **Interface (`app/js/ui.js`)**: `start()` monta a barra lateral conforme as permissões, mostra o selo de cadastros pendentes ao admin e traz modais, formulários e `run()` (mensagem amigável para erro `42501`).
 - **Login (`app/js/login.js`)**: erro genérico "E-mail ou senha incorretos.", mínimo de 10 caracteres, redefinição de senha por e-mail e tratamento dos códigos `signup_disabled` e `over_email_send_rate_limit`.
-- **Módulos (`app/js/modules/`)**: `painel`, `mercado`, `nichos`, `nicho`, `pesquisa`, `projetos`, `contatos`, `conhecimento`, `portfolio`, `equipe`.
+- **Módulos (`app/js/modules/`)**: `painel`, `contatos` (leads), `propostas`, `clientes`, `projetos`, `projeto`, `tarefas`, `suporte`, `financeiro`, `configuracoes`, `equipe`, `acompanhamento` (link do cliente), `mercado`, `nichos`, `nicho`, `pesquisa`, `conhecimento`, `portfolio`.
+- **Regras e peças compartilhadas**: `app/js/lib.js` (regras puras, testadas) e `app/js/core.js` (tabela ordenável e paginada, Kanban, linha do tempo, lixeira, filtros).
 - **Projetos ágil (`app/js/modules/projetos.js`)**:
   - Limite de WIP por coluna (`openWip`, tabela `projeto_wip`): a coluna fica destacada acima do limite. É só um aviso, não bloqueia.
   - Bloqueio com motivo (`block()`, campos `bloqueado` e `motivo_bloqueio`).
@@ -251,6 +265,8 @@ sequenceDiagram
   - `006`: `portfolio_cases` e bucket público `portfolio` (5 MB, PNG/JPEG/WebP).
   - `007`: trigger `limitar_contatos()`, que barra inserções públicas em `contatos_site`: no máximo 3 por contato e 60 no total, por hora.
   - `008`: `projeto_ciclos`, `projeto_wip`, colunas de bloqueio e de datas de fluxo em `projetos`, e o trigger `projetos_datas()`, que preenche `iniciado_em` e `concluido_em` conforme o status.
+  - `009` a `011`: perfil do diagnóstico, funil e propostas online, notificações, acompanhamento e avaliação do cliente.
+  - `012`: `clientes`, `tarefas`, `chamados`, `cobrancas`, `despesas`, `interacoes` (linha do tempo), `opcoes`/`categorias_servico`/`modelos_projeto` (configurações), novas etapas e colunas em leads, propostas e projetos, exclusão recuperável (`deleted_at`), auditoria `log_mudancas()` e as funções `projeto_de_proposta()`, `aplicar_modelo_projeto()` e `atualizar_vencimentos()`.
 - **Edge Function (`supabase/functions/notificar-contato/index.ts`)**: valida o header `x-webhook-secret`, escapa o HTML e envia o aviso pelo Resend.
 - **Pesquisa (`research/scripts/`)**: `data.js` guarda fatos, notas e fontes. `build.js` gera PDF, XLSX e CSVs. `charts.js` desenha os gráficos.
 
@@ -295,6 +311,8 @@ npx serve .
 
 Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
 
+Testes (Node 20+, sem instalar nada): `npm test` e `npm run check`.
+
 > [!NOTE]
 > Se a porta 3000 estiver ocupada, o `serve` escolhe outra e mostra no terminal.
 
@@ -302,7 +320,7 @@ Site: `http://localhost:3000/` · Portal: `http://localhost:3000/app/`
 
 1. Crie um projeto no Supabase.
 2. Em **Authentication → Providers → Email**, mantenha *Allow new users to sign up* ativado e *Confirm email* ligado.
-3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `011_notificacoes_cliente.sql`.
+3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `012_area_interna.sql`.
 4. Em **Project Settings → API**, copie a *Project URL* e a chave *anon/publishable* para `app/js/config.js`.
 5. Em **Authentication → Users → Add user**, crie o seu usuário. **O primeiro usuário vira administrador.**
 6. Entre em `/app/` e ajuste cargos e permissões em **Equipe**.
@@ -368,7 +386,7 @@ Não há `.env`. A configuração fica em arquivos JavaScript públicos e em sec
 <a id="qualidade-e-seguranca"></a>
 ## 🔒 Qualidade e segurança
 
-**Testes e CI:** não há testes automatizados. O workflow `Qualidade` (`.github/workflows/qualidade.yml`) roda em push e Pull Request na `main` e verifica os links dos `.md` e se os SVGs de `docs/assets` são XML válido. Ele só dispara quando `.md`, `docs/assets/` ou o próprio workflow mudam, para gastar poucos minutos do Actions. Sem segredos e sem deploy. O resto da verificação é manual.
+**Testes e CI:** `npm test` roda os testes unitários das regras de negócio (`tests/`) e `npm run check` faz a verificação estática (sintaxe, imports, páginas, menu, sequência de migrations); o workflow `Testes` (`.github/workflows/testes.yml`) executa os dois quando código, testes ou migrations mudam. As telas e o SQL foram exercitados com um banco e um Supabase simulados (veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md)); falta testar no projeto Supabase real. O workflow `Qualidade` (`.github/workflows/qualidade.yml`) roda em push e Pull Request na `main` e verifica os links dos `.md` e se os SVGs de `docs/assets` são XML válido. Ele só dispara quando `.md`, `docs/assets/` ou o próprio workflow mudam, para gastar poucos minutos do Actions. Sem segredos e sem deploy. O resto da verificação é manual.
 
 **O que protege o sistema de verdade:**
 - RLS ativa nas tabelas, com política padrão de negar. As permissões por módulo vivem na tabela `permissoes` e são avaliadas por `can()`.
@@ -378,7 +396,8 @@ Não há `.env`. A configuração fica em arquivos JavaScript públicos e em sec
 - `privacidade.html` é um modelo. Preencha os campos e peça revisão jurídica antes de publicar.
 - Bucket `entregaveis` privado, com download por URL assinada de 2 minutos. Bucket `projetos` privado. Bucket `portfolio` público, só para imagens de até 5 MB.
 - Usuário comum não consegue alterar o próprio papel, status ou e-mail (`profiles_self`, `005`).
-- Triggers `t_log_*` registram criação, edição e exclusão relevantes na tabela `atividades`.
+- Triggers `t_log_*` registram criação, lixeira, restauração e a mudança (de → para) de status, valores, prazos, papéis e permissões na tabela `atividades`; cada pessoa só lê o log dos módulos a que tem acesso.
+- Registros de negócio vão para a lixeira (`deleted_at`); só administradores excluem de vez.
 - Mensagem de login genérica e senha com 10 caracteres no mínimo.
 
 > [!IMPORTANT]
@@ -403,7 +422,9 @@ O repositório não tem issues nem TODOs no código. Os itens abaixo vêm do que
 
 - [ ] Preencher a política de privacidade (`[data]`, `[razão social]`, CNPJ, prazo de retenção) e pedir revisão jurídica.
 - [ ] Quando o domínio estiver definido, adicionar o `Sitemap:` ao `robots.txt`.
-- [ ] Implantar a Edge Function `notificar-contato` no Supabase e criar o webhook.
+- [ ] Aplicar as migrations `006` a `012` no Supabase e definir as permissões do papel Membro (veja `to-do/PENDENCIAS.md`).
+- [ ] Implantar a Edge Function `notificar-email` no Supabase e criar o webhook.
+- [ ] Etapa posterior da área interna: WhatsApp/e-mail/calendário oficiais, portal do cliente, assinatura eletrônica, integrações bancárias e fiscais, apontamento de horas, relatórios para BI (veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md)).
 - [ ] Cadastrar os primeiros cases reais no portal (hoje o site mostra 3 exemplos ilustrativos).
 - [ ] Gerar o arquivo `.pbix` do Power BI (hoje só há o modelo de dados em CSV).
 
@@ -430,7 +451,7 @@ feat: paleta fria, portfólio dinâmico, anti-spam, privacidade e práticas áge
 ```
 
 > [!NOTE]
-> Mudanças no banco entram como uma nova migration numerada (`009_...sql`). Não edite as migrations já executadas.
+> Mudanças no banco entram como uma nova migration numerada (`013_...sql`). Não edite as migrations já executadas.
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
 

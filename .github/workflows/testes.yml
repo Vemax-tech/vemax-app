@@ -1,0 +1,32 @@
+name: Testes
+
+# Leve de propósito: o projeto não tem build nem dependências. Roda só quando código do portal, testes ou migrations mudam.
+on:
+  push:
+    branches: [main]
+    paths: ['app/**', 'assets/**', 'tests/**', 'scripts/**', 'supabase/migrations/**', 'package.json', '.github/workflows/testes.yml']
+  pull_request:
+    branches: [main]
+    paths: ['app/**', 'assets/**', 'tests/**', 'scripts/**', 'supabase/migrations/**', 'package.json', '.github/workflows/testes.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Testes e verificação estática
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verificação estática (sintaxe, imports, páginas, menu e migrations)
+        run: npm run check
+      - name: Testes unitários das regras de negócio
+        run: npm test

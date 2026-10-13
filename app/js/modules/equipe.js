@@ -2,7 +2,7 @@
 import { sb } from '../supabase.js';
 import { start, h, run, pageHead, empty, fmtDate, formModal, confirmDlg } from '../ui.js';
 
-const MODS = { mercado: 'Inteligência de Mercado', projetos: 'Projetos', contatos: 'Contatos do site', conhecimento: 'Base de conhecimento', portfolio: 'Portfólio do site' };
+const MODS = { contatos: 'Leads e propostas', clientes: 'Clientes', projetos: 'Projetos e tarefas', suporte: 'Suporte', financeiro: 'Financeiro', mercado: 'Inteligência de Mercado', conhecimento: 'Base de conhecimento', portfolio: 'Portfólio do site' };
 
 export const init = () => start('equipe/', 'Equipe', async (ctx, view) => {
   const all = (await run(sb.from('profiles').select('*').order('criado_em'))) || [];
@@ -46,7 +46,7 @@ export const init = () => start('equipe/', 'Equipe', async (ctx, view) => {
     pendentes.length ? reqTable(pendentes, false) : empty('Nenhum cadastro aguardando aprovação.'),
     recusados.length > 0 && h('h2', { style: 'margin:24px 0 12px' }, 'Cadastros recusados'), recusados.length > 0 && reqTable(recusados, true),
     h('h2', { style: 'margin:24px 0 12px' }, 'Usuários'), usersTable,
-    h('h2', { style: 'margin:24px 0 12px' }, 'Permissões do papel Membro'), permsTable, h('p', { class: 'small muted', style: 'margin-top:8px' }, 'Administradores sempre têm acesso total.'),
+    h('h2', { style: 'margin:24px 0 12px' }, 'Permissões do papel Membro'), permsTable, h('p', { class: 'small muted', style: 'margin-top:8px' }, 'Administradores sempre têm acesso total. As permissões valem no servidor, não só nos menus. Para atender chamados, o Membro também precisa poder ver Clientes; para o painel de projetos mostrar custos, precisa ver Financeiro.'),
     h('h2', { style: 'margin:24px 0 12px' }, 'Atividade recente'),
     logs.length ? h('ul', { class: 'ul-list card' }, logs.map((l) => h('li', {}, h('b', {}, nameOf(l.usuario_id)), ` ${l.acao} ${l.entidade}`, l.detalhe ? ` “${l.detalhe}”` : '', h('span', { class: 'small muted' }, ' · ' + new Date(l.criado_em).toLocaleString('pt-BR'))))) : empty('Sem atividade registrada.'));
 });

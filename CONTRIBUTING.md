@@ -19,7 +19,7 @@ Isso evita conflitos com o que a outra pessoa da equipe já mandou.
    - `feature/nome-curto` para algo novo, por exemplo `feature/filtro-de-contatos`.
    - `fix/nome-curto` para correção, por exemplo `fix/erro-no-login`.
 2. Faça mudanças pequenas e testadas.
-3. Rode localmente com `npx serve .` e abra `http://localhost:3000/` (site) e `http://localhost:3000/app/` (portal). Módulos ES não funcionam via `file://`.
+3. Rode localmente com `npx serve .` e abra `http://localhost:3000/` (site) e `http://localhost:3000/app/` (portal). Módulos ES não funcionam via `file://`. Antes de abrir o Pull Request, rode `npm test` e `npm run check` (Node 20+, sem instalar dependências).
 4. Faça commits no padrão Conventional Commits (abaixo).
 5. Envie a branch e abra um Pull Request para a `main`. O template do PR já traz o que preencher.
 6. Peça a revisão da outra pessoa da equipe antes de juntar.
