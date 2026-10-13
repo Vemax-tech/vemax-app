@@ -1,0 +1,15 @@
+# Arquivos do repositório que NÃO fazem parte do site publicado no Cloudflare (a raiz inteira é enviada).
+node_modules
+.git
+.github
+.wrangler
+tests
+scripts
+supabase
+to-do
+package.json
+package-lock.json
+bun.lock
+bun.lockb
+wrangler.jsonc
+.assetsignore
