@@ -187,3 +187,12 @@ select.sm { width: auto; padding: 4px 8px; font-size: .8rem; }
 
 button.card { font: inherit; color: inherit; width: 100%; text-align: left; }
 button.card.on { border-color: var(--amber-hi); }
+
+/* Barras de rolagem finas, no tema escuro do portal */
+* { scrollbar-width: thin; scrollbar-color: rgba(91, 157, 255, .35) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(91, 157, 255, .28); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(91, 157, 255, .55); background-clip: content-box; }
+*::-webkit-scrollbar-corner { background: transparent; }
+html { color-scheme: dark; }
