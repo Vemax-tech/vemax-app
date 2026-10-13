@@ -18,7 +18,9 @@ Painel do Supabase → **SQL Editor** → cole o conteúdo de cada arquivo de `s
 - [ ] `011_notificacoes_cliente.sql` — sino de notificações, acompanhamento do cliente, avaliação pós-entrega
 - [ ] `012_area_interna.sql` — clientes, funil ampliado, tarefas, suporte, financeiro, configurações, lixeira e auditoria (a nova área interna; só adiciona, não apaga nada)
 
-Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `011` precisa da `008` e da `010`, e a `012` precisa de todas as anteriores. **A nova área interna só funciona depois da `012`.** Faça um backup (Supabase → Database → Backups) antes de aplicar.
+- [ ] `013_contratos_recorrentes.sql` — contratos recorrentes (suporte, hospedagem…) e geração automática de cobranças. Só depois da `012`.
+
+Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `011` precisa da `008` e da `010`, e a `012` precisa de todas as anteriores e a `013` precisa da `012`. **A nova área interna só funciona depois da `012`.** Faça um backup (Supabase → Database → Backups) antes de aplicar.
 
 ## 2. Configurações no painel do Supabase
 

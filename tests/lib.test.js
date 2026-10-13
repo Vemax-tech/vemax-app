@@ -136,3 +136,13 @@ test('slug gera chaves seguras', () => {
   assert.equal(L.slug('  Indicação do João  '), 'indicacao_do_joao');
   assert.equal(L.slug('???'), '');
 });
+
+test('valorMensal e receitaMensal consideram a periodicidade e só contratos ativos', () => {
+  assert.equal(L.valorMensal({ valor: 300, periodicidade: 'mensal' }), 300);
+  assert.equal(L.valorMensal({ valor: 900, periodicidade: 'trimestral' }), 300);
+  assert.equal(L.valorMensal({ valor: 1200, periodicidade: 'anual' }), 100);
+  assert.equal(L.valorMensal({ valor: 100, periodicidade: 'trimestral' }), 33.33);
+  const cs = [{ valor: 500, periodicidade: 'mensal', status: 'ativo' }, { valor: 1200, periodicidade: 'anual', status: 'ativo' }, { valor: 999, periodicidade: 'mensal', status: 'pausado' }, { valor: 999, periodicidade: 'mensal', status: 'encerrado' }];
+  assert.equal(L.receitaMensal(cs), 600);
+  assert.equal(L.receitaMensal([]), 0);
+});

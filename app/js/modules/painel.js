@@ -21,7 +21,7 @@ async function ranking() {
 export const init = () => start('', 'Visão geral', async (ctx, view) => {
   const first = (ctx.profile.nome || '').split(' ')[0] || 'equipe', hoje = L.hojeISO();
   const f = { per: 'mes', resp: '', pend: '' };
-  const [base, projs, leads, props, tars, chams, cobs, desp, tarefasHoras, atividades] = await Promise.all([
+  const [base, projs, leads, props, tars, chams, cobs, desp, tarefasHoras, atividades, contratos] = await Promise.all([
     loadBase(),
     ctx.can('projetos') ? quiet(sb.from('projetos').select('id,titulo,cliente,cliente_id,status,prazo,bloqueado,responsavel_id,esforco_horas,valor_contratado,concluido_em,criado_em').is('deleted_at', null)) : [],
     ctx.can('contatos') ? quiet(sb.from('contatos_site').select('id,nome,empresa,status,responsavel_id,primeiro_contato_em,proximo_contato,etapa_desde,criado_em,valor_estimado').is('deleted_at', null)) : [],
@@ -32,6 +32,7 @@ export const init = () => start('', 'Visão geral', async (ctx, view) => {
     ctx.can('financeiro') ? quiet(sb.from('despesas').select('projeto_id,valor').is('deleted_at', null).not('projeto_id', 'is', null)) : [],
     ctx.can('projetos') ? quiet(sb.from('tarefas').select('projeto_id,horas_gastas').is('deleted_at', null).not('projeto_id', 'is', null)) : [],
     quiet(sb.from('atividades').select('*').order('criado_em', { ascending: false }).limit(10)),
+    ctx.can('financeiro') ? quiet(sb.from('contratos').select('valor,periodicidade,status').is('deleted_at', null)) : [],
   ]);
   const nichos = ctx.can('mercado') ? await ranking() : [];
   const vazioTotal = !projs.length && !leads.length && !props.length && !tars.length && !chams.length && !cobs.length;
@@ -89,7 +90,8 @@ export const init = () => start('', 'Visão geral', async (ctx, view) => {
       const ef = (c) => L.statusCobranca(c, hoje), recPer = cobs.filter((c) => c.status === 'paga' && L.dentro(c.pago_em, per));
       const venc = cobs.filter((c) => ef(c) === 'atrasada'), aRec = cobs.filter((c) => ['pendente', 'prevista'].includes(ef(c))), prox = [...aRec].sort((a, b) => a.vencimento.localeCompare(b.vencimento));
       out.push(h('div', { class: 'grid g4', style: 'margin-top:22px' }, kpi('Recebido no período', L.brl(L.soma(recPer.map((c) => ({ v: c.valor_pago ?? c.valor })), 'v')), `${recPer.length} pagamento(s)`, 'financeiro/', false, true), kpi('A receber', L.brl(L.soma(aRec, 'valor')), `${aRec.length} cobrança(s) em dia`, 'financeiro/', false),
-        kpi('Vencido', L.brl(L.soma(venc, 'valor')), venc.length ? `${venc.length} cobrança(s) em atraso` : 'Nada em atraso', 'financeiro/', true), kpi('Próximo vencimento', prox[0] ? fmtDate(prox[0].vencimento) : '—', prox[0] ? L.brl(prox[0].valor) : 'Nada a receber', 'financeiro/', false)),
+        kpi('Vencido', L.brl(L.soma(venc, 'valor')), venc.length ? `${venc.length} cobrança(s) em atraso` : 'Nada em atraso', 'financeiro/', true), kpi('Próximo vencimento', prox[0] ? fmtDate(prox[0].vencimento) : '—', prox[0] ? L.brl(prox[0].valor) : 'Nada a receber', 'financeiro/', false),
+        contratos.length > 0 && kpi('Receita recorrente por mês', L.brl(L.receitaMensal(contratos)), `${contratos.filter((k) => k.status === 'ativo').length} contrato(s) ativo(s)`, 'financeiro/', false, true)),
       h('div', { style: 'margin-top:16px' }, bloco('Cobranças a acompanhar', 'financeiro/', lista([...venc, ...prox.slice(0, 4)].map((c) => item(lnk('financeiro/', `${c.descricao}${c.total_parcelas > 1 ? ` (${c.parcela}/${c.total_parcelas})` : ''}`), h('span', { class: 'small muted' }, L.brl(c.valor)), badge((ef(c) === 'atrasada' ? 'Venceu ' : 'Vence ') + fmtDate(c.vencimento), ef(c) === 'atrasada' ? 'warn' : 'dim'))), cobs.length ? 'Nada vencido nem a vencer.' : 'Nenhuma cobrança registrada. Gere as parcelas de um projeto em Financeiro.', true))));
     }
     if (nichos.length) {

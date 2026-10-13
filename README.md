@@ -143,6 +143,7 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | Projetos: entregas, equipe, valor, esforço, alterações de escopo e modelos configuráveis | ✅ entregue | `app/js/modules/projetos.js`, `projeto.js` |
 | Tarefas por projeto, responsável e prazo | ✅ entregue | `app/js/modules/tarefas.js` |
 | Suporte: chamados com notas internas separadas de mensagens ao cliente | ✅ entregue | `app/js/modules/suporte.js` |
+| Contratos recorrentes (suporte, hospedagem) com cobrança gerada automaticamente | ✅ entregue | `013_contratos_recorrentes.sql`, `app/js/modules/financeiro.js` |
 | Financeiro básico: parcelas, pagamentos manuais, despesas e custo por projeto | ✅ entregue | `app/js/modules/financeiro.js` |
 | Configurações (categorias, etapas, prioridades, modelos), lixeira e auditoria detalhada | ✅ entregue | `app/js/modules/configuracoes.js`, `log_mudancas()` |
 | Integração com WhatsApp, e-mail recebido, calendário e bancos | 📋 planejado | não configurada; veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md) |
@@ -230,7 +231,7 @@ sequenceDiagram
 │   ├── css/app.css
 │   └── js/                 # auth.js, supabase.js, ui.js, core.js, lib.js, login.js, config.js, modules/
 ├── supabase/
-│   ├── migrations/         # 001 a 012: tabelas, RLS, triggers, buckets, anti-spam, ágil, área interna
+│   ├── migrations/         # 001 a 013: tabelas, RLS, triggers, buckets, anti-spam, ágil, área interna, contratos
 │   └── functions/notificar-contato/   # Edge Function (Deno)
 ├── research/               # pesquisa de mercado (scripts Node + relatório, planilha, CSVs)
 ├── tests/  scripts/        # testes unitários (npm test) e verificação estática (npm run check)
@@ -267,6 +268,7 @@ sequenceDiagram
   - `007`: trigger `limitar_contatos()`, que barra inserções públicas em `contatos_site`: no máximo 3 por contato e 60 no total, por hora.
   - `008`: `projeto_ciclos`, `projeto_wip`, colunas de bloqueio e de datas de fluxo em `projetos`, e o trigger `projetos_datas()`, que preenche `iniciado_em` e `concluido_em` conforme o status.
   - `009` a `011`: perfil do diagnóstico, funil e propostas online, notificações, acompanhamento e avaliação do cliente.
+  - `013`: `contratos` e a função `gerar_cobrancas_recorrentes()`, que cria as cobranças de cada período sem duplicar.
   - `012`: `clientes`, `tarefas`, `chamados`, `cobrancas`, `despesas`, `interacoes` (linha do tempo), `opcoes`/`categorias_servico`/`modelos_projeto` (configurações), novas etapas e colunas em leads, propostas e projetos, exclusão recuperável (`deleted_at`), auditoria `log_mudancas()` e as funções `projeto_de_proposta()`, `aplicar_modelo_projeto()` e `atualizar_vencimentos()`.
 - **Edge Function (`supabase/functions/notificar-contato/index.ts`)**: valida o header `x-webhook-secret`, escapa o HTML e envia o aviso pelo Resend.
 - **Pesquisa (`research/scripts/`)**: `data.js` guarda fatos, notas e fontes. `build.js` gera PDF, XLSX e CSVs. `charts.js` desenha os gráficos.
@@ -321,7 +323,7 @@ Testes (Node 20+, sem instalar nada): `npm test` e `npm run check`.
 
 1. Crie um projeto no Supabase.
 2. Em **Authentication → Providers → Email**, mantenha *Allow new users to sign up* ativado e *Confirm email* ligado.
-3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `012_area_interna.sql`.
+3. No **SQL Editor**, execute em ordem `supabase/migrations/001_init.sql` até `013_contratos_recorrentes.sql`.
 4. Em **Project Settings → API**, copie a *Project URL* e a chave *anon/publishable* para `app/js/config.js`.
 5. Em **Authentication → Users → Add user**, crie o seu usuário. **O primeiro usuário vira administrador.**
 6. Entre em `/app/` e ajuste cargos e permissões em **Equipe**.

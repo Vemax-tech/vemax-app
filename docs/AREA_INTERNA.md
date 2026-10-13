@@ -43,7 +43,7 @@ Tecnologia (inalterada): HTML + JavaScript com ES modules, sem build, falando di
 
 **Suporte.** Chamados com cliente, projeto, assunto, descrição, canal (formulário, e-mail, telefone, WhatsApp, outro), prioridade, responsável, status, prazo combinado e solução. Quadro e lista com filtros e alertas de *sem responsável*, *fora do prazo* e *prazo em até 2 dias*. **Notas internas** e **mensagens enviadas ao cliente** ficam em tipos separados na linha do tempo do chamado.
 
-**Financeiro.** Contas a receber por cliente e projeto, em parcelas, com situação (prevista, pendente, paga, atrasada — calculada pela data —, cancelada), pagamento registrado à mão (data, valor e forma), despesas gerais ou de projeto, resumo de previsto × recebido × vencido, **custo e margem por projeto** e exportação CSV. Controle operacional: não substitui contabilidade, não emite nota e não guarda dados de cartão ou de conta.
+**Financeiro.** Contas a receber por cliente e projeto, em parcelas, com situação (prevista, pendente, paga, atrasada — calculada pela data —, cancelada), pagamento registrado à mão (data, valor e forma), despesas gerais ou de projeto, resumo de previsto × recebido × vencido, **custo e margem por projeto** e exportação CSV. **Contratos recorrentes** (suporte, hospedagem, manutenção, licenças): valor fixo mensal, trimestral ou anual, com receita recorrente por mês, reajuste, pausa/reativação, término e as cobranças geradas automaticamente alguns dias antes de cada vencimento. Controle operacional: não substitui contabilidade, não emite nota e não guarda dados de cartão ou de conta.
 
 **Equipe.** Aprovação de cadastros, papéis (Administrador / Membro), ativação e **permissões por módulo** (ver/editar): Leads e propostas, Clientes, Projetos e tarefas, Suporte, Financeiro, Mercado, Conhecimento, Portfólio.
 
@@ -58,7 +58,7 @@ npm test                    # testes unitários das regras de negócio (Node, se
 npm run check               # verificação estática: sintaxe, imports, páginas, menu, migrations
 ```
 
-Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001` … `012`. A `012_area_interna.sql` **só adiciona** tabelas, colunas e regras; não apaga dados nem tabelas. Ela depende da `008`, `010` e `011`. Depois de aplicá-la, abra **Equipe → Permissões do papel Membro** e decida quem vê/edita Clientes, Suporte e Financeiro (padrão: Clientes só leitura, Suporte editável, Financeiro fechado).
+Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001` … `013`. A `012_area_interna.sql` **só adiciona** tabelas, colunas e regras; não apaga dados nem tabelas. Ela depende da `008`, `010` e `011`. A `013_contratos_recorrentes.sql` (contratos) depende da `012`. Depois de aplicá-la, abra **Equipe → Permissões do papel Membro** e decida quem vê/edita Clientes, Suporte e Financeiro (padrão: Clientes só leitura, Suporte editável, Financeiro fechado).
 
 ## Segurança e privacidade (decisões)
 
@@ -79,7 +79,8 @@ Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001`
 4. **Membros sem “editar Projetos” não movem tarefas.** Tarefas seguem a permissão de Projetos. Se quiser que cada pessoa atualize as próprias tarefas, é preciso uma regra nova (não incluída).
 5. **Listas grandes.** Filtros e paginação rodam no navegador sobre os registros carregados (limite padrão do Supabase de 1000 linhas por consulta). Para uma equipe pequena é suficiente; se a base crescer, a paginação deve passar para o servidor.
 6. **Arquivos do cliente.** A ficha guarda *links* importantes; anexos de arquivo existem por projeto (bucket privado, URL assinada de 2 minutos).
-7. **Proposta aprovada pela equipe** registra nome e data, não é assinatura eletrônica nem contrato.
+7. **Contratos recorrentes não têm agendador.** As cobranças são geradas quando alguém com permissão de editar o Financeiro abre a tela (ou cria/edita um contrato). A função `gerar_cobrancas_recorrentes()` é segura para repetir (não duplica) e pode ser agendada com `pg_cron` no Supabase se for preciso gerar sem ninguém abrir o sistema.
+8. **Proposta aprovada pela equipe** registra nome e data, não é assinatura eletrônica nem contrato.
 
 ## Integrações
 
@@ -93,7 +94,7 @@ Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001`
 
 ## Etapa posterior (não incluído nesta versão)
 
-Integração oficial com WhatsApp, e-mail e calendário · portal separado para o cliente · aprovação de entregas pelo cliente · assinatura eletrônica · integrações bancárias/contábeis e nota fiscal · apontamento detalhado de horas e margem por tarefa · planejamento de capacidade da equipe · relatórios avançados e exportação para BI · automações de cobrança, acompanhamento comercial e abertura de tarefas · contratos recorrentes e planos de suporte · gestão de ativos/inventário.
+Integração oficial com WhatsApp, e-mail e calendário · portal separado para o cliente · aprovação de entregas pelo cliente · assinatura eletrônica · integrações bancárias/contábeis e nota fiscal · apontamento detalhado de horas e margem por tarefa · planejamento de capacidade da equipe · relatórios avançados e exportação para BI · automações de cobrança, acompanhamento comercial e abertura de tarefas · gestão de ativos/inventário.
 
 A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `deleted_at` e linha do tempo (`interacoes`); `opcoes` e `modelos_projeto` tornam etapas e modelos configuráveis; as regras de cálculo ficam em `app/js/lib.js`, testadas e sem dependência de tela.
 
@@ -101,6 +102,7 @@ A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `delete
 
 | Onde | O quê |
 |---|---|
+| `supabase/migrations/013_contratos_recorrentes.sql` | Contratos recorrentes e a função `gerar_cobrancas_recorrentes()` |
 | `supabase/migrations/012_area_interna.sql` | Clientes, funil ampliado, propostas↔clientes, projetos (escopo, entregas, equipe), tarefas, chamados, cobranças, despesas, linha do tempo, configurações, lixeira, auditoria, funções `projeto_de_proposta`, `aplicar_modelo_projeto`, `atualizar_vencimentos` |
 | `app/js/lib.js` | Regras puras: datas, dinheiro, parcelas, status calculados, alertas, duplicados, leitura de modelos |
 | `app/js/core.js` | Peças compartilhadas: tabela ordenável/paginada, Kanban, linha do tempo, lixeira, filtros, CSV |

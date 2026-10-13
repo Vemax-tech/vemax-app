@@ -197,3 +197,13 @@ export const formatarLinhasModelo = (itens, tipo) => (itens || []).map((i) => (t
 
 /** Chave técnica estável a partir de um nome ("Redes sociais" -> "redes_sociais"). */
 export const slug = (s) => semAcento(s).replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
+
+// ---------- contratos recorrentes ----------
+export const CONTRATO_TIPOS = { suporte: 'Suporte', hospedagem: 'Hospedagem', manutencao: 'Manutenção', licenca: 'Licença / ferramenta', outro: 'Outro' };
+export const PERIODICIDADES = { mensal: 'Mensal', trimestral: 'Trimestral', anual: 'Anual' };
+export const CONTRATO_STATUS = { ativo: 'Ativo', pausado: 'Pausado', encerrado: 'Encerrado' };
+const MESES = { mensal: 1, trimestral: 3, anual: 12 };
+/** Quanto o contrato rende por mês (trimestral ÷ 3, anual ÷ 12). */
+export const valorMensal = (c) => Math.round((Number(c.valor) / (MESES[c.periodicidade] || 1)) * 100) / 100;
+/** Receita recorrente mensal: soma só dos contratos ativos. */
+export const receitaMensal = (contratos) => Math.round(contratos.filter((c) => c.status === 'ativo').reduce((t, c) => t + valorMensal(c) * 100, 0)) / 100;
