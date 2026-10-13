@@ -3,6 +3,7 @@ import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, dataTable, filtros, contem, loadBase, loadClientes, clienteOpts, lixeira, quiet, timeline, registrarMudancas } from '../core.js';
 import { converterLead } from './clientes.js';
+import { mensagemErro } from '../validacao.js';
 import { start, h, run, toast, modal, formModal, confirmDlg, pageHead, empty, fmtDate, copyText, qs } from '../ui.js';
 
 const KIND = { rascunho: 'dim', enviada: '', aceita: 'ok', recusada: 'warn', vencida: 'warn' };
@@ -129,7 +130,7 @@ export function detalheProposta(p, env) {
       { name: 'modelo', label: 'Modelo de projeto', type: 'select', nullable: true, options: [['', '— sem modelo —'], ...modelos.map((m) => [m.id, m.nome])], hint: 'O modelo cria as tarefas e entregas iniciais.' }],
     onSubmit: async (v) => {
       const { data, error } = await sb.rpc('projeto_de_proposta', { p_proposta: p.id, p_prazo: v.prazo || null, p_modelo: v.modelo || null });
-      if (error) { toast(error.message || 'Não foi possível criar o projeto.', true); return false; }
+      if (error) { toast(mensagemErro(error, 'Não foi possível criar o projeto.'), true); return false; }
       env.projetos.push({ id: data, proposta_id: p.id });
       toast('Projeto criado. O lead foi marcado como ganho.'); env.onChange?.(); paint();
       if (await confirmDlg('Abrir o projeto agora?')) location.href = projetoHref(data);

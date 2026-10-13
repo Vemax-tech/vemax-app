@@ -30,7 +30,7 @@ export const init = () => start('contatos/', 'Leads', async (ctx, view) => {
     { name: 'empresa', label: 'Empresa', maxlength: 160, value: l.empresa },
     { name: 'pessoa_contato', label: 'Pessoa de contato', maxlength: 120, value: l.pessoa_contato },
     { name: 'email', label: 'E-mail', type: 'email', maxlength: 160, value: l.email },
-    { name: 'telefone', label: 'Telefone / WhatsApp', maxlength: 40, value: l.telefone },
+    { name: 'telefone', label: 'Telefone / WhatsApp', kind: 'telefone', maxlength: 40, value: l.telefone },
     { name: 'mensagem', label: 'Necessidade relatada', type: 'textarea', required: true, maxlength: 2000, value: l.mensagem },
     { name: 'categoria_id', label: 'Serviço de interesse', type: 'select', nullable: true, value: l.categoria_id, options: [['', '— não definido —'], ...base.catOpts(l.categoria_id)] },
     { name: 'origem', label: 'Origem do contato', type: 'select', value: l.origem || 'indicacao', options: base.opts('origem_lead', l.origem) },

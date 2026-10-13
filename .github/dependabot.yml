@@ -1,0 +1,12 @@
+# Avisa (abre Pull Request) quando uma dependência ou ação do GitHub tiver versão nova ou correção de segurança.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+  - package-ecosystem: npm
+    directory: /tests/integration
+    schedule: { interval: monthly }
+  - package-ecosystem: npm
+    directory: /research/scripts
+    schedule: { interval: monthly }

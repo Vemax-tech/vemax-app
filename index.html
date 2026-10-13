@@ -395,11 +395,11 @@
 
     <form class="cform glass" id="cForm" hidden novalidate>
       <div class="f2">
-        <div><label for="cName">Nome</label><input id="cName" name="nome" autocomplete="name" required></div>
-        <div><label for="cContact">E-mail ou WhatsApp</label><input id="cContact" name="contato" autocomplete="email" required></div>
+        <div><label for="cName">Nome</label><input id="cName" name="nome" autocomplete="name" maxlength="120" required></div>
+        <div><label for="cContact">E-mail ou WhatsApp</label><input id="cContact" name="contato" autocomplete="email" maxlength="160" required></div>
       </div>
       <label for="cMsg">Mensagem</label>
-      <textarea id="cMsg" name="mensagem" rows="5" required></textarea>
+      <textarea id="cMsg" name="mensagem" rows="5" maxlength="2000" required></textarea>
       <div class="hp" aria-hidden="true"><label for="cSite">Não preencha este campo</label><input id="cSite" name="website" type="text" tabindex="-1" autocomplete="off"></div>
       <p class="err" id="cErr" role="alert" hidden>Preencha nome, contato e mensagem para continuarmos.</p>
       <p class="small cpriv">Usamos seus dados só para responder a esta mensagem. Veja a <a href="privacidade.html">Política de Privacidade</a>.</p>
@@ -435,6 +435,7 @@
 </footer>
 
 <script src="assets/js/config.js"></script>
+<script src="assets/js/valida.js"></script>
 <script src="assets/js/portfolio.js"></script>
 <script src="assets/js/script.js"></script>
 </body>

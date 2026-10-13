@@ -2,7 +2,8 @@
 import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, quiet } from '../core.js';
-import { start, h, run, pageHead, empty, formModal, confirmDlg, toast } from '../ui.js';
+import { secSeguranca } from './seguranca.js';
+import { start, h, run, pageHead, empty, formModal, confirmDlg, toast, qs } from '../ui.js';
 
 const GRUPOS = [
   ['etapa_lead', 'Etapas do funil de leads', false], ['etapa_projeto', 'Etapas do quadro de projetos', false], ['etapa_tarefa', 'Etapas do quadro de tarefas', false], ['etapa_chamado', 'Etapas do quadro de suporte', false],
@@ -16,8 +17,8 @@ const LIXEIRA = [
 
 export const init = () => start('configuracoes/', 'Configurações', async (ctx, view) => {
   const admin = ctx.isAdmin;
-  const abas = [['notif', 'Notificações'], ...(admin ? [['cat', 'Categorias de serviço'], ['etapas', 'Etapas e listas'], ['modelos', 'Modelos de projeto'], ['lixeira', 'Lixeira']] : []), ['integ', 'Integrações']];
-  const st = { aba: 'notif', grupo: 'etapa_lead' };
+  const abas = [['notif', 'Notificações'], ['seguranca', 'Segurança'], ...(admin ? [['cat', 'Categorias de serviço'], ['etapas', 'Etapas e listas'], ['modelos', 'Modelos de projeto'], ['lixeira', 'Lixeira']] : []), ['integ', 'Integrações']];
+  const st = { aba: abas.some(([k]) => k === qs('aba')) ? qs('aba') : 'notif', grupo: 'etapa_lead' };
   const nav = h('nav', { class: 'tabs', 'aria-label': 'Seções das configurações' }), body = h('div');
 
   // ---------------------------------------------------------------- notificações
@@ -147,7 +148,7 @@ export const init = () => start('configuracoes/', 'Configurações', async (ctx,
   async function mostrar() {
     nav.replaceChildren(...abas.map(([k, l]) => h('a', { href: '#', class: st.aba === k ? 'on' : '', 'aria-current': st.aba === k ? 'page' : null, onclick: (e) => { e.preventDefault(); st.aba = k; mostrar(); } }, l)));
     body.replaceChildren(h('div', { class: 'spin', 'aria-label': 'Carregando' }));
-    const sec = { notif: secNotif, cat: secCat, etapas: secEtapas, modelos: secModelos, lixeira: secLixeira, integ: secInteg }[st.aba];
+    const sec = { notif: secNotif, cat: secCat, etapas: secEtapas, modelos: secModelos, lixeira: secLixeira, integ: secInteg, seguranca: () => secSeguranca(ctx) }[st.aba];
     try { body.replaceChildren(await sec()); } catch (e) { console.error(e); body.replaceChildren(empty('Não foi possível carregar esta seção.')); }
   }
   view.append(pageHead('Preferências', 'Configurações', admin ? 'Ajuste o portal ao jeito da equipe, sem mexer em código.' : 'Suas preferências no portal.'), nav, body);

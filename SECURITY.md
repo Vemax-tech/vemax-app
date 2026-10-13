@@ -11,6 +11,8 @@ Use um destes caminhos:
 
 Inclua o que for possível: onde a falha está, como reproduzir, qual o impacto e, se tiver, uma sugestão de correção. Não inclua dados reais de clientes.
 
+O relatório completo da última auditoria, com o que foi corrigido e o que ainda depende de configuração, está em [docs/SEGURANCA.md](docs/SEGURANCA.md).
+
 ## O que está no escopo
 
 | Área | Exemplos |
@@ -19,6 +21,8 @@ Inclua o que for possível: onde a falha está, como reproduzir, qual o impacto 
 | Supabase e RLS | política de RLS que deixa ler ou alterar dados indevidos, função com `EXECUTE` aberto para `anon`, acesso a arquivo de bucket privado (`entregaveis`, `projetos`) |
 | Edge Function | `notificar-contato` aceitando chamada sem o header `x-webhook-secret`, injeção de HTML no e-mail enviado |
 | Formulário de contato | contornar o limite anti-spam, injetar conteúdo em `contatos_site`, ler contatos sem login |
+| Sessão e autenticação | sessão que continua valendo após logout, contornar o 2FA, aviso de tentativas de login que não aparece, redirecionamento aberto no login |
+| Cabeçalhos e CSP | forma de executar script no site ou no portal, página que pode ser colocada em iframe |
 | Segredos | chave privada, `service_role`, chave do Resend ou `WEBHOOK_SECRET` exposta no código ou no histórico |
 
 ## Fora do escopo

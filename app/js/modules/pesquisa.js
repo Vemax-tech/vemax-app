@@ -1,5 +1,6 @@
 // Ficha da pesquisa: dados, fontes e entregáveis (Storage privado)
 import { sb } from '../supabase.js';
+import { validarArquivo, mensagemErro } from '../validacao.js';
 import { start, h, run, pageHead, empty, formModal, confirmDlg, toast, fmtDate, qs, STATUS, CONF, icon } from '../ui.js';
 
 const BUCKET = 'entregaveis';
@@ -50,10 +51,12 @@ export const init = () => start('mercado/', 'Pesquisa', async (ctx, view) => {
     const ext = f.name.split('.').pop().toLowerCase();
     if (!EXT[ext]) return toast('Tipo não permitido. Use pdf, xlsx, pbix, csv ou png.', true);
     if (f.size > MAX) return toast('Arquivo maior que 50 MB.', true);
+    const conf = validarArquivo(f, new Uint8Array(await f.slice(0, 512).arrayBuffer()), { permitidas: Object.keys(EXT) });
+    if (!conf.ok) return toast(conf.erro, true);          // confere o conteúdo real, não só a extensão
     const path = `${id}/${crypto.randomUUID()}.${ext}`;       // nome interno aleatório; nome original fica na tabela
     toast('Enviando…');
     const up = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type || 'application/octet-stream' });
-    if (up.error) return toast('Falha no envio: ' + up.error.message, true);
+    if (up.error) return toast(mensagemErro(up.error, 'Falha no envio do arquivo.'), true);
     const row = await run(sb.from('anexos').insert({ pesquisa_id: id, tipo: EXT[ext], nome: f.name.slice(0, 160), caminho: path, tamanho: f.size }).select().single(), 'Entregável anexado.');
     if (row) { A.unshift(row); drawA(); } else await sb.storage.from(BUCKET).remove([path]);
   } });

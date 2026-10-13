@@ -13,3 +13,7 @@ bun.lock
 bun.lockb
 wrangler.jsonc
 .assetsignore
+# Conteúdo que não faz parte do site e não precisa ficar público no endereço do site
+docs
+research
+*.md

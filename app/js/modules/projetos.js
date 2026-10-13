@@ -2,6 +2,7 @@
 import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, filtros, contem, kanban, colunas, loadBase, loadClientes, clienteOpts, quiet, pedirForm, registrarMudancas } from '../core.js';
+import { mensagemErro } from '../validacao.js';
 import { start, h, run, pageHead, empty, formModal, confirmDlg, modal, fmtDate, toast, icon } from '../ui.js';
 
 export const detalheHref = (id) => new URL(`../projetos/detalhe.html?id=${id}`, new URL('./', location.href)).href;
@@ -57,7 +58,7 @@ export async function novoProjeto({ ctx, base, clientes, preset = {}, aoCriar })
     if (!r) return false;
     if (m) {
       const { error } = await sb.rpc('aplicar_modelo_projeto', { p_projeto: r.id, p_modelo: m.id });
-      if (error) toast('Projeto criado, mas não foi possível aplicar o modelo: ' + error.message, true);
+      if (error) toast('Projeto criado, mas não foi possível aplicar o modelo. ' + mensagemErro(error), true);
     }
     aoCriar?.(r);
   } });

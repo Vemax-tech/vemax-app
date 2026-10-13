@@ -7,6 +7,7 @@ import { novaTarefa, editarTarefa, moverTarefa } from './tarefas.js';
 import { gerarCobrancas, registrarPagamento, formDespesa } from './financeiro.js';
 import { openAcompanhamento } from './acompanhamento.js';
 import { fichaHref } from './clientes.js';
+import { validarArquivo, mensagemErro } from '../validacao.js';
 import { start, h, run, pageHead, formModal, confirmDlg, modal, fmtDate, toast, qs } from '../ui.js';
 
 const BUCKET = 'projetos';
@@ -66,10 +67,12 @@ export const init = () => start('projetos/', 'Projeto', async (ctx, view) => {
       const file = pick.files[0];
       if (!file) { toast('Escolha um arquivo.', true); return; }
       if (file.size > MAX) { toast('Arquivo acima de 50 MB.', true); return; }
+      const conf = validarArquivo(file, new Uint8Array(await file.slice(0, 512).arrayBuffer()));
+      if (!conf.ok) { toast(conf.erro, true); return; }              // confere o conteúdo real, não só a extensão
       send.disabled = true;
       const path = `${p.id}/${crypto.randomUUID()}-${file.name.replace(/[^\w.\-]+/g, '_')}`;
       const up = await sb.storage.from(BUCKET).upload(path, file, { contentType: file.type || 'application/octet-stream' });
-      if (up.error) { console.error(up.error); toast('Falha no envio: ' + up.error.message, true); send.disabled = false; return; }
+      if (up.error) { console.error(up.error); toast(mensagemErro(up.error, 'Falha no envio do arquivo.'), true); send.disabled = false; return; }
       const row = await run(sb.from('projeto_anexos').insert({ projeto_id: p.id, nome: file.name, caminho: path, tamanho: file.size }).select().single(), 'Arquivo anexado.');
       if (row) { files.unshift(row); paint(); pick.value = ''; } else await sb.storage.from(BUCKET).remove([path]);
       send.disabled = false;

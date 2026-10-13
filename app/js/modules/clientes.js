@@ -2,6 +2,7 @@
 import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, dataTable, filtros, contem, loadBase, lixeira, linkSeguro, timeline, quiet } from '../core.js';
+import { escaparLike, mensagemErro } from '../validacao.js';
 import { start, h, run, toast, modal, formModal, confirmDlg, pageHead, empty, fmtDate, qs, contactHref } from '../ui.js';
 
 const FICHA = new URL('./ficha.html', new URL('../../clientes/', import.meta.url)).href;
@@ -11,9 +12,9 @@ export const fichaHref = (id) => `${FICHA}?id=${id}`;
 const camposCliente = (c = {}) => [
   { name: 'nome', label: 'Nome da empresa ou pessoa', required: true, maxlength: 160, value: c.nome },
   { name: 'razao_social', label: 'Razão social', maxlength: 160, value: c.razao_social },
-  { name: 'documento', label: 'CNPJ ou CPF', maxlength: 18, value: c.documento, hint: 'Opcional. Só números ou com pontuação; evita cadastrar a mesma empresa duas vezes.' },
+  { name: 'documento', label: 'CNPJ ou CPF', kind: 'documento', maxlength: 18, value: c.documento, hint: 'Opcional. Só números ou com pontuação; evita cadastrar a mesma empresa duas vezes.' },
   { name: 'email', label: 'E-mail', type: 'email', maxlength: 160, value: c.email },
-  { name: 'telefone', label: 'Telefone / WhatsApp', maxlength: 40, value: c.telefone },
+  { name: 'telefone', label: 'Telefone / WhatsApp', kind: 'telefone', maxlength: 40, value: c.telefone },
   { name: 'site', label: 'Site', type: 'url', maxlength: 200, value: c.site, placeholder: 'https://' },
   { name: 'cidade', label: 'Cidade', maxlength: 120, value: c.cidade },
   { name: 'observacoes', label: 'Observações', type: 'textarea', maxlength: 4000, value: c.observacoes },
@@ -60,7 +61,7 @@ export async function criarCliente(vals, { aoCriar } = {}) {
   }
   const { data, error } = await sb.from('clientes').insert(v).select().single();
   if (error) {
-    toast(error.code === '23505' ? 'Já existe um cliente com este nome ou documento. Use o cadastro existente.' : error.code === '42501' ? 'Sem permissão para cadastrar clientes.' : 'Não foi possível cadastrar: ' + error.message, true);
+    toast(error.code === '23505' ? 'Já existe um cliente com este nome ou documento. Use o cadastro existente.' : mensagemErro(error, 'Não foi possível cadastrar.'), true);
     return null;
   }
   toast('Cliente cadastrado.');
@@ -99,7 +100,7 @@ export async function converterLead(lead) {
   });
   if (!cli) return null;
   if (lead.pessoa_contato) {
-    const { data: ja } = await sb.from('cliente_contatos').select('id').eq('cliente_id', cli.id).ilike('nome', lead.pessoa_contato);
+    const { data: ja } = await sb.from('cliente_contatos').select('id').eq('cliente_id', cli.id).ilike('nome', escaparLike(lead.pessoa_contato));
     if (!ja?.length) await sb.from('cliente_contatos').insert({ cliente_id: cli.id, nome: lead.pessoa_contato, email: lead.email || '', telefone: lead.telefone || '', principal: true });
   }
   const ok = await vincularLead(lead, cli);
@@ -184,7 +185,7 @@ export const initFicha = () => start('clientes/', 'Cliente', async (ctx, view) =
     const dups = L.possiveisDuplicados({ ...nv, id: cli.id }, clientes, cs);
     if (dups.length && !(await confirmDlg(`Já existe cadastro parecido (${dups.map((d) => d.nome).join(', ')}). Salvar mesmo assim?`))) return false;
     const { data, error } = await sb.from('clientes').update(nv).eq('id', cli.id).select().single();
-    if (error) { toast(error.code === '23505' ? 'Já existe outro cliente com este nome ou documento.' : 'Não foi possível salvar: ' + error.message, true); return false; }
+    if (error) { toast(error.code === '23505' ? 'Já existe outro cliente com este nome ou documento.' : mensagemErro(error, 'Não foi possível salvar.'), true); return false; }
     Object.assign(cli, data); drawHead(); toast('Cliente salvo.');
   } });
 
@@ -196,7 +197,7 @@ export const initFicha = () => start('clientes/', 'Cliente', async (ctx, view) =
       h('button', { class: 'btn sm danger', onclick: async () => { if (await confirmDlg(`Remover ${p.nome} dos contatos?`) && await run(sb.from('cliente_contatos').delete().eq('id', p.id), 'Contato removido.')) { contatos.splice(contatos.indexOf(p), 1); drawContatos(); } } }, 'Remover'))))) : h('p', { class: 'small muted' }, 'Nenhuma pessoa de contato cadastrada.'));
   const formContato = (p = {}) => formModal({ title: p.id ? 'Editar contato' : 'Novo contato', fields: [
     { name: 'nome', label: 'Nome', required: true, maxlength: 120, value: p.nome }, { name: 'cargo', label: 'Cargo', maxlength: 80, value: p.cargo },
-    { name: 'email', label: 'E-mail', type: 'email', maxlength: 160, value: p.email }, { name: 'telefone', label: 'Telefone / WhatsApp', maxlength: 40, value: p.telefone },
+    { name: 'email', label: 'E-mail', type: 'email', maxlength: 160, value: p.email }, { name: 'telefone', label: 'Telefone / WhatsApp', kind: 'telefone', maxlength: 40, value: p.telefone },
     { name: 'principal', label: 'Contato principal?', type: 'select', value: p.principal ? 'sim' : 'nao', options: [['nao', 'Não'], ['sim', 'Sim']] }],
   onSubmit: async (v) => {
     const row = { ...v, principal: v.principal === 'sim', cliente_id: cli.id };
