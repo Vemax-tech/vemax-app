@@ -150,7 +150,7 @@ export const initFicha = () => start('clientes/', 'Cliente', async (ctx, view) =
   if (!cli || cli.deleted_at) { view.append(pageHead('Clientes', 'Cliente não encontrado', 'O cadastro pode ter sido removido ou o endereço está incompleto.', h('a', { class: 'btn', href: './' }, 'Voltar para clientes'))); return; }
   const canEdit = ctx.can('clientes', 'editar'), hoje = L.hojeISO();
   const base = await loadBase();
-  const [contatos, links, leads, propostas, projetos, tarefas, chamados, cobrancas] = await Promise.all([
+  const [contatos, links, leads, propostas, projetos, tarefas, chamados, cobrancas, contratos] = await Promise.all([
     quiet(sb.from('cliente_contatos').select('*').eq('cliente_id', id).order('principal', { ascending: false }).order('nome')),
     quiet(sb.from('cliente_links').select('*').eq('cliente_id', id).order('criado_em', { ascending: false })),
     ctx.can('contatos') ? quiet(sb.from('contatos_site').select('id,nome,empresa,status,valor_estimado,criado_em').eq('cliente_id', id).is('deleted_at', null).order('criado_em', { ascending: false })) : [],
@@ -159,6 +159,7 @@ export const initFicha = () => start('clientes/', 'Cliente', async (ctx, view) =
     ctx.can('projetos') ? quiet(sb.from('tarefas').select('id,titulo,status,prazo,projeto_id').eq('cliente_id', id).is('deleted_at', null).order('prazo', { nullsFirst: false })) : [],
     ctx.can('suporte') ? quiet(sb.from('chamados').select('id,numero,assunto,status,prazo').eq('cliente_id', id).is('deleted_at', null).order('aberto_em', { ascending: false })) : [],
     ctx.can('financeiro') ? quiet(sb.from('cobrancas').select('*').eq('cliente_id', id).is('deleted_at', null).order('vencimento')) : [],
+    ctx.can('financeiro') ? quiet(sb.from('contratos').select('*').eq('cliente_id', id).is('deleted_at', null).neq('status', 'encerrado').order('descricao')) : [],
   ]);
 
   const head = h('div'), dados = h('div'), contatosBox = h('div'), linksBox = h('div');
@@ -238,6 +239,9 @@ export const initFicha = () => start('clientes/', 'Cliente', async (ctx, view) =
       h('span', { class: 'small', style: 'color:#ff9b8a' }, 'Em atraso: ', h('b', {}, L.brl(L.soma(ef.filter((c) => c.ef === 'atrasada'), 'valor'))))),
     lista(ef.filter((c) => c.ef !== 'cancelada').slice(0, 8).map((c) => h('li', { class: 'row between' }, h('span', {}, `${c.descricao} (${c.parcela}/${c.total_parcelas})`), h('span', { class: 'row', style: 'gap:6px' }, h('span', { class: 'small muted' }, fmtDate(c.vencimento) + ' · ' + L.brl(c.valor)), badge(L.COBRANCA_STATUS[c.ef], c.ef === 'paga' ? 'ok' : c.ef === 'atrasada' ? 'warn' : 'dim')))), 'Nenhuma cobrança registrada.'));
 
+  const blocoContratos = ctx.can('financeiro') && contratos.length > 0 && card(`Contratos recorrentes · ${L.brl(L.receitaMensal(contratos))}/mês`, h('a', { class: 'btn sm', href: `../financeiro/?cliente=${id}` }, 'Abrir financeiro'),
+    lista(contratos.map((k) => h('li', { class: 'row between' }, h('span', {}, k.descricao, h('span', { class: 'small muted' }, ` · ${L.brl(k.valor)} ${L.PERIODICIDADES[k.periodicidade].toLowerCase()}`)), badge(k.status === 'ativo' ? 'Próxima: ' + fmtDate(k.proximo_vencimento) : L.CONTRATO_STATUS[k.status], k.status === 'ativo' ? 'ok' : 'dim'))), ''));
+
   view.append(head,
     h('div', { class: 'cols2' },
       h('div', { class: 'stack' }, card('Dados da empresa', null, dados),
@@ -245,7 +249,7 @@ export const initFicha = () => start('clientes/', 'Cliente', async (ctx, view) =
         card('Arquivos e links importantes', canEdit && h('button', { class: 'btn sm primary', onclick: () => formModal({ title: 'Novo link', fields: [
           { name: 'titulo', label: 'Título', required: true, maxlength: 120 }, { name: 'url', label: 'Endereço', type: 'url', required: true, maxlength: 500, placeholder: 'https://' }],
         onSubmit: async (v) => { const r = await run(sb.from('cliente_links').insert({ ...v, cliente_id: cli.id }).select().single(), 'Link salvo.'); if (!r) return false; links.unshift(r); drawLinks(); } }) }, 'Adicionar'), linksBox)),
-      h('div', { class: 'stack' }, blocoComercial, blocoProjetos, blocoTarefas, blocoChamados, blocoFin)),
+      h('div', { class: 'stack' }, blocoComercial, blocoProjetos, blocoTarefas, blocoChamados, blocoContratos, blocoFin)),
     h('section', { class: 'card', style: 'margin-top:18px' }, h('h2', { style: 'margin-bottom:4px' }, 'Linha do tempo'),
       h('p', { class: 'small muted', style: 'margin-bottom:12px' }, 'Interações, decisões e alterações de tudo o que envolve este cliente. Notas e mensagens são só para a equipe.'),
       timeline({ cliente_id: id, entidade: 'clientes', id }, { base, canEdit })));
