@@ -1,5 +1,7 @@
 // Regras de negócio puras (sem DOM nem banco): datas, dinheiro, status calculados e agregações.
 // Fica separado para ser testado em Node (`npm test`) e reaproveitado por todas as telas.
+import { soDigitos } from './validacao.js';
+
 
 export const STALL_DAYS = 14;          // lead parado: mesma etapa há mais de 14 dias
 export const SOON_DAYS = 7;            // "prazo próximo": vence em até 7 dias
@@ -137,9 +139,8 @@ const SUFIXOS = /\b(ltda|me|mei|epp|eireli|sa|s a|cia|company)\b/g;
 /** Nome comparável: sem acento, caixa, pontuação nem sufixo societário. "Padaria Pão Doce Ltda." == "padaria pao doce". */
 export const normNome = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
   .replace(/[^a-z0-9 ]+/g, ' ').replace(SUFIXOS, ' ').replace(/\s+/g, ' ').trim();
-export const soDigitos = (s) => String(s || '').replace(/\D/g, '');
+export { soDigitos, emailValido, telefoneValido, contatoValido, cpfValido, cnpjValido, documentoOk, avaliarSenha, limparBusca, escaparLike, tipoPorAssinatura, validarArquivo } from './validacao.js';
 export const normEmail = (s) => String(s || '').trim().toLowerCase();
-export const emailValido = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
 export const urlValida = (s) => { try { const u = new URL(String(s)); return u.protocol === 'http:' || u.protocol === 'https:'; } catch { return false; } };
 
 /** Clientes que provavelmente são a mesma empresa/pessoa que `alvo` (nome, CPF/CNPJ ou e-mail iguais). */

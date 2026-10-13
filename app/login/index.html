@@ -58,9 +58,18 @@
       <button class="btn primary" type="button" id="doneBack">Voltar ao login</button>
     </section>
 
+    <form id="fMfa" novalidate hidden>
+      <p class="small">Abra o aplicativo autenticador (Google Authenticator, Authy, 1Password…) e digite o código de 6 números.</p>
+      <label for="mfaCode">Código de verificação</label>
+      <input id="mfaCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
+      <p class="err" id="errMfa" role="alert" hidden></p>
+      <button class="btn primary" type="submit">Verificar e entrar</button>
+      <button class="linkbtn" type="button" id="mfaCancel">Cancelar e voltar</button>
+    </form>
+
     <form id="fNew" novalidate hidden>
       <label for="np">Nova senha (mín. 10 caracteres)</label>
-      <input id="np" type="password" autocomplete="new-password" minlength="10" required>
+      <input id="np" type="password" autocomplete="new-password" minlength="10" maxlength="128" required>
       <p class="err" id="err2" role="alert" hidden></p>
       <button class="btn primary" type="submit">Salvar nova senha</button>
     </form>

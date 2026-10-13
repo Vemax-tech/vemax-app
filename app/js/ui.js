@@ -1,5 +1,7 @@
 // Helpers de interface: criação segura de DOM (sem innerHTML com dados), shell, modal, toast.
-import { requireSession, logout } from './auth.js';
+import { requireSession, logout, evento } from './auth.js';
+import { iniciarSessao } from './sessao.js';
+import { mensagemErro, telefoneValido, documentoOk, emailValido } from './validacao.js';
 import { sb } from './supabase.js';
 import { initNotifs } from './notifs.js';
 import { initBusca } from './busca.js';
@@ -93,12 +95,17 @@ export function toast(msg, err = false) {
 
 export const copyText = async (t) => { try { await navigator.clipboard.writeText(t); toast('Copiado.'); } catch { toast('Não foi possível copiar automaticamente.', true); } };
 
+// Acesso negado pelo servidor entra no log de segurança (no máximo 1 por minuto por aba, para não encher o log).
+let ultimoNegado = 0;
+const negado = () => { if (Date.now() - ultimoNegado > 60000) { ultimoNegado = Date.now(); evento('acesso_negado', location.pathname.slice(0, 120)); } };
+
 /** Aguarda uma promise do Supabase; mostra erro amigável e devolve os dados (ou null). */
 export async function run(p, okMsg) {
   const { data, error } = await p;
   if (error) {
     console.error(error);
-    toast(error.code === '42501' ? 'Sem permissão para esta ação.' : 'Algo deu errado: ' + error.message, true);
+    if (error.code === '42501') negado();
+    toast(mensagemErro(error), true);
     return null;
   }
   if (okMsg) toast(okMsg);
@@ -152,7 +159,9 @@ export function formModal({ title, fields, onSubmit, validate, onClose, submitLa
           v = v === '' ? null : Number(v);
           if (v != null && (!Number.isFinite(v) || (f.min != null && v < f.min) || (f.max != null && v > f.max))) return fail(`Valor inválido em: ${f.label}`, el);
         }
-        if (f.type === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return fail(`E-mail inválido em: ${f.label}`, el);
+        if (f.type === 'email' && v && !emailValido(v)) return fail(`E-mail inválido em: ${f.label}`, el);
+        if (f.kind === 'telefone' && v && !telefoneValido(v)) return fail(`Telefone inválido em: ${f.label}. Inclua o DDD e use só números, espaços, ( ) + e -.`, el);
+        if (f.kind === 'documento' && v && !documentoOk(v)) return fail(`CPF ou CNPJ inválido em: ${f.label}. Confira os dígitos.`, el);
         if ((f.type === 'url') && v && !/^https?:\/\/\S+$/i.test(v)) return fail(`Use um endereço que comece com http:// ou https:// em: ${f.label}`, el);
         vals[f.name] = v === '' && f.nullable ? null : v;
       }
@@ -160,7 +169,7 @@ export function formModal({ title, fields, onSubmit, validate, onClose, submitLa
       if (msg) return fail(msg);
       err.hidden = true; save.disabled = true;
       let ok;
-      try { ok = await onSubmit(vals); } catch (e) { console.error(e); toast('Não foi possível salvar: ' + (e.message || 'erro inesperado'), true); ok = false; }
+      try { ok = await onSubmit(vals); } catch (e) { console.error(e); toast(mensagemErro(e), true); ok = false; }
       save.disabled = false;
       if (ok !== false) close();
     };
@@ -215,7 +224,7 @@ export async function start(key, title, render) {
     h('div', { class: 'me' },
       h('b', {}, ctx.profile.nome || ctx.user.email),
       h('span', { class: 'small' }, (ctx.isAdmin ? 'Administrador' : 'Membro') + (ctx.profile.cargo ? ' · ' + ctx.profile.cargo : '')),
-      h('button', { class: 'btn sm', onclick: logout }, icon('out'), 'Sair')));
+      h('button', { class: 'btn sm', onclick: () => logout() }, icon('out'), 'Sair')));
   if (ctx.isAdmin) {   // selo com o nº de cadastros aguardando aprovação
     sb.from('profiles').select('id', { count: 'exact', head: true }).eq('status', 'pendente').then(({ count }) => {
       const a = [...side.querySelectorAll('a.navi')].find((x) => x.getAttribute('href') === ROOT + 'equipe/');
@@ -224,6 +233,7 @@ export async function start(key, title, render) {
   }
   initNotifs({ sb, h, modal, icon, side, ctx, root: ROOT });
   initBusca({ sb, h, modal, icon, side, ctx, root: ROOT });
+  iniciarSessao({ sb, h, modal, sair: (m) => logout(m), irParaLogin: () => location.replace(ROOT + 'login/') });
   const view = h('main', { class: 'content', id: 'view' });
   const top = h('div', { class: 'topbar' },
     h('a', { class: 'brand', href: ROOT, style: 'padding:0' }, icon('logo'), 'Vemax'),
@@ -231,8 +241,17 @@ export async function start(key, title, render) {
   app.replaceChildren(h('div', { class: 'shell' }, side, h('div', {}, top, view)));
   document.title = `${title} — Vemax Portal`;
   view.append(h('div', { class: 'spin' }));
-  try { view.replaceChildren(); await render(ctx, view); }
+  try { view.replaceChildren(avisoSeguranca(ctx)); await render(ctx, view); }
   catch (e) { console.error(e); view.replaceChildren(h('div', { class: 'empty' }, h('p', {}, 'Não foi possível carregar esta página.'))); }
+}
+
+/** Faixa de aviso para administradores sem 2FA (com 2FA obrigatório ou recomendado). */
+function avisoSeguranca(ctx) {
+  if (ctx.adminSemPoderes) return h('p', { class: 'pending-note', role: 'alert', style: 'margin-bottom:16px;color:#ff9b8a' }, 'Seu acesso de administrador está limitado até você ativar a verificação em duas etapas. ', h('a', { class: 't', href: ROOT + 'configuracoes/?aba=seguranca' }, 'Ativar agora'));
+  let dispensado = false;
+  try { dispensado = Boolean(sessionStorage.getItem('vx_aviso_2fa')); } catch { /* armazenamento bloqueado: mostra o aviso */ }
+  if (ctx.isAdmin && !ctx.mfa?.ativo && !dispensado) return h('p', { class: 'pending-note', style: 'margin-bottom:16px' }, 'Proteja a conta de administrador: ative a verificação em duas etapas. ', h('a', { class: 't', href: ROOT + 'configuracoes/?aba=seguranca' }, 'Configurar'), ' · ', h('button', { class: 'linkbtn', style: 'margin:0', onclick: (e) => { try { sessionStorage.setItem('vx_aviso_2fa', '1'); } catch { /* ok */ } e.target.closest('p').remove(); } }, 'Agora não'));
+  return null;
 }
 
 export const pageHead = (eyebrow, title, sub, ...actions) =>

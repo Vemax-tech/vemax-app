@@ -1,5 +1,6 @@
 // Portfólio: cases exibidos no site institucional (publicar/ocultar, imagem, etapas, depoimento)
 import { sb } from '../supabase.js';
+import { validarArquivo, mensagemErro } from '../validacao.js';
 import { start, h, run, pageHead, empty, modal, confirmDlg, toast, fmtDate } from '../ui.js';
 
 const BUCKET = 'portfolio';
@@ -82,9 +83,11 @@ export const init = () => start('portfolio/', 'Portfólio', async (ctx, view) =>
         save.disabled = true; err.hidden = true;
         let novoPath = null;
         if (file) {
+          const conf = validarArquivo({ name: 'imagem.' + TIPOS[file.type], size: file.size }, new Uint8Array(await file.slice(0, 512).arrayBuffer()), { permitidas: ['png', 'jpg', 'webp'], maxBytes: 5 * 1024 * 1024 });
+          if (!conf.ok) { save.disabled = false; return fail(conf.erro); }       // o conteúdo precisa ser mesmo uma imagem
           novoPath = `${slug}-${Date.now()}.${TIPOS[file.type]}`;
           const up = await sb.storage.from(BUCKET).upload(novoPath, file, { contentType: file.type, upsert: false });
-          if (up.error) { save.disabled = false; console.error(up.error); return fail('Não foi possível enviar a imagem: ' + up.error.message); }
+          if (up.error) { save.disabled = false; console.error(up.error); return fail(mensagemErro(up.error, 'Não foi possível enviar a imagem.')); }
           row.imagem_path = novoPath;
         } else if (f.rmImg.checked) row.imagem_path = null;
 
@@ -94,7 +97,7 @@ export const init = () => start('portfolio/', 'Portfólio', async (ctx, view) =>
         if (error) {
           console.error(error);
           if (novoPath) sb.storage.from(BUCKET).remove([novoPath]);   // não deixa imagem órfã
-          return fail(error.code === '23505' ? 'Já existe um case com esse endereço. Mude o slug.' : error.code === '42501' ? 'Sem permissão para salvar.' : 'Não foi possível salvar: ' + error.message);
+          return fail(error.code === '23505' ? 'Já existe um case com esse endereço. Mude o slug.' : error.code === '42501' ? 'Sem permissão para salvar.' : mensagemErro(error, 'Não foi possível salvar.'));
         }
         if (!isNew && c.imagem_path && (novoPath || f.rmImg.checked)) sb.storage.from(BUCKET).remove([c.imagem_path]);
         toast(isNew ? 'Case criado.' : 'Case atualizado.');

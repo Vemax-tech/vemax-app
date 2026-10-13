@@ -1,6 +1,8 @@
 // Busca global (Ctrl+K): procura clientes, leads, propostas, projetos, tarefas e chamados de uma vez.
 // Só consulta o que a pessoa pode ver; a RLS do banco garante o resto. Recebe as dependências por parâmetro
 // para não criar import circular com ui.js.
+import { limparBusca } from './validacao.js';
+
 export function initBusca({ sb, h, modal, icon, side, ctx, root }) {
   const btn = h('button', { class: 'navi busca-btn', type: 'button', 'aria-label': 'Buscar (Ctrl+K)' }, icon('search'), 'Buscar', h('kbd', {}, 'Ctrl K'));
   side.querySelector('.brand')?.after(btn);
@@ -16,8 +18,7 @@ export function initBusca({ sb, h, modal, icon, side, ctx, root }) {
   ].filter((f) => ctx.can(f.mod));
   if (!FONTES.length) { btn.remove(); return; }
 
-  /** Deixa só letras, números, espaço e @ . - + : o texto entra num filtro do PostgREST e não pode carregar vírgulas, parênteses ou curingas. */
-  const limpar = (q) => q.replace(/[^\p{L}\p{N}\s@.+-]/gu, ' ').replace(/\s+/g, ' ').trim();
+  const limpar = limparBusca;       // o texto entra num filtro do PostgREST: só letras, números, espaço e @ . + -
 
   let aberta = false;
   const abrir = () => {

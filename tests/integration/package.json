@@ -1,0 +1,13 @@
+{
+  "name": "vemax-testes-integracao",
+  "private": true,
+  "type": "module",
+  "description": "Testes de integração (banco real em memória e telas simuladas). Dependências isoladas aqui para o site continuar sem dependências.",
+  "scripts": {
+    "test": "node sql-seguranca.mjs && node sql-funcional.mjs && node telas.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.x",
+    "jsdom": "26.x"
+  }
+}

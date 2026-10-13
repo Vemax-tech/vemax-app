@@ -109,6 +109,7 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 
 | Documento | Para quê |
 |---|---|
+| [`docs/SEGURANCA.md`](docs/SEGURANCA.md) | **Auditoria de segurança:** o que foi encontrado e corrigido, o que falta configurar no Supabase e os riscos que restam |
 | [`docs/AREA_INTERNA.md`](docs/AREA_INTERNA.md) | **Área interna atual:** o que cada módulo faz, como usar, segurança, limitações e o que fica para depois |
 | [`docs/prompt-area-interna.md`](docs/prompt-area-interna.md) | Prompt original que descreve o portal: objetivo, autenticação, permissões e módulos |
 | [`supabase/migrations/`](supabase/migrations/) | Esquema do banco, RLS, triggers e buckets, em ordem de `001` a `012` |
@@ -156,7 +157,8 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | E-mail ao chegar contato novo | 🚧 código pronto | `supabase/functions/notificar-contato/index.ts` (precisa ser implantada no Supabase) |
 | Relatório, planilha e pacote Power BI de nichos | ✅ entregue | `research/` (o `.pbix` não foi gerado) |
 | Verificação de links dos `.md` e dos SVGs (GitHub Actions) | ✅ entregue | `.github/workflows/qualidade.yml` |
-| Testes automatizados das regras de negócio e verificação estática | ✅ entregue | `tests/`, `scripts/verificar.mjs`, `.github/workflows/testes.yml` |
+| Segurança: CSP e cabeçalhos, sessão com prazo e revogação, 2FA, log de eventos, validações no servidor | ✅ entregue | `_headers`, `014_seguranca.sql`, `app/js/sessao.js`, `app/js/validacao.js` |
+| Testes automatizados (unitários, banco real em memória e telas simuladas) e verificação estática | ✅ entregue | `tests/`, `scripts/verificar.mjs`, `.github/workflows/testes.yml` |
 | Dados de contato do site (WhatsApp, e-mail, cidade, Instagram) | ✅ entregue | `assets/js/config.js`, rodapé do `index.html` |
 
 <p align="right"><a href="#topo">⬆ voltar ao topo</a></p>
@@ -389,9 +391,11 @@ Não há `.env`. A configuração fica em arquivos JavaScript públicos e em sec
 <a id="qualidade-e-seguranca"></a>
 ## 🔒 Qualidade e segurança
 
-**Testes e CI:** `npm test` roda os testes unitários das regras de negócio (`tests/`) e `npm run check` faz a verificação estática (sintaxe, imports, páginas, menu, sequência de migrations); o workflow `Testes` (`.github/workflows/testes.yml`) executa os dois quando código, testes ou migrations mudam. As telas e o SQL foram exercitados com um banco e um Supabase simulados (veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md)); falta testar no projeto Supabase real. O workflow `Qualidade` (`.github/workflows/qualidade.yml`) roda em push e Pull Request na `main` e verifica os links dos `.md` e se os SVGs de `docs/assets` são XML válido. Ele só dispara quando `.md`, `docs/assets/` ou o próprio workflow mudam, para gastar poucos minutos do Actions. Sem segredos e sem deploy. O resto da verificação é manual.
+**Testes e CI:** o workflow `Testes` roda 3 camadas: `npm run check` (estática, inclui regras de segurança), `npm test` (unitários) e `tests/integration` (Postgres real em memória com as migrations, mais as telas e o login simulados; veja [docs/SEGURANCA.md](docs/SEGURANCA.md)). Detalhe do que `npm test` roda: os testes unitários das regras de negócio (`tests/`) e `npm run check` faz a verificação estática (sintaxe, imports, páginas, menu, sequência de migrations); o workflow `Testes` (`.github/workflows/testes.yml`) executa os dois quando código, testes ou migrations mudam. As telas e o SQL foram exercitados com um banco e um Supabase simulados (veja [docs/AREA_INTERNA.md](docs/AREA_INTERNA.md)); falta testar no projeto Supabase real. O workflow `Qualidade` (`.github/workflows/qualidade.yml`) roda em push e Pull Request na `main` e verifica os links dos `.md` e se os SVGs de `docs/assets` são XML válido. Ele só dispara quando `.md`, `docs/assets/` ou o próprio workflow mudam, para gastar poucos minutos do Actions. Sem segredos e sem deploy. O resto da verificação é manual.
 
 **O que protege o sistema de verdade:**
+- **Cabeçalhos e CSP** (`_headers`): sem script embutido, sem `eval`, sem iframe; testados em Chrome real.
+- **Sessão:** saída por inatividade (30 min), duração máxima e revogação aplicadas no banco (`sessao_valida()`), 2FA por TOTP e log de eventos de segurança (Configurações > Segurança).
 - RLS ativa nas tabelas, com política padrão de negar. As permissões por módulo vivem na tabela `permissoes` e são avaliadas por `can()`.
 - Funções internas (`handle_new_user`, `log_atividade`, `limitar_contatos`, `projetos_datas`) sem `EXECUTE` para `anon` (`003`, `007` e `008`).
 - Anti-spam em duas camadas: no navegador (`spammy()`) e no banco (`limitar_contatos()`, 3 por contato e 60 no total, por hora). O navegador é contornável, por isso o teto fica no banco.

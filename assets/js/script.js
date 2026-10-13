@@ -170,9 +170,12 @@
   });
   const readForm = () => {
     const d = { nome: $('#cName').value.trim(), contato: $('#cContact').value.trim(), msg: cMsg.value.trim() };
-    const ok = d.nome && d.contato && d.msg;
-    cErr.hidden = !!ok;
-    return ok ? d : null;
+    const V = window.VEMAX_VALIDA;
+    const erro = !d.nome || !d.contato || !d.msg ? 'Preencha nome, contato e mensagem para continuarmos.'
+      : !V.contatoValido(d.contato) ? 'Informe um e-mail válido ou um telefone com DDD, para conseguirmos responder.'
+      : d.nome.length > 120 || d.msg.length > 2000 ? 'O nome ou a mensagem passou do tamanho permitido.' : '';
+    cErr.textContent = erro; cErr.hidden = !erro;
+    return erro ? null : d;
   };
   // Registra o contato no portal (best effort: nunca bloqueia o envio ao WhatsApp/e-mail)
   const COOLDOWN = 60 * 1000;

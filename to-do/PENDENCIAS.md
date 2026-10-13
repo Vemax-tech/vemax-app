@@ -18,6 +18,7 @@ Painel do Supabase → **SQL Editor** → cole o conteúdo de cada arquivo de `s
 - [ ] `011_notificacoes_cliente.sql` — sino de notificações, acompanhamento do cliente, avaliação pós-entrega
 - [ ] `012_area_interna.sql` — clientes, funil ampliado, tarefas, suporte, financeiro, configurações, lixeira e auditoria (a nova área interna; só adiciona, não apaga nada)
 
+- [ ] `014_seguranca.sql` — sessão com prazo máximo, 2FA para administradores, log de eventos de segurança, limite por IP no formulário e validações de formato. **Aplique depois de publicar o código novo** (o portal funciona antes dela, só sem esses recursos). Se algo der errado, o cabeçalho do arquivo mostra como desligar a duração máxima da sessão e a exigência de 2FA.
 - [ ] `013_contratos_recorrentes.sql` — contratos recorrentes (suporte, hospedagem…) e geração automática de cobranças. Só depois da `012`.
 
 Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `011` precisa da `008` e da `010`, e a `012` precisa de todas as anteriores e a `013` precisa da `012`. **A nova área interna só funciona depois da `012`.** Faça um backup (Supabase → Database → Backups) antes de aplicar.
@@ -29,6 +30,16 @@ Depois de cada uma, se aparecer erro, copie a mensagem. Não pule a ordem: a `01
 - [ ] **Decidir sobre o cadastro de funcionário pela tela de login** (`005`). O prompt da área interna diz “sem cadastro público”. Hoje o pedido cria uma conta pendente e sem acesso até o admin aprovar. Se quiser fechar de vez: desligue *Allow new users to sign up* e crie as contas por convite (Authentication → Users). Se mantiver, ative captcha.
 - [ ] **Configurações** (como administrador): revisar os nomes das etapas, as categorias de serviço, as origens de lead, os motivos de perda e os 7 modelos de projeto que já vêm prontos
 - [ ] Testar a nova área interna no Supabase real (ela foi testada com banco e API simulados): criar cliente, lead, proposta aprovada → projeto, tarefa, chamado, cobrança com pagamento, lixeira e restaurar
+
+## 2b. Segurança (veja `docs/SEGURANCA.md`, seção 4)
+
+- [ ] **Cada administrador ativa o 2FA** em Configurações > Segurança (guarde o celular; sem códigos de reserva)
+- [ ] Supabase › Authentication: conferir *Rate Limits*, *Site URL* e *Redirect URLs*, validade do JWT, regra de senha, MFA habilitado, e-mail de confirmação
+- [ ] Decidir: **desligar o cadastro público** (contas por convite) ou manter com CAPTCHA (Cloudflare Turnstile)
+- [ ] Configurar SMTP próprio (o e-mail padrão do Supabase tem limite baixo)
+- [ ] Depois que todos os admins ativarem o 2FA: ligar `exigir_mfa_admin` em Configurações > Segurança
+- [ ] Conferir em Configurações > Segurança > *Verificação das proteções* que o Cloudflare publicou a CSP
+- [ ] Rodar o *Security Advisor* do Supabase (Database › Advisors)
 
 ## 3. Aviso por e-mail (opcional, mas recomendado)
 
