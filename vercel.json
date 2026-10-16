@@ -1,8 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "//": "Deploy APENAS da demonstração do VemaxCALL (/call/ + shared/). O site e o portal continuam no Cloudflare Workers, com o _headers de lá. Este arquivo existe porque o _headers é específico do Cloudflare e NÃO vale no Vercel: sem ele, o deploy iria ao ar sem nenhum cabeçalho de segurança.",
-  "cleanUrls": false,
-  "trailingSlash": true,
   "redirects": [
     { "source": "/", "destination": "/call/", "permanent": false }
   ],
