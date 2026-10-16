@@ -31,6 +31,7 @@ const sep = path.sep;
 const js = [
   ...listar(path.join(RAIZ, 'app'), (p) => p.endsWith('.js')),
   ...listar(path.join(RAIZ, 'shared/js'), (p) => p.endsWith('.js')),
+  ...listar(path.join(RAIZ, 'call'), (p) => p.endsWith('.js')),
   ...listar(path.join(RAIZ, 'assets'), (p) => p.endsWith('.js')),
   ...listar(path.join(RAIZ, 'tests'), (p) => p.endsWith('.js') || p.endsWith('.mjs')),
   ...listar(path.join(RAIZ, 'scripts'), (p) => p.endsWith('.mjs')),
@@ -41,24 +42,28 @@ for (const f of js) {
 }
 
 // 2) imports relativos (portal e módulos compartilhados: é o que quebra ao mover arquivo de pasta)
-for (const f of js.filter((x) => x.includes(`${sep}app${sep}`) || x.includes(`${sep}shared${sep}`))) {
+for (const f of js.filter((x) => ['app', 'call', 'shared'].some((a) => x.includes(`${sep}${a}${sep}`)))) {
   const src = readFileSync(f, 'utf8');
   for (const m of src.matchAll(/(?:import|export)[^'"]*?from\s+['"](\.{1,2}\/[^'"]+)['"]/g)) {
     if (!existsSync(path.resolve(path.dirname(f), m[1]))) falha(`Import quebrado em ${rel(f)}: ${m[1]}`);
   }
 }
 
-// 3) páginas do portal: cada uma chama boot.js com módulo e função que existem
-const paginas = listar(path.join(RAIZ, 'app'), (p) => p.endsWith('.html'));
+// 3) páginas das áreas internas (portal e VemaxCALL): cada uma chama boot.js com módulo e função que existem
+const AREAS = ['app', 'call'].filter((a) => existsSync(path.join(RAIZ, a)));
 const reBoot = /<script type="module" src="[^"]*js\/boot\.js" data-modulo="([a-z]+)" data-fn="(\w+)"><\/script>/;
-for (const f of paginas) {
-  const src = readFileSync(f, 'utf8');
-  const m = reBoot.exec(src);
-  if (!m) { if (!f.includes(`${sep}login${sep}`)) falha(`Página sem boot.js: ${rel(f)}`); continue; }
-  const alvo = path.join(RAIZ, 'app/js/modules', m[1] + '.js');
-  if (!existsSync(alvo)) { falha(`Página ${rel(f)} aponta para módulo inexistente: ${m[1]}`); continue; }
-  if (!new RegExp(`export\\s+(?:const|async function|function)\\s+${m[2]}\\b`).test(readFileSync(alvo, 'utf8'))) falha(`Página ${rel(f)}: o módulo ${m[1]} não exporta ${m[2]}`);
-  if (!/name="robots" content="noindex/.test(src)) falha(`Página sem noindex: ${rel(f)}`);
+let nPaginas = 0;
+for (const area of AREAS) {
+  for (const f of listar(path.join(RAIZ, area), (p) => p.endsWith('.html'))) {
+    nPaginas++;
+    const src = readFileSync(f, 'utf8');
+    const m = reBoot.exec(src);
+    if (!m) { if (!f.includes(`${sep}login${sep}`)) falha(`Página sem boot.js: ${rel(f)}`); continue; }
+    const alvo = path.join(RAIZ, area, 'js/modules', m[1] + '.js');
+    if (!existsSync(alvo)) { falha(`Página ${rel(f)} aponta para módulo inexistente: ${m[1]}`); continue; }
+    if (!new RegExp(`export\\s+(?:const|async function|function)\\s+${m[2]}\\b`).test(readFileSync(alvo, 'utf8'))) falha(`Página ${rel(f)}: o módulo ${m[1]} não exporta ${m[2]}`);
+    if (!/name="robots" content="noindex/.test(src)) falha(`Página sem noindex: ${rel(f)}`);
+  }
 }
 
 // 4) segurança
@@ -79,23 +84,26 @@ if (/script-src[^;]*'unsafe-(inline|eval)'/.test(hdr)) falha("_headers permite '
 // 4c) supabase-js com versão exata
 const sup = readFileSync(path.join(RAIZ, 'app/js/supabase.js'), 'utf8');
 if (!/supabase-js@\d+\.\d+\.\d+\//.test(sup)) falha('supabase-js deve ter versão exata no import (ex.: @2.117.3), nunca @2');
-// 4d) código do navegador
-for (const f of js.filter((x) => x.includes(`${sep}app${sep}`) || x.includes(`${sep}assets${sep}`))) {
+// 4d) código do navegador (todas as áreas, inclusive os módulos compartilhados)
+// innerHTML só é aceito a partir do mapa de ícones, que é conteúdo fixo no código (ICONS[...] / icons[...]).
+const iconeEstatico = (rhs) => /^(ICONS|icons)\[/.test(rhs.trim());
+for (const f of js.filter((x) => ['app', 'call', 'shared', 'assets'].some((a) => x.includes(`${sep}${a}${sep}`)))) {
   const src = readFileSync(f, 'utf8');
   const semComentarios = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
   if (/\beval\s*\(|new\s+Function\s*\(/.test(semComentarios)) falha(`eval/new Function em ${rel(f)}`);
   if (/service_role/.test(semComentarios)) falha(`Referência a service_role em código do navegador: ${rel(f)}`);
-  const dinamico = [...semComentarios.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].filter((m) => !/^ICONS\[/.test(m[1].trim()));
+  const dinamico = [...semComentarios.matchAll(/\.innerHTML\s*=\s*([^;\n]+)/g)].filter((m) => !iconeEstatico(m[1]));
   if (dinamico.length) falha(`innerHTML com valor dinâmico em ${rel(f)}: ${dinamico[0][1].slice(0, 60)}`);
 }
 
-// 5) menu
-const ui = readFileSync(path.join(RAIZ, 'app/js/ui.js'), 'utf8');
-const nav = ui.slice(ui.indexOf('const NAV = ['), ui.indexOf('];', ui.indexOf('const NAV = [')));
-for (const m of nav.matchAll(/\[\s*'([^']*)'\s*,\s*'[^']+'\s*,\s*'(\w+)'/g)) {
-  const destino = path.join(RAIZ, 'app', m[1], 'index.html');
-  if (!existsSync(destino)) falha(`Menu aponta para página inexistente: ${m[1]}`);
-  if (!new RegExp(`\\b${m[2]}:\\s*'<`).test(ui)) falha(`Ícone do menu não definido: ${m[2]}`);
+// 5) menu de cada área: todo item aponta para uma página que existe e usa um ícone definido
+for (const area of AREAS) {
+  const ui = readFileSync(path.join(RAIZ, area, 'js/ui.js'), 'utf8');
+  const nav = ui.slice(ui.indexOf('const NAV = ['), ui.indexOf('];', ui.indexOf('const NAV = [')));
+  for (const m of nav.matchAll(/\[\s*'([^']*)'\s*,\s*'[^']+'\s*,\s*'(\w+)'/g)) {
+    if (!existsSync(path.join(RAIZ, area, m[1], 'index.html'))) falha(`Menu de ${area} aponta para página inexistente: ${m[1]}`);
+    if (!new RegExp(`\\b${m[2]}:\\s*'<`).test(ui)) falha(`Ícone do menu de ${area} não definido: ${m[2]}`);
+  }
 }
 
 // 6) migrations
@@ -103,4 +111,4 @@ const migr = readdirSync(path.join(RAIZ, 'supabase/migrations')).filter((n) => n
 migr.forEach((n, i) => { if (!n.startsWith(String(i + 1).padStart(3, '0') + '_')) falha(`Migrations fora de sequência: esperado ${String(i + 1).padStart(3, '0')}_, achei ${n}`); });
 
 if (erros.length) { console.error(`✗ ${erros.length} problema(s):\n\n` + erros.join('\n\n')); process.exit(1); }
-console.log(`✓ ${js.length} arquivos JS com sintaxe válida, ${paginas.length} páginas do portal, ${htmls.length} páginas HTML sem script embutido, CSP presente, ${migr.length} migrations em sequência.`);
+console.log(`✓ ${js.length} arquivos JS com sintaxe válida, ${nPaginas} páginas de área interna (${AREAS.join(' + ')}), ${htmls.length} páginas HTML sem script embutido, CSP presente, ${migr.length} migrations em sequência.`);

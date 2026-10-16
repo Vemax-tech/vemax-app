@@ -131,7 +131,8 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | Formulário de contato (grava lead + WhatsApp/e-mail) | ✅ entregue | `assets/js/script.js`, tabela `contatos_site` |
 | Anti-spam do formulário (honeypot, tempo mínimo, intervalo e teto no banco) | ✅ entregue | `spammy()` em `assets/js/script.js`, `007_contato_antispam.sql` |
 | Política de privacidade do site | 🚧 modelo | `privacidade.html` (tem campos `[entre colchetes]` a preencher) |
-| `robots.txt` bloqueando `/app/` | ✅ entregue | `robots.txt` |
+| `robots.txt` bloqueando `/app/` e `/call/` | ✅ entregue | `robots.txt` |
+| **VemaxCALL** (3ª área): dois fluxos, máquina de estados de 6 eixos, filas por papel, prontuários, documentos com versão, entregas e matriz de permissões | 🎬 demonstração | `call/` — dados fictícios em memória; especificação em [`docs/vemaxcall/`](docs/vemaxcall/README.md), roteiro de apresentação em [`13-roteiro-apresentacao.md`](docs/vemaxcall/13-roteiro-apresentacao.md) |
 | Portfólio dinâmico no site | ✅ entregue | `assets/js/portfolio.js`, `portfolio/caso.html`, `006_portfolio.sql` |
 | Login, recuperação de senha, mostrar/ocultar senha, indicador de força | ✅ entregue | `app/js/login.js`, `app/login/index.html` |
 | Cadastro com aprovação do administrador | ✅ entregue | `005_cadastro_aprovacao.sql`, `app/js/modules/equipe.js` |
@@ -234,6 +235,10 @@ sequenceDiagram
 │   │   (clientes/ficha.html e projetos/detalhe.html são as fichas)
 │   ├── css/app.css
 │   └── js/                 # só o que é do portal: auth.js, supabase.js, ui.js, core.js, lib.js, login.js, config.js, modules/
+├── call/                   # VemaxCALL — demonstração funcional (dados fictícios em memória, sem backend)
+│   ├── solicitacoes/ filas/ prontuarios/ registros/ relatorios/ permissoes/
+│   ├── css/call.css        # só o que é específico; o resto vem de shared/ e app/css/
+│   └── js/                 # dados.js (a trocar pelo banco), fluxo.js, permissoes.js, papel.js, ui.js, modules/
 ├── supabase/
 │   ├── migrations/         # 001 a 013: tabelas, RLS, triggers, buckets, anti-spam, ágil, área interna, contratos
 │   └── functions/notificar-contato/   # Edge Function (Deno)

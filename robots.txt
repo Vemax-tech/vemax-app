@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /app/
+Disallow: /call/
 
 # Quando o domínio estiver definido, adicione:
 # Sitemap: https://SEU-DOMINIO/sitemap.xml
