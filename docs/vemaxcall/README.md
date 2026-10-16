@@ -74,7 +74,7 @@ Data: **16/10/2026** · Auditoria sobre o commit `019a8f9` (branch `feat/seguran
 ## O que esta descoberta NÃO fez
 
 - **Não implementou nada.** Nenhuma migration, nenhuma tela, nenhuma dependência instalada.
-- **Não alterou o site nem o portal.** A única mudança proposta no código existente é a extração de `shared/js/` (item A1 do backlog), ainda não feita.
+- **Não alterou o site nem o portal**, com uma exceção já executada: a extração de `shared/js/` (itens A1 e A7 do backlog), na branch `refactor/shared-js`, commit `76329a7`. Ela não muda nenhuma regra e não depende de nenhuma resposta pendente; serve ao portal tanto quanto ao VemaxCALL. Detalhes em `07-modelo-dados.md`, 7.1.
 - **Não verificou a fidelidade aos fluxogramas originais** — eles não estão no repositório. Ver `03-fluxos.md`, seção 3.0. **Este é o primeiro item a resolver.**
 - **Não decidiu nada que dependa do negócio.** As 20 perguntas de `12` estão abertas.
 - **Não leu dado pessoal de produção.** A inspeção do Supabase se limitou a nomes de tabela, contagem de linhas e alertas de segurança.

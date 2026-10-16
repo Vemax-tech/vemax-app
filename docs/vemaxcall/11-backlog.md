@@ -2,7 +2,7 @@
 
 ## 11.0 Antes de começar — bloqueios reais
 
-Nada da Fase A deve começar antes destes quatro itens:
+Nada da Fase A deve começar antes destes quatro itens — **com uma exceção**: os itens **A1 e A7** (extração de `shared/js/` e parametrização do harness de teste) não dependem de nenhuma resposta, servem ao portal tanto quanto ao VemaxCALL e **já foram executados**.
 
 | # | Bloqueio | Por quê |
 |---|---|---|
@@ -32,13 +32,13 @@ Regra do pedido, respeitada: **concluir e validar cada fase antes de expandir**.
 
 | # | Entrega | Depende de | Observação |
 |---|---|---|---|
-| A1 | **Extrair `shared/js/`** (`ui.js`, `core.js`, `validacao.js`, `sessao.js`) e apontar o portal para lá | — | **commit isolado**; testes do portal passando antes e depois; `git revert` é a reversão |
+| A1 | ✅ **feito** — `shared/js/` com `dom.js`, `tabela.js`, `formato.js`, `validacao.js` e `sessao.js`; portal apontado para lá | — | commit `76329a7` (branch `refactor/shared-js`), isolado. Detalhes em `07-modelo-dados.md`, 7.1 |
 | A2 | Projeto Supabase do VemaxCALL criado, região e backup configurados | B3 | ligar leaked password protection e MFA |
 | A3 | Migration `call_001`: empresas, profiles, papéis, matriz de permissão, `can_call()`, `mfa_ok_call()` | A2, B4 | RLS padrão negar em tudo |
 | A4 | Migration `call_002`: pacientes, prontuários, movimentos, solicitações, tarefas, eventos + índices | A3 | ADR-004 |
 | A5 | Migration `call_003`: `call_transicoes_validas` + `mover_solicitacao()` + `mover_prontuario()` + `pode_concluir()` | A4 | TDD: testes antes |
 | A6 | Migration `call_004`: auditoria de mudança e de **leitura** | A4 | `call_auditoria` |
-| A7 | `banco.mjs` parametrizado por pasta de migrations | A1 | habilita todos os testes seguintes |
+| A7 | ✅ **feito** — `banco.mjs` aceita `{ migracoes }` (relativa à raiz ou absoluta) | A1 | commit `76329a7`. Habilita todos os testes seguintes com o harness PGlite |
 | A8 | **`call-sql-permissoes.mjs`**: matriz completa papel × transição | A5, A7 | gate de qualidade da fase |
 | A9 | **`call-sql-estados.mjs`**: T01–T16, C01–C10, válidas e inválidas | A5, A7 | idem |
 | A10 | `call/login/` + `call/js/auth.js` (sessão 15 min / 8 h, 2FA obrigatório) | A3 | padrão de `app/js/auth.js` |

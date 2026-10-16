@@ -41,8 +41,9 @@ flowchart TB
 | Do portal | Como entra no VemaxCALL |
 |---|---|
 | `shared/tokens.css` | **importado como está.** Identidade visual idêntica, zero duplicação |
-| `app/js/ui.js` — `h()`, `modal()`, `formModal()`, `toast()`, `run()`, `pageHead()`, `tabs()`, `empty()` | **extrair para `shared/js/ui.js`** e passar os dois a consumir. O `NAV` e o `start()` ficam específicos de cada área |
-| `app/js/core.js` — `dataTable()`, `kanban()`, `filtros()`, `timeline()`, `badge()` | mesma extração. `timeline()` precisa de parâmetro de tabela (hoje é fixa em `interacoes`) |
+| `shared/js/dom.js` — `h()`, `modal()`, `formModal()`, `toast()`, `pageHead()`, `tabs()`, `empty()`, `fmtDate()`, `linkSeguro()` | **✅ já extraído** de `app/js/ui.js`. `NAV`, `start()` e o conjunto de ícones ficaram no portal; `criarIcon()` e `criarRun()` recebem por parâmetro o que é de cada área |
+| `shared/js/tabela.js` — `dataTable()`, `kanban()`, `filtros()`, `badge()`, `sec()`, `baixarCsv()` | **✅ já extraído** de `app/js/core.js`. `timeline()` **ficou no portal**: conhece a tabela `interacoes`; o VemaxCALL terá a própria, sobre `call_solicitacao_eventos` |
+| `shared/js/formato.js` — datas, dinheiro, parcelamento, normalização de texto | **✅ já extraído** de `app/js/lib.js`, que ficou só com status calculados e alertas |
 | `app/js/validacao.js` | **importado como está.** Já é puro e testado |
 | `app/js/boot.js` | padrão copiado (`data-modulo`/`data-fn`): mantém a CSP sem `unsafe-inline` |
 | `app/js/sessao.js` | importado; o VemaxCALL passa limites próprios (15 min / 8 h) |
@@ -50,7 +51,15 @@ flowchart TB
 | `tests/integration/banco.mjs` | parametrizar a pasta de migrations; o resto serve inteiro |
 | `scripts/verificar.mjs` | estender a varredura para `call/` |
 
-**[RECOMENDAÇÃO]** A extração para `shared/js/` é a única mudança que toca o portal existente. É mecânica (mover arquivo + ajustar import), coberta por `telas.mjs`, e evita a pior alternativa: duas cópias de `ui.js` divergindo com o tempo. **Fazer isso como primeiro commit da Fase A, isolado, com os testes do portal passando antes e depois.**
+**[FATO] A extração foi feita** — item A1 do backlog, commit `76329a7` na branch `refactor/shared-js`, isolado e revertível. É a única mudança que toca o portal existente. Resultado: `shared/js/` com `dom.js`, `tabela.js`, `formato.js`, `validacao.js` e `sessao.js`; `app/js/ui.js`, `core.js` e `lib.js` ficaram só com o que é do portal e reexportam o compartilhado, então **nenhum dos 20 arquivos de `app/js/modules/` precisou mudar**.
+
+Três pontos não eram movimentação mecânica e foram resolvidos assim:
+
+| Ponto | Solução |
+|---|---|
+| `run()` dependia de `mensagemErro` (genérico) e de `evento()` do `auth.js` (do portal) | `criarRun(onNegado)` no compartilhado; cada área injeta o seu registro de acesso negado |
+| `icon()` tinha o conjunto de ícones embutido, e `empty()` usava `icon('logo')` | `criarIcon(icons)` recebe o conjunto; `empty(msg, ico)` recebe o nó de ícone |
+| `iniciarSessao()` usava as constantes do módulo na contagem regressiva, e a chave de inatividade no `localStorage` era fixa | passou a aceitar `limiteMs`, `avisoMs` e `chave`, com os valores do portal como padrão. Como as duas áreas ficam no **mesmo domínio**, o `localStorage` é compartilhado e a chave separada é necessária |
 
 ## 7.2 Modelo de domínio
 
@@ -144,9 +153,11 @@ create index on call_prontuarios (empresa_id, local) where local <> 'arquivo';  
 
 A única mudança no existente é a extração de `shared/js/`, que é **código, não dado**:
 
-| Risco | Mitigação | Reversão |
+| Risco | Mitigação | Verificado |
 |---|---|---|
-| Import quebrado no portal | `npm run check` verifica todo import relativo; `telas.mjs` renderiza as 21 telas | `git revert` do commit de extração — é um commit só |
-| Divergência de comportamento | nenhuma linha de lógica muda; só o caminho do arquivo | idem |
+| Import quebrado no portal | `npm run check` confere todo import relativo (e passou a cobrir `shared/js`) | ✅ 56 arquivos JS, zero import quebrado |
+| Tela que deixa de renderizar | `telas.mjs` renderiza as 21 telas em jsdom e falha em qualquer `console.error` | ✅ `console.error: 0`; segue 1 falha pré-existente, a mesma de antes |
+| Divergência de comportamento | nenhuma regra mudou; os parâmetros novos de sessão têm o valor atual como padrão | ✅ `npm test` 32/32; as duas suítes de SQL passam |
+| Reversão | o commit é um só e isolado | `git revert 76329a7` |
 
 **Plano de reversão geral do VemaxCALL:** como nada existente é alterado, desligar o módulo é remover a linha de `NAV`/rota e parar de servir `/call/`. As tabelas `call_*` ficam intactas (ou o projeto Supabase separado é pausado). Nenhum efeito sobre site ou portal.
