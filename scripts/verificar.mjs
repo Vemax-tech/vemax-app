@@ -30,6 +30,7 @@ const sep = path.sep;
 // 1) sintaxe
 const js = [
   ...listar(path.join(RAIZ, 'app'), (p) => p.endsWith('.js')),
+  ...listar(path.join(RAIZ, 'shared/js'), (p) => p.endsWith('.js')),
   ...listar(path.join(RAIZ, 'assets'), (p) => p.endsWith('.js')),
   ...listar(path.join(RAIZ, 'tests'), (p) => p.endsWith('.js') || p.endsWith('.mjs')),
   ...listar(path.join(RAIZ, 'scripts'), (p) => p.endsWith('.mjs')),
@@ -39,8 +40,8 @@ for (const f of js) {
   if (r.status !== 0) falha(`Sintaxe: ${rel(f)}\n${r.stderr.split('\n').slice(0, 4).join('\n')}`);
 }
 
-// 2) imports relativos
-for (const f of js.filter((x) => x.includes(`${sep}app${sep}`))) {
+// 2) imports relativos (portal e módulos compartilhados: é o que quebra ao mover arquivo de pasta)
+for (const f of js.filter((x) => x.includes(`${sep}app${sep}`) || x.includes(`${sep}shared${sep}`))) {
   const src = readFileSync(f, 'utf8');
   for (const m of src.matchAll(/(?:import|export)[^'"]*?from\s+['"](\.{1,2}\/[^'"]+)['"]/g)) {
     if (!existsSync(path.resolve(path.dirname(f), m[1]))) falha(`Import quebrado em ${rel(f)}: ${m[1]}`);

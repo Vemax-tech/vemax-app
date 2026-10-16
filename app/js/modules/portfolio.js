@@ -1,6 +1,6 @@
 // Portfólio: cases exibidos no site institucional (publicar/ocultar, imagem, etapas, depoimento)
 import { sb } from '../supabase.js';
-import { validarArquivo, mensagemErro } from '../validacao.js';
+import { validarArquivo, mensagemErro } from '../../../shared/js/validacao.js';
 import { start, h, run, pageHead, empty, modal, confirmDlg, toast, fmtDate } from '../ui.js';
 
 const BUCKET = 'portfolio';

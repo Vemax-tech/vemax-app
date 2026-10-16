@@ -3,7 +3,7 @@ import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, dataTable, filtros, contem, loadBase, loadClientes, clienteOpts, lixeira, quiet, timeline, registrarMudancas } from '../core.js';
 import { converterLead } from './clientes.js';
-import { mensagemErro } from '../validacao.js';
+import { mensagemErro } from '../../../shared/js/validacao.js';
 import { start, h, run, toast, modal, formModal, confirmDlg, pageHead, empty, fmtDate, copyText, qs } from '../ui.js';
 
 const KIND = { rascunho: 'dim', enviada: '', aceita: 'ok', recusada: 'warn', vencida: 'warn' };

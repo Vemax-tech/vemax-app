@@ -7,7 +7,7 @@ import { novaTarefa, editarTarefa, moverTarefa } from './tarefas.js';
 import { gerarCobrancas, registrarPagamento, formDespesa } from './financeiro.js';
 import { openAcompanhamento } from './acompanhamento.js';
 import { fichaHref } from './clientes.js';
-import { validarArquivo, mensagemErro } from '../validacao.js';
+import { validarArquivo, mensagemErro } from '../../../shared/js/validacao.js';
 import { start, h, run, pageHead, formModal, confirmDlg, modal, fmtDate, toast, qs } from '../ui.js';
 
 const BUCKET = 'projetos';

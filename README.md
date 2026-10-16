@@ -157,7 +157,7 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | E-mail ao chegar contato novo | 🚧 código pronto | `supabase/functions/notificar-contato/index.ts` (precisa ser implantada no Supabase) |
 | Relatório, planilha e pacote Power BI de nichos | ✅ entregue | `research/` (o `.pbix` não foi gerado) |
 | Verificação de links dos `.md` e dos SVGs (GitHub Actions) | ✅ entregue | `.github/workflows/qualidade.yml` |
-| Segurança: CSP e cabeçalhos, sessão com prazo e revogação, 2FA, log de eventos, validações no servidor | ✅ entregue | `_headers`, `014_seguranca.sql`, `app/js/sessao.js`, `app/js/validacao.js` |
+| Segurança: CSP e cabeçalhos, sessão com prazo e revogação, 2FA, log de eventos, validações no servidor | ✅ entregue | `_headers`, `014_seguranca.sql`, `shared/js/sessao.js`, `shared/js/validacao.js` |
 | Testes automatizados (unitários, banco real em memória e telas simuladas) e verificação estática | ✅ entregue | `tests/`, `scripts/verificar.mjs`, `.github/workflows/testes.yml` |
 | Dados de contato do site (WhatsApp, e-mail, cidade, Instagram) | ✅ entregue | `assets/js/config.js`, rodapé do `index.html` |
 
@@ -224,14 +224,16 @@ sequenceDiagram
 │   ├── css/styles.css      # estilos do site
 │   └── js/                 # config.js (contato/Supabase), script.js, portfolio.js
 ├── portfolio/caso.html     # página de um case (?c=<slug>)
-├── shared/tokens.css       # design tokens usados pelo site e pelo portal
+├── shared/
+│   ├── tokens.css          # design tokens usados pelo site e pelo portal
+│   └── js/                 # genéricos de qualquer área: dom.js, tabela.js, formato.js, validacao.js, sessao.js
 ├── app/                    # portal interno
 │   ├── login/              # login, cadastro e redefinição de senha
 │   ├── contatos/ propostas/ clientes/ projetos/ tarefas/ suporte/ financeiro/   # operação
 │   ├── mercado/ conhecimento/ portfolio/ equipe/ configuracoes/
 │   │   (clientes/ficha.html e projetos/detalhe.html são as fichas)
 │   ├── css/app.css
-│   └── js/                 # auth.js, supabase.js, ui.js, core.js, lib.js, login.js, config.js, modules/
+│   └── js/                 # só o que é do portal: auth.js, supabase.js, ui.js, core.js, lib.js, login.js, config.js, modules/
 ├── supabase/
 │   ├── migrations/         # 001 a 013: tabelas, RLS, triggers, buckets, anti-spam, ágil, área interna, contratos
 │   └── functions/notificar-contato/   # Edge Function (Deno)
@@ -254,7 +256,8 @@ sequenceDiagram
 - **Interface (`app/js/ui.js`)**: `start()` monta a barra lateral conforme as permissões, mostra o selo de cadastros pendentes ao admin e traz modais, formulários e `run()` (mensagem amigável para erro `42501`).
 - **Login (`app/js/login.js`)**: erro genérico "E-mail ou senha incorretos.", mínimo de 10 caracteres, redefinição de senha por e-mail e tratamento dos códigos `signup_disabled` e `over_email_send_rate_limit`.
 - **Módulos (`app/js/modules/`)**: `painel`, `contatos` (leads), `propostas`, `clientes`, `projetos`, `projeto`, `tarefas`, `suporte`, `financeiro`, `configuracoes`, `equipe`, `acompanhamento` (link do cliente), `mercado`, `nichos`, `nicho`, `pesquisa`, `conhecimento`, `portfolio`.
-- **Regras e peças compartilhadas**: `app/js/lib.js` (regras puras, testadas) e `app/js/core.js` (tabela ordenável e paginada, Kanban, linha do tempo, lixeira, filtros).
+- **Peças compartilhadas (`shared/js/`)**: o que não é de nenhuma área específica, pronto para o site, o portal e os próximos módulos — `dom.js` (criação segura de DOM, modal, formulário, toast), `tabela.js` (tabela ordenável e paginada, Kanban, filtros, CSV), `formato.js` (datas, dinheiro, parcelamento, normalização de texto), `validacao.js` e `sessao.js`. Os ícones e o registro de acesso negado entram por parâmetro (`criarIcon`, `criarRun`), para cada área manter os seus.
+- **Regras do portal**: `app/js/lib.js` (status calculados, alertas de lead, consumo de projeto — reexporta `shared/js/formato.js`) e `app/js/core.js` (dados de apoio, linha do tempo, lixeira — reexporta `shared/js/tabela.js`).
 - **Projetos ágil (`app/js/modules/projetos.js`)**:
   - Limite de WIP por coluna (`openWip`, tabela `projeto_wip`): a coluna fica destacada acima do limite. É só um aviso, não bloqueia.
   - Bloqueio com motivo (`block()`, campos `bloqueado` e `motivo_bloqueio`).

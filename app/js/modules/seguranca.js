@@ -2,7 +2,7 @@
 import { sb, clienteTemporario } from '../supabase.js';
 import { badge, quiet } from '../core.js';
 import { evento } from '../auth.js';
-import { avaliarSenha } from '../validacao.js';
+import { avaliarSenha } from '../../../shared/js/validacao.js';
 import { h, run, empty, confirmDlg, toast } from '../ui.js';
 
 export const TIPOS_EVENTO = {

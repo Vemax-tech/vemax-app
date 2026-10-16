@@ -2,7 +2,7 @@
 import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, dataTable, filtros, contem, loadBase, lixeira, linkSeguro, timeline, quiet } from '../core.js';
-import { escaparLike, mensagemErro } from '../validacao.js';
+import { escaparLike, mensagemErro } from '../../../shared/js/validacao.js';
 import { start, h, run, toast, modal, formModal, confirmDlg, pageHead, empty, fmtDate, qs, contactHref } from '../ui.js';
 
 const FICHA = new URL('./ficha.html', new URL('../../clientes/', import.meta.url)).href;
