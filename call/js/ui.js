@@ -86,7 +86,9 @@ export async function start(key, title, render) {
         h('a', { class: 'navi' + (p === key ? ' on' : ''), href: ROOT + p, 'aria-current': p === key ? 'page' : null }, icon(ic), l)]),
     h('div', { class: 'spacer' }));
   seletorPapel(side);
-  side.append(h('a', { class: 'small muted', href: '../app/', style: 'padding:10px 12px' }, '← Portal da Vemax'));
+  // Sem link para /app/: a demonstração é publicada sozinha, e link quebrado na frente do cliente é pior
+  // do que link ausente. No deploy completo, o portal fica em /app/.
+  side.append(h('p', { class: 'small muted', style: 'padding:10px 12px' }, 'Terceira área do sistema Vemax, ao lado do site e do portal interno.'));
 
   const view = h('main', { class: 'content', id: 'view' });
   const top = h('div', { class: 'topbar' },

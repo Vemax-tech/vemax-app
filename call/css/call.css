@@ -1,8 +1,6 @@
 /* VemaxCALL — só o que é específico desta área.
-   O resto vem de ../../shared/tokens.css e de ../../app/css/app.css, que o portal já usa:
-   a identidade visual é a mesma, sem duplicar CSS.
-   Nota: extrair o app.css para shared/css/ é o equivalente, para estilo, do que foi feito com
-   shared/js/ (item A1). Fica como próximo passo para não misturar duas mudanças numa só. */
+   O resto vem de ../../shared/tokens.css e ../../shared/css/base.css, que o portal também usa:
+   a identidade visual é a mesma, sem duplicar CSS e sem o /call/ depender do /app/. */
 
 /* Faixa de demonstração: fixa no topo, impossível de confundir com produção */
 .demo-bar {

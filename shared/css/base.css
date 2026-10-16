@@ -1,4 +1,4 @@
-/* Vemax — portal interno. Tokens vêm de ../../shared/tokens.css */
+/* Base de estilo compartilhada pelas áreas internas (portal /app/ e VemaxCALL /call/). Tokens vêm de ../tokens.css */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; font-family: var(--font); font-size: 15px; line-height: 1.6; color: var(--muted); background: var(--bg-2); min-height: 100vh; }

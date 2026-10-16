@@ -1,0 +1,38 @@
+# O deploy no Vercel publica SÓ a demonstração do VemaxCALL (/call/ + shared/).
+# O site institucional e o portal interno continuam no Cloudflare Workers.
+#
+# Motivo de não subir o /app/ aqui: ele fala com o Supabase de produção. Publicá-lo num segundo
+# endereço criaria outra porta de entrada para o portal real, fora das Redirect URLs configuradas
+# no Supabase Auth — mais superfície e mais confusão sobre qual endereço é o oficial, sem ganho.
+
+# código e dados que nunca são servidos
+.github
+.git
+node_modules
+tests
+scripts
+supabase
+research
+to-do
+docs
+*.md
+package.json
+package-lock.json
+bun.lock
+bun.lockb
+
+# configuração de outra hospedagem
+wrangler.jsonc
+_headers
+.assetsignore
+
+# site institucional e portal: ficam no Cloudflare
+app
+assets
+portfolio
+index.html
+privacidade.html
+proposta.html
+acompanhar.html
+avaliar.html
+robots.txt
