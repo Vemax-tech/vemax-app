@@ -1,6 +1,23 @@
 # 13. Roteiro de apresentação da demonstração
 
-Como abrir: `npx serve .` na raiz do projeto, depois `http://localhost:3000/call/`.
+## Como abrir
+
+**No seu computador:** `npx serve .` na raiz do projeto, depois `http://localhost:3000/call/`.
+
+**Publicado (Cloudflare Workers, onde o site já está):** o `/call/` já é servido pela configuração que existe — `assets.directory` do `wrangler.jsonc` é a raiz do repositório, o `.assetsignore` não exclui `call/` nem `shared/`, e o `_headers` já tem o bloco `/call/*`. Não precisa de projeto novo nem de configuração nova.
+
+| Objetivo | Comando | Resultado |
+|---|---|---|
+| **Endereço só para a apresentação**, sem tocar no site em produção | `npx wrangler@latest versions upload` | URL de versão (preview) própria, com a demo |
+| Publicar junto com o site, depois de aprovar | merge na `main` e `npx wrangler@latest deploy` | `…/call/` no endereço oficial |
+
+A primeira vez pede `npx wrangler@latest login` (abre o navegador).
+
+Se o Worker estiver conectado ao GitHub (Workers Builds), o push da branch `feat/vemaxcall-demo` **já deve ter gerado um preview** — confira em Cloudflare → Workers & Pages → vemax-app → Deployments antes de rodar qualquer comando.
+
+> **Não publique no Vercel.** Não por não funcionar, mas porque o `_headers` é específico do Cloudflare: lá a demo subiria sem nenhum cabeçalho de segurança, e manter dois arquivos de cabeçalho é garantia de um ficar desatualizado. Como o site já está no Cloudflare, é um lugar só.
+
+---
 
 Não precisa de login, de internet nem de banco. Os dados vivem em memória: o botão **Reiniciar dados** na faixa amarela devolve tudo ao estado inicial, então dá para apresentar quantas vezes quiser sem resíduo.
 
