@@ -1,6 +1,6 @@
 // Ficha da pesquisa: dados, fontes e entregáveis (Storage privado)
 import { sb } from '../supabase.js';
-import { validarArquivo, mensagemErro } from '../validacao.js';
+import { validarArquivo, mensagemErro } from '../../../shared/js/validacao.js';
 import { start, h, run, pageHead, empty, formModal, confirmDlg, toast, fmtDate, qs, STATUS, CONF, icon } from '../ui.js';
 
 const BUCKET = 'entregaveis';

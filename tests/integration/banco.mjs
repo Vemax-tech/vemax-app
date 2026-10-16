@@ -8,7 +8,13 @@ import { fileURLToPath } from 'node:url';
 
 export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-export async function criarBanco({ ate } = {}) {
+/**
+ * Sobe o banco de teste e aplica as migrations em ordem alfabética.
+ * `migracoes` é a pasta das migrations (relativa à raiz do repositório ou absoluta) — assim um módulo novo,
+ * com o seu próprio conjunto de migrations, reusa este mesmo harness.
+ * `ate` para de aplicar depois desse nome de arquivo (serve para testar o estado antes de uma migration).
+ */
+export async function criarBanco({ ate, migracoes = 'supabase/migrations' } = {}) {
   const db = new PGlite({ extensions: { pgcrypto } });
   await db.exec(`
     create role anon nologin; create role authenticated nologin;
@@ -27,7 +33,7 @@ export async function criarBanco({ ate } = {}) {
     alter default privileges in schema public grant all on sequences to anon, authenticated;
     alter default privileges in schema public grant execute on functions to anon, authenticated, public;
   `);
-  const dir = path.join(REPO, 'supabase/migrations');
+  const dir = path.isAbsolute(migracoes) ? migracoes : path.join(REPO, migracoes);
   for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.sql')).sort()) {
     if (ate && f > ate) break;
     try { await db.exec(fs.readFileSync(path.join(dir, f), 'utf8')); } catch (e) { throw new Error(`Migration ${f} falhou: ${e.message}`); }

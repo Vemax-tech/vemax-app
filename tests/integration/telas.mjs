@@ -592,7 +592,7 @@ await run('Login: com 2FA, trocar a senha pede confirmar o código antes', '/app
 });
 
 await run('Sessão: aviso e saída por inatividade, e queda da sessão no servidor', '/app/', async () => {
-  const { iniciarSessao, LIMITE_INATIVIDADE_MS, AVISO_ANTES_MS } = await import(pathToFileURL(path.join(REPO, 'app/js/sessao.js')).href);
+  const { iniciarSessao, LIMITE_INATIVIDADE_MS, AVISO_ANTES_MS } = await import(pathToFileURL(path.join(REPO, 'shared/js/sessao.js')).href);
   const { h, modal } = await import(pathToFileURL(path.join(REPO, 'app/js/ui.js')).href);
   let t = 1_000_000; const saidas = [], foiLogin = [];
   const parar = iniciarSessao({ sb, h, modal, sair: (m) => saidas.push(m), irParaLogin: () => foiLogin.push(1), agora: () => t, tick: 15 });

@@ -1,5 +1,5 @@
 import { sb, configured } from './supabase.js';
-import { avaliarSenha, emailValido, esperaLogin } from './validacao.js';
+import { avaliarSenha, emailValido, esperaLogin } from '../../shared/js/validacao.js';
 import { evento } from './auth.js';
 
 const $ = (s) => document.querySelector(s);

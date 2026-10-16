@@ -1,5 +1,5 @@
 /* Vemax — validação do formulário público (script clássico, sem módulos).
-   Espelha app/js/validacao.js e as regras do banco (migration 014); o teste tests/site.test.js garante que continuem iguais.
+   Espelha shared/js/validacao.js e as regras do banco (migration 014); o teste tests/site.test.js garante que continuem iguais.
    É só conveniência: quem barra dado inválido de verdade é o banco. */
 (function () {
   'use strict';

@@ -1,7 +1,7 @@
 // Busca global (Ctrl+K): procura clientes, leads, propostas, projetos, tarefas e chamados de uma vez.
 // Só consulta o que a pessoa pode ver; a RLS do banco garante o resto. Recebe as dependências por parâmetro
 // para não criar import circular com ui.js.
-import { limparBusca } from './validacao.js';
+import { limparBusca } from '../../shared/js/validacao.js';
 
 export function initBusca({ sb, h, modal, icon, side, ctx, root }) {
   const btn = h('button', { class: 'navi busca-btn', type: 'button', 'aria-label': 'Buscar (Ctrl+K)' }, icon('search'), 'Buscar', h('kbd', {}, 'Ctrl K'));

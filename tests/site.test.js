@@ -4,12 +4,12 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import * as V from '../app/js/validacao.js';
+import * as V from '../shared/js/validacao.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ler = (rel) => fs.readFileSync(path.join(RAIZ, rel), 'utf8');
 
-test('validação do formulário do site (assets/js/valida.js) dá o mesmo resultado que app/js/validacao.js', () => {
+test('validação do formulário do site (assets/js/valida.js) dá o mesmo resultado que shared/js/validacao.js', () => {
   const ctx = { window: {} };
   vm.runInNewContext(ler('assets/js/valida.js'), ctx);
   const amostras = ['ana@exemplo.com', 'a.b+c@sub.dominio.com.br', 'a@b', 'a@b.c', '', '   ', '(11) 99999-8888', '+55 11 3333-4444', '11999998888', '12345', 'abc',

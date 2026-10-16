@@ -58,7 +58,7 @@ Gravidade: **Alta** = permite dano real ou facilita muito um ataque. **Média** 
 
 | Controle | Onde é aplicado | Como |
 |---|---|---|
-| Saída por **inatividade** (30 min, com aviso 2 min antes) | Navegador, vale para todas as abas abertas | `app/js/sessao.js` |
+| Saída por **inatividade** (30 min, com aviso 2 min antes) | Navegador, vale para todas as abas abertas | `shared/js/sessao.js` |
 | **Duração máxima** da sessão (12 h, configurável) | **Servidor (RLS)** | função `sessao_valida()` compara com `auth.sessions`; passou do limite, o banco recusa os dados mesmo com token ainda válido |
 | **Revogação imediata** no logout | **Servidor (RLS)** | logout, "encerrar outras sessões" ou sessão apagada: o mesmo token deixa de dar acesso aos dados na hora |
 | Conferência periódica | Navegador | a cada 5 min e ao voltar para a aba, pergunta `sessao_valida()`; se falso, sai |
@@ -100,7 +100,7 @@ Não há bloqueio permanente de conta (evita que terceiros negem acesso a algué
 
 ### 3.6 Validação de entradas
 
-Regras em um lugar só (`app/js/validacao.js`), espelhadas no banco com `CHECK ... NOT VALID` (valem para tudo o que for gravado daqui para frente, sem reprovar registros antigos):
+Regras em um lugar só (`shared/js/validacao.js`), espelhadas no banco com `CHECK ... NOT VALID` (valem para tudo o que for gravado daqui para frente, sem reprovar registros antigos):
 
 | Campo | Navegador | Servidor (banco) |
 |---|---|---|

@@ -2,7 +2,7 @@
 import { sb } from '../supabase.js';
 import * as L from '../lib.js';
 import { badge, filtros, contem, kanban, colunas, loadBase, loadClientes, clienteOpts, quiet, pedirForm, registrarMudancas } from '../core.js';
-import { mensagemErro } from '../validacao.js';
+import { mensagemErro } from '../../../shared/js/validacao.js';
 import { start, h, run, pageHead, empty, formModal, confirmDlg, modal, fmtDate, toast, icon } from '../ui.js';
 
 export const detalheHref = (id) => new URL(`../projetos/detalhe.html?id=${id}`, new URL('./', location.href)).href;
