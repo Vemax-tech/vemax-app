@@ -14,6 +14,16 @@
   Cache-Control: no-cache
   X-Robots-Tag: noindex, nofollow
 
+# O VemaxCALL é mais restrito que o portal: trata dado de saúde, então nada de cache em lugar algum.
+# A demonstração não fala com servidor nenhum (os dados são em memória), então aqui a CSP é mais
+# estrita que a do site: sem Supabase, sem jsDelivr, sem envio de formulário e sem conexão alguma.
+# Quando o VemaxCALL passar a usar banco de verdade, esta linha precisa ganhar o host do projeto.
+/call/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'; upgrade-insecure-requests
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+
 # Páginas com link privado (token na URL): não vazam o endereço por Referer, não ficam em cache e não são indexadas.
 /proposta.html
   Referrer-Policy: no-referrer

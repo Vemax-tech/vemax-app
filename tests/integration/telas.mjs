@@ -100,6 +100,13 @@ function mount(urlPath, html) {
   }
   Object.defineProperty(globalThis, 'navigator', { value: w.navigator, configurable: true, writable: true });
   w.open = () => null; w.confirm = () => true; w.print = () => {};
+  // A tela de Segurança confere os cabeçalhos com um fetch HEAD na própria página. Sem rede, o fetch
+  // real demora (e falha) de forma imprevisível, e a conferência era lida antes de terminar.
+  // Aqui ele responde na hora, com os cabeçalhos que o _headers publica.
+  globalThis.fetch = async () => ({
+    ok: true,
+    headers: { get: (n) => ({ 'content-security-policy': "default-src 'self'", 'x-content-type-options': 'nosniff' }[String(n).toLowerCase()] ?? null) },
+  });
   globalThis.URL.createObjectURL = () => 'blob:x'; globalThis.URL.revokeObjectURL = () => {};
   w.HTMLElement.prototype.scrollIntoView = () => {};
   const clickOrig = w.HTMLAnchorElement.prototype.click; w.HTMLAnchorElement.prototype.click = function () { if (this.hasAttribute('download')) { globalThis.__downloads = (globalThis.__downloads || 0) + 1; return; } return clickOrig.call(this); };
@@ -619,7 +626,8 @@ await run('Sessão: aviso e saída por inatividade, e queda da sessão no servid
 });
 
 await run('Configurações > Segurança (administrador)', '/app/configuracoes/?aba=seguranca', async () => {
-  await init('configuracoes'); 
+  await init('configuracoes');
+  await wait(80);                 // a conferência das proteções é montada por um async solto no módulo
   const t = body();
   for (const s of ['Trocar senha', 'Verificação em duas etapas (2FA)', 'Sessões', 'Política de segurança', 'Verificação das proteções', 'Eventos de segurança']) check(t.includes(s), 'seção: ' + s);
   check(t.includes('Falha de login') && t.includes('Alerta: muitas falhas de login') && t.includes('Papel alterado'), 'tabela de eventos com os tipos em português');
