@@ -112,7 +112,8 @@ Projeto pessoal, sem vínculo com disciplina ou instituição. **Site no ar:** [
 | [`docs/SEGURANCA.md`](docs/SEGURANCA.md) | **Auditoria de segurança:** o que foi encontrado e corrigido, o que falta configurar no Supabase e os riscos que restam |
 | [`docs/AREA_INTERNA.md`](docs/AREA_INTERNA.md) | **Área interna atual:** o que cada módulo faz, como usar, segurança, limitações e o que fica para depois |
 | [`docs/prompt-area-interna.md`](docs/prompt-area-interna.md) | Prompt original que descreve o portal: objetivo, autenticação, permissões e módulos |
-| [`supabase/migrations/`](supabase/migrations/) | Esquema do banco, RLS, triggers e buckets, em ordem de `001` a `012` |
+| [`docs/vemaxcall/`](docs/vemaxcall/README.md) | **VemaxCALL (em descoberta):** auditoria, especificação dos dois fluxos, máquina de estados, regras, permissões, modelo de dados, ADRs e backlog. Nada implementado ainda |
+| [`supabase/migrations/`](supabase/migrations/) | Esquema do banco, RLS, triggers e buckets, em ordem de `001` a `014` |
 | [`research/README.md`](research/README.md) | Pesquisa de mercado: entregáveis e como regenerar |
 | [`research/output/powerbi/LEIA-ME.md`](research/output/powerbi/LEIA-ME.md) | Montagem do modelo Power BI e medidas DAX |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) e [`SECURITY.md`](SECURITY.md) | Fluxo de trabalho e commits; como reportar vulnerabilidade |

@@ -4,6 +4,8 @@ Marque `[x]` conforme for concluindo. Tudo aqui depende de você: são ações n
 
 > **Estado do código:** as mudanças mais recentes (propostas, acompanhamento, avaliação, notificações, PDF, função de e-mail) podem estar **sem commit**. Veja `git status` antes de começar.
 
+> ⚠️ **Correção — 16/10/2026.** A seção 1 abaixo está **desatualizada**: as migrations `006` a `014` **já foram aplicadas** no projeto do Supabase. Verificado pela API: as 40 tabelas de `public` existem (incluindo `config_seguranca`, `seguranca_sal`, `eventos_seguranca` da `014` e `contratos` da `013`) e todas têm RLS habilitada. **Não reaplique nenhuma delas.** As demais seções continuam valendo. Detalhes em [`docs/vemaxcall/01-auditoria.md`](../docs/vemaxcall/01-auditoria.md), seção 1.4.
+
 ---
 
 ## 1. Aplicar as migrations no Supabase (obrigatório, nesta ordem)
