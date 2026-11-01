@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.x",
-    "jsdom": "26.x"
+    "jsdom": "30.x"
   }
 }
