@@ -1,7 +1,10 @@
 <a id="topo"></a>
 
 <p align="center">
-  <img src="docs/assets/vemax-logo.jpg" alt="Logo VEMAX" width="260">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/vemax-logo-horizontal-branco.svg">
+    <img src="docs/assets/brand/vemax-logo-horizontal-grafite.svg" alt="VEMAX" width="320">
+  </picture>
 </p>
 
 <p align="center">
