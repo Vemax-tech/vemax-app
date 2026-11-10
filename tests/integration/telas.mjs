@@ -377,6 +377,9 @@ await run('Financeiro', '/app/financeiro/', async () => {
   check(t.includes('Previsto no período') && t.includes('Recebido no período') && t.includes('Vencido e não pago'), 'resumo');
   check(t.includes('Atrasada'), 'cobrança atrasada marcada');
   check(t.includes('Padaria Pão Doce'), 'cobranças por cliente');
+  // A tela abre em "Este mês", e a cobrança atrasada (4 dias) e a despesa (3 dias) caem no mês anterior
+  // quando o teste roda nos primeiros dias do mês. Os últimos 30 dias cobrem os dados em qualquer data.
+  const per = document.querySelector('select[aria-label="Período"]'); per.value = '30d'; per.dispatchEvent(new dom.window.Event('change')); await wait();
   // registrar pagamento
   const linha = [...document.querySelectorAll('tbody tr')].find((r) => r.textContent.includes('Atrasada'));
   await click('Registrar pagamento', linha); await submit('Registrar pagamento');
