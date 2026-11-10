@@ -7,7 +7,7 @@
     "test": "node sql-seguranca.mjs && node sql-funcional.mjs && node telas.mjs"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.3.x",
+    "@electric-sql/pglite": "0.5.x",
     "jsdom": "31.x"
   }
 }
