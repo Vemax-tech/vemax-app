@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as L from '../app/js/lib.js';
+import * as L from '../public/app/js/lib.js';
 
 test('addDias e addMeses respeitam fim de mês e virada de ano', () => {
   assert.equal(L.addDias('2026-02-27', 3), '2026-03-02');

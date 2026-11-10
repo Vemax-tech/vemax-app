@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as V from '../shared/js/validacao.js';
+import * as V from '../public/shared/js/validacao.js';
 
 const bytes = (...v) => new Uint8Array(v);
 const pdf = bytes(0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34);

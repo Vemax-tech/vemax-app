@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { estadoInatividade, LIMITE_INATIVIDADE_MS, AVISO_ANTES_MS } from '../shared/js/sessao.js';
-import { esperaLogin, mensagemErro } from '../shared/js/validacao.js';
+import { estadoInatividade, LIMITE_INATIVIDADE_MS, AVISO_ANTES_MS } from '../public/shared/js/sessao.js';
+import { esperaLogin, mensagemErro } from '../public/shared/js/validacao.js';
 
 test('inatividade: ativo, aviso e expirou nos pontos certos', () => {
   const t0 = 1_000_000;

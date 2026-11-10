@@ -1,6 +1,6 @@
 # Área interna da Vemax (`/app/`)
 
-Painel privado da equipe para controlar oportunidades, clientes, propostas, projetos, tarefas, suporte e o financeiro básico. **Clientes não acessam esta área.** Os únicos pontos públicos são os links privados que já existiam: proposta (`proposta.html`), acompanhamento de projeto (`acompanhar.html`) e avaliação (`avaliar.html`).
+Painel privado da equipe para controlar oportunidades, clientes, propostas, projetos, tarefas, suporte e o financeiro básico. **Clientes não acessam esta área.** Os únicos pontos públicos são os links privados que já existiam: proposta (`public/proposta.html`), acompanhamento de projeto (`public/acompanhar.html`) e avaliação (`public/avaliar.html`).
 
 Tecnologia (inalterada): HTML + JavaScript com ES modules, sem build, falando direto com o Supabase. A segurança fica na **RLS do Postgres**; as checagens em JavaScript só orientam a interface.
 
@@ -53,12 +53,12 @@ Tecnologia (inalterada): HTML + JavaScript com ES modules, sem build, falando di
 
 ```powershell
 cd vemax-app
-npx serve .                 # portal em http://localhost:3000/app/
+npm run dev                 # serve public/: portal em http://localhost:3000/app/
 npm test                    # testes unitários das regras de negócio (Node, sem dependências)
 npm run check               # verificação estática: sintaxe, imports, páginas, menu, migrations
 ```
 
-Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001` … `013`. A `012_area_interna.sql` **só adiciona** tabelas, colunas e regras; não apaga dados nem tabelas. Ela depende da `008`, `010` e `011`. A `013_contratos_recorrentes.sql` (contratos) depende da `012`. Depois de aplicá-la, abra **Equipe → Permissões do papel Membro** e decida quem vê/edita Clientes, Suporte e Financeiro (padrão: Clientes só leitura, Suporte editável, Financeiro fechado).
+Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001` … `014`. A `012_area_interna.sql` **só adiciona** tabelas, colunas e regras; não apaga dados nem tabelas. Ela depende da `008`, `010` e `011`. A `013_contratos_recorrentes.sql` (contratos) depende da `012`. Depois de aplicá-la, abra **Equipe → Permissões do papel Membro** e decida quem vê/edita Clientes, Suporte e Financeiro (padrão: Clientes só leitura, Suporte editável, Financeiro fechado).
 
 ## Segurança e privacidade (decisões)
 
@@ -68,7 +68,7 @@ Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001`
 - **Notas e mensagens nunca são públicas.** As páginas públicas continuam usando funções que devolvem só campos seguros; `interacoes` (notas, decisões, mensagens ao cliente) só é lida pela equipe, módulo a módulo.
 - **Formulário público fechado.** O visitante só consegue criar um lead “limpo” (sem responsável, valor, cliente, observações internas). O teto anti-spam da `007` segue valendo.
 - **Entradas validadas** no navegador e no banco (tamanhos, formatos, valores positivos, URLs só `http/https`, método de pagamento restrito a uma lista — nunca dados de cartão).
-- **Sem segredos no código.** Só a chave pública `anon` está em `app/js/config.js`, como antes.
+- **Sem segredos no código.** Só a chave pública `anon` está em `public/app/js/config.js`, como antes.
 - **Texto de usuário** é sempre inserido como texto, nunca como HTML.
 
 ### Limitações e decisões que ficam com a equipe
@@ -96,7 +96,7 @@ Banco: no **SQL Editor** do Supabase, aplique em ordem `supabase/migrations/001`
 
 Integração oficial com WhatsApp, e-mail e calendário · portal separado para o cliente · aprovação de entregas pelo cliente · assinatura eletrônica · integrações bancárias/contábeis e nota fiscal · apontamento detalhado de horas e margem por tarefa · planejamento de capacidade da equipe · relatórios avançados e exportação para BI · automações de cobrança, acompanhamento comercial e abertura de tarefas · gestão de ativos/inventário.
 
-A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `deleted_at` e linha do tempo (`interacoes`); `opcoes` e `modelos_projeto` tornam etapas e modelos configuráveis; as regras de cálculo ficam em `app/js/lib.js`, testadas e sem dependência de tela.
+A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `deleted_at` e linha do tempo (`interacoes`); `opcoes` e `modelos_projeto` tornam etapas e modelos configuráveis; as regras de cálculo ficam em `public/app/js/lib.js`, testadas e sem dependência de tela.
 
 ## Mapa de arquivos
 
@@ -104,10 +104,10 @@ A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `delete
 |---|---|
 | `supabase/migrations/013_contratos_recorrentes.sql` | Contratos recorrentes e a função `gerar_cobrancas_recorrentes()` |
 | `supabase/migrations/012_area_interna.sql` | Clientes, funil ampliado, propostas↔clientes, projetos (escopo, entregas, equipe), tarefas, chamados, cobranças, despesas, linha do tempo, configurações, lixeira, auditoria, funções `projeto_de_proposta`, `aplicar_modelo_projeto`, `atualizar_vencimentos` |
-| `app/js/lib.js` | Regras puras: datas, dinheiro, parcelas, status calculados, alertas, duplicados, leitura de modelos |
-| `app/js/core.js` | Peças compartilhadas: tabela ordenável/paginada, Kanban, linha do tempo, lixeira, filtros, CSV |
-| `app/js/busca.js` | Busca global (Ctrl+K) |
-| `app/js/modules/` | `painel`, `contatos` (leads), `propostas`, `clientes`, `projetos`, `projeto`, `tarefas`, `suporte`, `financeiro`, `configuracoes`, `equipe`, `acompanhamento` (link do cliente) e os módulos de mercado/conhecimento/portfólio já existentes |
+| `public/app/js/lib.js` | Regras puras: datas, dinheiro, parcelas, status calculados, alertas, duplicados, leitura de modelos |
+| `public/app/js/core.js` | Peças compartilhadas: tabela ordenável/paginada, Kanban, linha do tempo, lixeira, filtros, CSV |
+| `public/app/js/busca.js` | Busca global (Ctrl+K) |
+| `public/app/js/modules/` | `painel`, `contatos` (leads), `propostas`, `clientes`, `projetos`, `projeto`, `tarefas`, `suporte`, `financeiro`, `configuracoes`, `equipe`, `acompanhamento` (link do cliente) e os módulos de mercado/conhecimento/portfólio já existentes |
 | `tests/lib.test.js` | Testes das regras de negócio |
 | `scripts/verificar.mjs` | Verificação estática (`npm run check`) |
 
@@ -117,4 +117,4 @@ A arquitetura já ajuda nisso: toda tabela de negócio tem `cliente_id`, `delete
 - `npm run check`: sintaxe de todos os `.js`, imports, páginas, menu e sequência de migrations.
 - Migrations `001`–`012` aplicadas em sequência num Postgres real (PGlite) com stubs do Supabase, e 80 verificações de triggers, RLS (anônimo, membro, administrador), duplicidade, lixeira, auditoria, funções e permissões.
 - As telas foram renderizadas e exercitadas (formulários, validações, quadros, filtros, conversões) contra um Supabase simulado em memória.
-- **Não testado:** contra o projeto Supabase real (nenhuma migration foi aplicada em produção) e em navegador real/celular. Veja `to-do/PENDENCIAS.md`.
+- **Não testado:** contra o projeto Supabase real (nenhuma migration foi aplicada em produção) e em navegador real/celular. Veja [PENDENCIAS.md](PENDENCIAS.md).

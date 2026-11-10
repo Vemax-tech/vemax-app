@@ -1,12 +1,21 @@
-# Avisa (abre Pull Request) quando uma dependência ou ação do GitHub tiver versão nova ou correção de segurança.
+# Abre Pull Request quando uma Action ou dependência tiver versão nova ou correção de segurança.
+# O site em si não tem dependências: só os testes de integração e a pesquisa de mercado têm.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message: { prefix: ci }
+
   - package-ecosystem: npm
     directory: /tests/integration
     schedule: { interval: monthly }
+    commit-message: { prefix: test }
+
   - package-ecosystem: npm
     directory: /research/scripts
     schedule: { interval: monthly }
+    commit-message: { prefix: chore }

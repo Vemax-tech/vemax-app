@@ -43,14 +43,14 @@ Gravidade: **Alta** = permite dano real ou facilita muito um ataque. **Média** 
 
 ## 3. O que foi implementado
 
-### 3.1 Cabeçalhos e CSP (site e `/app/`): arquivo `_headers`
+### 3.1 Cabeçalhos e CSP (site e `/app/`): arquivo `public/_headers`
 
-- `Content-Security-Policy`: só o próprio site, o Supabase do projeto (API e imagens), o `supabase-js` no jsDelivr e as fontes do Google. **Scripts embutidos não são permitidos** (nem `unsafe-inline` nem `unsafe-eval` em `script-src`). Para isso, todo script embutido saiu das páginas: o portal usa `app/js/boot.js` e o site, dois arquivos pequenos.
+- `Content-Security-Policy`: só o próprio site, o Supabase do projeto (API e imagens), o `supabase-js` no jsDelivr e as fontes do Google. **Scripts embutidos não são permitidos** (nem `unsafe-inline` nem `unsafe-eval` em `script-src`). Para isso, todo script embutido saiu das páginas: o portal usa `public/app/js/boot.js` e o site, dois arquivos pequenos.
 - `frame-ancestors 'none'` e `X-Frame-Options: DENY` (anti-clickjacking), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`.
 - Páginas com token na URL (`proposta`, `acompanhar`, `avaliar`): `Referrer-Policy: no-referrer`, `Cache-Control: no-store` e `X-Robots-Tag: noindex`.
 - `/app/*`: `Cache-Control: no-cache` e `noindex`.
 - `style-src` mantém `'unsafe-inline'` porque o portal monta estilos em linha. Estilo é risco bem menor que script; fica registrado como limitação.
-- **Testado em Chrome real** (CSP aplicada por um servidor local que lê o `_headers`): site, login, as 3 páginas de link privado, privacidade e portfólio, e as 12 telas do portal já logadas (com um Supabase simulado) carregam sem nenhuma violação. Uma página de teste com script embutido e script externo foi corretamente bloqueada.
+- **Testado em Chrome real** (CSP aplicada por um servidor local que lê o `public/_headers`): site, login, as 3 páginas de link privado, privacidade e portfólio, e as 12 telas do portal já logadas (com um Supabase simulado) carregam sem nenhuma violação. Uma página de teste com script embutido e script externo foi corretamente bloqueada.
 
 ### 3.2 Sessão, logout e senha
 
@@ -58,7 +58,7 @@ Gravidade: **Alta** = permite dano real ou facilita muito um ataque. **Média** 
 
 | Controle | Onde é aplicado | Como |
 |---|---|---|
-| Saída por **inatividade** (30 min, com aviso 2 min antes) | Navegador, vale para todas as abas abertas | `shared/js/sessao.js` |
+| Saída por **inatividade** (30 min, com aviso 2 min antes) | Navegador, vale para todas as abas abertas | `public/shared/js/sessao.js` |
 | **Duração máxima** da sessão (12 h, configurável) | **Servidor (RLS)** | função `sessao_valida()` compara com `auth.sessions`; passou do limite, o banco recusa os dados mesmo com token ainda válido |
 | **Revogação imediata** no logout | **Servidor (RLS)** | logout, "encerrar outras sessões" ou sessão apagada: o mesmo token deixa de dar acesso aos dados na hora |
 | Conferência periódica | Navegador | a cada 5 min e ao voltar para a aba, pergunta `sessao_valida()`; se falso, sai |
@@ -100,7 +100,7 @@ Não há bloqueio permanente de conta (evita que terceiros negem acesso a algué
 
 ### 3.6 Validação de entradas
 
-Regras em um lugar só (`shared/js/validacao.js`), espelhadas no banco com `CHECK ... NOT VALID` (valem para tudo o que for gravado daqui para frente, sem reprovar registros antigos):
+Regras em um lugar só (`public/shared/js/validacao.js`), espelhadas no banco com `CHECK ... NOT VALID` (valem para tudo o que for gravado daqui para frente, sem reprovar registros antigos):
 
 | Campo | Navegador | Servidor (banco) |
 |---|---|---|
@@ -125,17 +125,17 @@ Foi tomado cuidado para **não gerar falso positivo**: nomes com acento, travess
 
 Conteúdo conferido pelos primeiros bytes (um executável renomeado para `.png` é barrado), extensões perigosas e dupla extensão bloqueadas, nome sem caminho, limite de 50 MB (5 MB no portfólio), bucket `projetos` com lista de tipos, download por URL assinada de 2 minutos.
 
-### 3.9 Edge Functions (`notificar-email`, `notificar-contato`)
+### 3.9 Edge Function (`notificar-email`)
 
-Comparação do segredo do webhook em **tempo constante**, limite de 20 KB no corpo, `JSON` lido com tratamento de erro, assunto em linha única (sem quebra de linha), HTML escapado e variáveis de ambiente verificadas em vez de `!`. A `notificar-contato` está marcada como legada: use a `notificar-email`.
+Comparação do segredo do webhook em **tempo constante**, limite de 20 KB no corpo, `JSON` lido com tratamento de erro, assunto em linha única (sem quebra de linha), HTML escapado e variáveis de ambiente verificadas em vez de `!`.
 
 ### 3.10 Outros ajustes
 
-Matriz de permissões visível só a contas ativas; versão exata do `supabase-js`; `.assetsignore` impede publicar `docs/`, `research/`, `*.md`, `supabase/`, `tests/`, `scripts/` e `to-do/` no site; `.github/dependabot.yml`; o `scripts/verificar.mjs` passa a **barrar** script embutido, `eval`, `innerHTML` dinâmico, `service_role` no navegador, CSP ausente e `supabase-js` sem versão fixa.
+Matriz de permissões visível só a contas ativas; versão exata do `supabase-js`; o Cloudflare publica só a pasta `public/` (documentação, pesquisa, banco, testes e scripts nunca vão ao ar); `.github/dependabot.yml`; o `scripts/verificar.mjs` passa a **barrar** script embutido, `eval`, `innerHTML` dinâmico, `service_role` no navegador, CSP ausente e `supabase-js` sem versão fixa.
 
 ## 4. Itens que dependem do painel do Supabase e do Cloudflare (não dá para fazer pelo código)
 
-Confira estes pontos e marque no `to-do/PENDENCIAS.md`:
+Confira estes pontos e marque em [PENDENCIAS.md](PENDENCIAS.md):
 
 **Supabase › Authentication**
 - [ ] **Rate Limits:** mantenha limites baixos para login (os padrões costumam ser 30 requisições a cada 5 min por IP), cadastro e envio de e-mail. Esses limites são o bloqueio real contra força bruta.
@@ -150,7 +150,7 @@ Confira estes pontos e marque no `to-do/PENDENCIAS.md`:
 
 **Supabase › outros:** *Database › Backups* ativos; *Advisors* (Security) sem alertas; chave `service_role` **nunca** no repositório nem no navegador (hoje não está).
 
-**Cloudflare:** confirmar que o deploy publicou o `_headers` (o painel de Configurações > Segurança mostra "CSP ativa"); considerar *WAF rate limiting* para o domínio; HTTPS e HSTS já ativos.
+**Cloudflare:** confirmar que o deploy publicou o `public/_headers` (o painel de Configurações > Segurança mostra "CSP ativa"); considerar *WAF rate limiting* para o domínio; HTTPS e HSTS já ativos.
 
 **Antes de ligar:** aplicar a migration `014_seguranca.sql`. Se algo der errado, o cabeçalho do arquivo mostra como desligar a duração máxima da sessão e a exigência de 2FA com uma linha de SQL.
 
@@ -176,16 +176,16 @@ O pedido original do portal diz "sem cadastro público", mas o fluxo de cadastro
 
 ## 7. Testes executados
 
-Todos rodam no CI (`.github/workflows/testes.yml`) e localmente:
+Todos rodam no CI (`.github/workflows/ci.yml`) e localmente:
 
 | Comando | O que cobre |
 |---|---|
 | `npm run check` | sintaxe, imports, páginas, **sem script embutido**, CSP presente, `supabase-js` com versão fixa, sem `eval`/`innerHTML` dinâmico, migrations em sequência |
 | `npm test` | regras de negócio, **validações** (e-mail, telefone, CPF/CNPJ, senha, arquivos, busca), inatividade, espera do login, mensagens de erro, cabeçalhos e Edge Functions |
-| `node tests/integration/sql-seguranca.mjs` | **banco real em memória (PGlite)**: sessão revogada e vencida, 2FA (`aal1`/`aal2`), eventos e alerta de força bruta, privacidade dos hashes, limite por IP, validações de formato, **injeção de SQL**, funções executáveis por visitante, RLS em todas as tabelas, políticas abertas a visitante |
-| `node tests/integration/sql-funcional.mjs` | regressão do banco: funil, propostas, projetos, chamados, financeiro, contratos, lixeira e auditoria |
-| `node tests/integration/telas.mjs` | telas, **login (senha errada, 429, 2FA, 5 códigos errados, redefinição)**, sessão (aviso e saída por inatividade, queda no servidor, logout em outra aba), aba Segurança, e uma varredura que reprova qualquer tela que mostre `null`, `undefined` ou `[object` |
-| Chrome real + servidor com `_headers` | CSP sem violações no site e no portal |
+| `npm run test:integration` → `sql-seguranca.mjs` | **banco real em memória (PGlite)**: sessão revogada e vencida, 2FA (`aal1`/`aal2`), eventos e alerta de força bruta, privacidade dos hashes, limite por IP, validações de formato, **injeção de SQL**, funções executáveis por visitante, RLS em todas as tabelas, políticas abertas a visitante |
+| `npm run test:integration` → `sql-funcional.mjs` | regressão do banco: funil, propostas, projetos, chamados, financeiro, contratos, lixeira e auditoria |
+| `npm run test:integration` → `telas.mjs` | telas, **login (senha errada, 429, 2FA, 5 códigos errados, redefinição)**, sessão (aviso e saída por inatividade, queda no servidor, logout em outra aba), aba Segurança, e uma varredura que reprova qualquer tela que mostre `null`, `undefined` ou `[object` |
+| Chrome real + servidor com `public/_headers` | CSP sem violações no site e no portal |
 
 **Teste de injeção de SQL:** payloads clássicos (`' OR '1'='1`, `'; DROP TABLE ...`, `UNION SELECT token ...`) foram enviados às 6 funções públicas e a campos de texto, em banco de teste. Nenhuma devolveu dado, aceitou resposta ou alterou tabela; os payloads foram gravados como texto comum. O único SQL dinâmico do banco (`interacao_preenche`) usa `%I` sobre uma lista fechada por `CHECK`.
 

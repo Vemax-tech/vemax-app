@@ -1,5 +1,5 @@
 // Teste de fumaça: renderiza cada tela da área interna com um Supabase falso e exercita os fluxos principais.
-import { register } from 'node:module';
+import * as nodeModule from 'node:module';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { JSDOM, VirtualConsole } from 'jsdom';
@@ -7,9 +7,17 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 process.env.SMOKE_DIR = HERE;
 const REPO = process.env.REPO || path.resolve(HERE, '../..');
-register('./hooks.mjs', import.meta.url);
+const SITE = path.join(REPO, 'public'); // tudo o que vai ao ar fica em public/
+// Troca o import de supabase.js pelo Supabase falso. registerHooks (Node 22.15+) é síncrono e não gera aviso;
+// o register() antigo fica só como reserva para versões anteriores.
+const STUB = pathToFileURL(path.join(HERE, 'fake-supabase.mjs')).href;
+if (nodeModule.registerHooks) {
+  nodeModule.registerHooks({ resolve: (s, c, next) => (/^\.{1,2}\/(.*\/)?supabase\.js$/.test(s) ? { url: STUB, shortCircuit: true } : next(s, c)) });
+} else {
+  nodeModule.register('./hooks.mjs', import.meta.url);
+}
 const { sb, state, seedOpcoes, zerarEstado } = await import('./fake-supabase.mjs');
-const mod = (n) => import(pathToFileURL(path.join(REPO, 'app/js/modules', n + '.js')).href);
+const mod = (n) => import(pathToFileURL(path.join(SITE, 'app/js/modules', n + '.js')).href);
 
 const falhas = [], erros = [];
 const check = (c, m) => { if (!c) { falhas.push(m); console.log('  ✗ ' + m); } else console.log('  ✓ ' + m); };
@@ -134,7 +142,7 @@ async function run(nome, url, fn, { papel = 'admin', perms, html } = {}) {
   console.log('\n— ' + nome);
   seed(papel); if (perms) state.db.permissoes = perms;
   mount(url, html || (url.startsWith('/app/login') ? HTML_LOGIN : undefined));   // a tela de login usa o HTML real
-  (await import(pathToFileURL(path.join(REPO, 'app/js/ui.js')).href)).instalarDom(dom.window.Element);
+  (await import(pathToFileURL(path.join(SITE, 'app/js/ui.js')).href)).instalarDom(dom.window.Element);
   const antes = erros.length;
   try { await fn(); await wait(80); vazamentos(nome); } catch (e) { falhas.push(`${nome}: ${e.message}`); console.log('  ✗ EXCEÇÃO: ' + e.stack.split('\n').slice(0, 4).join('\n    ')); }
   if (erros.length > antes) { falhas.push(`${nome}: ${erros.length - antes} console.error`); }
@@ -497,7 +505,7 @@ await run('Contratos na ficha do cliente e no painel', '/app/clientes/ficha.html
   await init('clientes', 'initFicha');
   check(body().includes('Contratos recorrentes') && body().includes('Suporte mensal de TI'), 'ficha mostra os contratos do cliente');
   mount('/app/');
-  (await import(pathToFileURL(path.join(REPO, 'app/js/ui.js')).href)).instalarDom(dom.window.Element);
+  (await import(pathToFileURL(path.join(SITE, 'app/js/ui.js')).href)).instalarDom(dom.window.Element);
   await init('painel');
   check(body().includes('Receita recorrente por mês'), 'painel mostra a receita recorrente');
 });
@@ -507,9 +515,9 @@ await run('Contratos: membro sem financeiro', '/app/clientes/ficha.html?id=c1', 
 }, { papel: 'membro', perms: [{ modulo: 'clientes', pode_ver: true, pode_editar: false }] });
 // ============================ SEGURANÇA ============================
 const fsm = await import('node:fs');
-const HTML_LOGIN = fsm.readFileSync(path.join(REPO, 'app/login/index.html'), 'utf8');
+const HTML_LOGIN = fsm.readFileSync(path.join(SITE, 'app/login/index.html'), 'utf8');
 let versaoLogin = 0;
-const abrirLogin = async () => { await import(pathToFileURL(path.join(REPO, 'app/js/login.js')).href + '?v=' + (++versaoLogin)); await wait(120); };
+const abrirLogin = async () => { await import(pathToFileURL(path.join(SITE, 'app/js/login.js')).href + '?v=' + (++versaoLogin)); await wait(120); };
 const $q = (sel) => document.querySelector(sel);
 const enviar = (form, botao) => { const f = $q(form); f.requestSubmit(botao ? f.querySelector(botao) : undefined); };
 const digitar = (sel, v) => { const el = $q(sel); el.value = v; el.dispatchEvent(new dom.window.Event('input', { bubbles: true })); };
@@ -599,8 +607,8 @@ await run('Login: com 2FA, trocar a senha pede confirmar o código antes', '/app
 });
 
 await run('Sessão: aviso e saída por inatividade, e queda da sessão no servidor', '/app/', async () => {
-  const { iniciarSessao, LIMITE_INATIVIDADE_MS, AVISO_ANTES_MS } = await import(pathToFileURL(path.join(REPO, 'shared/js/sessao.js')).href);
-  const { h, modal } = await import(pathToFileURL(path.join(REPO, 'app/js/ui.js')).href);
+  const { iniciarSessao, LIMITE_INATIVIDADE_MS, AVISO_ANTES_MS } = await import(pathToFileURL(path.join(SITE, 'shared/js/sessao.js')).href);
+  const { h, modal } = await import(pathToFileURL(path.join(SITE, 'app/js/ui.js')).href);
   let t = 1_000_000; const saidas = [], foiLogin = [];
   const parar = iniciarSessao({ sb, h, modal, sair: (m) => saidas.push(m), irParaLogin: () => foiLogin.push(1), agora: () => t, tick: 15 });
   await wait(60); check(!modalEl() && !saidas.length, 'recém-aberto: sem aviso');
@@ -699,7 +707,7 @@ await run('Quem tem 2FA mas entrou só com senha é mandado ao passo do código'
 });
 await run('Erros do banco não vazam detalhes na tela', '/app/clientes/', async () => {
   await init('clientes');
-  const ui = await import(pathToFileURL(path.join(REPO, 'app/js/ui.js')).href);
+  const ui = await import(pathToFileURL(path.join(SITE, 'app/js/ui.js')).href);
   const r = await ui.run(Promise.resolve({ data: null, error: { code: '23514', message: 'new row for relation "clientes" violates check constraint "clientes_documento_digitos"' } }));
   await wait(30);
   const toasts = [...document.querySelectorAll('.toast')].map((x) => x.textContent).join(' ');

@@ -1,0 +1,40 @@
+name: Segredos
+
+# Procura chaves, tokens e senhas em TODO o histórico do Git, não só na ponta:
+# um segredo apagado depois continua no histórico e continua vazado.
+# A chave anon do Supabase é pública por projeto e não é um achado.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # Detectores novos aparecem sem que o código mude. A varredura semanal pega isso.
+  schedule:
+    - cron: '17 9 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: segredos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trufflehog:
+    name: Segredos (TruffleHog)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Baixar o código com o histórico completo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Procurar segredos em todo o histórico
+        # Imagem fixada por digest (uma tag pode ser reescrita, um digest não).
+        # Falha se achar segredo confirmado como ativo ou que não deu para verificar.
+        run: |
+          docker run --rm -v "$PWD":/repo -w /repo \
+            ghcr.io/trufflesecurity/trufflehog:3.99.8@sha256:674b2f187620a19df77f44cf9a7d77efcc581a5662accef2f2739cbb46ba4a3a \
+            git file:///repo --no-update --fail --github-actions --results=verified,unknown

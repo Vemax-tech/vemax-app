@@ -1,0 +1,101 @@
+name: CI
+
+# Verificação estática, testes unitários e testes de integração.
+# Mudança só de documentação não dispara este workflow (fica com o docs.yml):
+# em repositório privado o Actions consome minutos do plano.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'research/**'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
+      - '.github/CODEOWNERS'
+      - '.github/dependabot.yml'
+      - '.github/workflows/docs.yml'
+      - '.github/workflows/segredos.yml'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'research/**'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
+      - '.github/CODEOWNERS'
+      - '.github/dependabot.yml'
+      - '.github/workflows/docs.yml'
+      - '.github/workflows/segredos.yml'
+  workflow_dispatch:
+
+# Só leitura: o CI não escreve nada no repositório, não usa segredos e não faz deploy.
+permissions:
+  contents: read
+
+# Um push novo no mesmo branch cancela a execução anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Verificação estática e testes unitários
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Instalar o Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Verificação estática
+        # Sintaxe, imports, páginas do portal, CSP, sem script embutido, sem eval/innerHTML dinâmico,
+        # referências locais das páginas, deploy só de public/ e migrations em sequência.
+        run: npm run check
+
+      - name: Testes unitários
+        # Regras de negócio, validações, sessão, cabeçalhos de segurança e Edge Function.
+        run: npm test
+
+  integracao:
+    name: Banco e telas (integração)
+    # Só roda se a etapa rápida passou: não gasta minutos com o que já está quebrado.
+    needs: verificar
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: tests/integration
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Instalar o Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tests/integration/package-lock.json
+
+      - name: Instalar dependências de teste (isoladas em tests/integration)
+        run: npm ci
+
+      - name: Segurança do banco (RLS, sessão, 2FA, eventos, injeção de SQL)
+        # Aplica as migrations 001 a 014 num Postgres real em memória (PGlite).
+        run: node sql-seguranca.mjs
+
+      - name: Regras do banco (funil, financeiro, contratos, lixeira, auditoria)
+        run: node sql-funcional.mjs
+
+      - name: Telas, login e sessão (navegador simulado)
+        run: node telas.mjs

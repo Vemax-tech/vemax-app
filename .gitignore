@@ -1,3 +1,23 @@
+# Dependências (só testes de integração e pesquisa têm)
 node_modules/
+
+# Cloudflare / wrangler
+.wrangler/
+.dev.vars
+
+# Supabase CLI local
+supabase/.temp/
+supabase/.branches/
+
+# Sistema e editor
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Saídas temporárias da pesquisa
 research/output/.tmp/
+
+# Variáveis de ambiente locais (o projeto não usa .env, mas nunca devem ir para o Git)
+.env
+.env.*

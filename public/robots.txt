@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /app/
+
+# Quando o domínio estiver definido, adicione:
+# Sitemap: https://SEU-DOMINIO/sitemap.xml

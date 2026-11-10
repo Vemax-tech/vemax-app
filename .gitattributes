@@ -1,0 +1,7 @@
+# Finais de linha consistentes entre Windows, macOS e Linux.
+* text=auto eol=lf
+
+*.png  binary
+*.jpg  binary
+*.pdf  binary
+*.xlsx binary

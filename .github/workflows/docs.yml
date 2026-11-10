@@ -1,0 +1,70 @@
+name: Documentação
+
+# Leve de propósito: só roda quando documentação ou imagens mudam.
+on:
+  push:
+    branches: [main]
+    paths: ['**.md', 'docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['**.md', 'docs/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  links:
+    name: Links dos .md
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Verificar links quebrados
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
+        with:
+          # O repositório é privado: links para ele mesmo não abrem sem login, então ficam de fora.
+          args: >-
+            --no-progress
+            --accept 200,206,429
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude '^https://github\.com/Vemax-tech/'
+            --exclude 'users\.noreply\.github\.com'
+            --exclude '\.supabase\.co'
+            './**/*.md'
+          fail: true
+
+  svgs:
+    name: SVGs válidos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validar os SVGs de docs/assets como XML
+        shell: python
+        run: |
+          import glob, sys, xml.dom.minidom
+          erros = 0
+          arquivos = sorted(glob.glob('docs/assets/**/*.svg', recursive=True))
+          for f in arquivos:
+              try:
+                  xml.dom.minidom.parse(f)
+                  print('ok  ', f)
+              except Exception as e:
+                  erros += 1
+                  print('ERRO', f, e)
+          if not arquivos:
+              sys.exit('nenhum SVG encontrado em docs/assets')
+          sys.exit(1 if erros else 0)

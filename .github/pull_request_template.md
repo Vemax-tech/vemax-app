@@ -8,11 +8,11 @@
 
 ## Como testar
 
-<!-- Passo a passo. Ex.: `npx serve .`, abrir /app/, entrar em Projetos, ... -->
+<!-- Passo a passo. Ex.: `npm run dev`, abrir /app/, entrar em Projetos, ... -->
 
 ## Checklist
 
-- [ ] Testei localmente (`npx serve .`)
+- [ ] Testei localmente (`npm run dev`), e `npm run check` e `npm test` passam
 - [ ] Não há chaves, senhas nem dados pessoais no código
 - [ ] Mudança no banco entrou como nova migration, com RLS e políticas
-- [ ] Atualizei o README se for necessário
+- [ ] Atualizei o README ou o `docs/` se for necessário

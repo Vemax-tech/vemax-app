@@ -19,7 +19,7 @@ O relatório completo da última auditoria, com o que foi corrigido e o que aind
 |---|---|
 | Portal (`/app/`) | acesso a módulo sem permissão, login contornado, cadastro que pula a aprovação do administrador |
 | Supabase e RLS | política de RLS que deixa ler ou alterar dados indevidos, função com `EXECUTE` aberto para `anon`, acesso a arquivo de bucket privado (`entregaveis`, `projetos`) |
-| Edge Function | `notificar-contato` aceitando chamada sem o header `x-webhook-secret`, injeção de HTML no e-mail enviado |
+| Edge Function | `notificar-email` aceitando chamada sem o header `x-webhook-secret`, injeção de HTML no e-mail enviado |
 | Formulário de contato | contornar o limite anti-spam, injetar conteúdo em `contatos_site`, ler contatos sem login |
 | Sessão e autenticação | sessão que continua valendo após logout, contornar o 2FA, aviso de tentativas de login que não aparece, redirecionamento aberto no login |
 | Cabeçalhos e CSP | forma de executar script no site ou no portal, página que pode ser colocada em iframe |

@@ -2,10 +2,12 @@
   "name": "vemax-app",
   "private": true,
   "type": "module",
-  "description": "Site institucional e portal interno da Vemax. Sem build: o package.json existe só para rodar testes e verificações.",
+  "description": "Site institucional e portal interno da VEMAX. Sem build: o site publicado fica em public/ e este package.json existe só para testes e verificações.",
   "scripts": {
     "test": "node --test \"tests/*.test.js\"",
-    "check": "node scripts/verificar.mjs"
+    "check": "node scripts/verificar.mjs",
+    "test:integration": "npm test --prefix tests/integration",
+    "dev": "npx --yes serve public"
   },
-  "engines": { "node": ">=20" }
+  "engines": { "node": ">=22" }
 }

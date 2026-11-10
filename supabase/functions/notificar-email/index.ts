@@ -2,8 +2,7 @@
 // (lead novo, proposta aceita/recusada, avaliação recebida, cadastro pendente, alerta de segurança).
 //
 // Disparo: Database > Webhooks > tabela `notificacoes`, evento INSERT, método POST,
-// URL da função, header "x-webhook-secret: <WEBHOOK_SECRET>". Desative a função `notificar-contato`
-// (e o webhook de `contatos_site`) para não receber o aviso de lead duas vezes.
+// URL da função, header "x-webhook-secret: <WEBHOOK_SECRET>".
 //
 // Secrets: RESEND_API_KEY, NOTIFY_TO (e-mails separados por vírgula), NOTIFY_FROM, WEBHOOK_SECRET.
 // Opcional: SITE_URL (ex.: https://seudominio.com.br, sem barra final) para incluir o link do portal no e-mail.
