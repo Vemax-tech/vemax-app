@@ -1,31 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 320" width="1280" height="320" role="img" aria-labelledby="t d">
   <title id="t">VEMAX</title>
-  <desc id="d">Banner da VEMAX: soluções para negócios e necessidades</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#070B14"/><stop offset="1" stop-color="#0A101C"/></linearGradient>
-    <linearGradient id="orb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3B82F6" stop-opacity="0"/><stop offset=".5" stop-color="#3B82F6"/><stop offset="1" stop-color="#5B9DFF" stop-opacity=".1"/></linearGradient>
-    <linearGradient id="word" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E8F0FF"/><stop offset="1" stop-color="#5B9DFF"/></linearGradient>
-    <radialGradient id="glow" cx=".8" cy=".5" r=".6"><stop offset="0" stop-color="#3B82F6" stop-opacity=".28"/><stop offset="1" stop-color="#3B82F6" stop-opacity="0"/></radialGradient>
-    <pattern id="g" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#3B82F6" stroke-opacity=".07"/></pattern>
-  </defs>
-  <style>
-    text { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; }
-    .pulse { animation: p 4s ease-in-out infinite; }
-    .spin { transform-origin: 980px 160px; animation: s 24s linear infinite; }
-    @keyframes p { 0%,100% { opacity: .55 } 50% { opacity: 1 } }
-    @keyframes s { to { transform: rotate(360deg) } }
-    @media (prefers-reduced-motion: reduce) { .pulse, .spin { animation: none } }
-  </style>
-  <rect width="1280" height="320" fill="url(#bg)"/>
-  <rect width="1280" height="320" fill="url(#g)"/>
-  <rect width="1280" height="320" fill="url(#glow)"/>
-  <g class="pulse">
-    <ellipse cx="980" cy="160" rx="300" ry="86" fill="none" stroke="url(#orb)" stroke-width="2.5" transform="rotate(-18 980 160)"/>
-    <ellipse cx="980" cy="160" rx="230" ry="60" fill="none" stroke="#3B82F6" stroke-opacity=".4" stroke-width="1.5" transform="rotate(-18 980 160)"/>
-  </g>
-  <g class="spin"><g transform="rotate(-18 980 160)"><circle cx="1280" cy="160" r="6" fill="#7DD3FC"/><circle cx="1280" cy="160" r="14" fill="#3B82F6" fill-opacity=".25"/></g></g>
-  <circle cx="980" cy="160" r="5" fill="#3B82F6"/>
-  <text x="80" y="170" font-size="104" font-weight="700" letter-spacing="10" fill="url(#word)">VEMAX</text>
-  <rect x="84" y="196" width="96" height="4" rx="2" fill="#3B82F6"/>
-  <text x="84" y="238" font-size="22" font-weight="600" letter-spacing="5" fill="#94A3B8">SOLUÇÕES PARA NEGÓCIOS E NECESSIDADES</text>
+  <desc id="d">Banner da VEMAX, versão para fundo escuro</desc>
+  <rect width="1280" height="320" fill="#11181F"/>
+  <g transform="translate(294 32)"><path fill="#FFFFFF" fill-rule="evenodd" d="M553.36 202.69 L584.06 202.69 L598.59 166.38 L613.11 202.69 L643.82 202.69 L613.94 128 L643.82 53.31 L613.11 53.31 L598.59 89.62 L584.06 53.31 L553.36 53.31 L583.23 128 Z M459.83 183.87 L505.82 183.87 L513.35 202.69 L544.05 202.69 L482.82 49.62 L421.59 202.69 L452.3 202.69 Z M469.89 158.72 L482.82 126.38 L495.76 158.72 Z M379.89 155.63 L379.89 202.69 L410.69 202.69 L410.69 78.63 Z M287.66 78.63 L287.66 202.69 L318.46 202.69 L318.46 155.63 Z M180.36 202.69 L271.4 202.69 L271.4 175.66 L211.16 175.66 L211.16 138.69 L261.99 138.69 L261.99 113.54 L211.16 113.54 L211.16 80.34 L269.52 80.34 L269.52 53.31 L180.36 53.31 Z M171.35 53.31 L140.64 53.31 L110.12 129.62 L79.59 53.31 L48.89 53.31 L110.12 206.38 Z"/><path fill="#FFFFFF" fill-rule="evenodd" d="M287.95 53.31 L349.18 206.38 L410.41 53.31 L379.7 53.31 L349.18 129.62 L318.65 53.31 Z"/></g>
+  <rect x="592" y="296" width="96" height="4" fill="#FF5A1F"/>
 </svg>
