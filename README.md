@@ -2,45 +2,37 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/vemax-logo-horizontal-branco.svg">
-    <img src="docs/assets/brand/vemax-logo-horizontal-grafite.svg" alt="VEMAX" width="320">
-  </picture>
-</p>
-
-<p align="center">
-  <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
     <img src="docs/assets/banner-light.svg" alt="VEMAX — Soluções para negócios e necessidades" width="100%">
   </picture>
 </p>
 
-<h1 align="center">VEMAX</h1>
 <p align="center"><b>SOLUÇÕES PARA NEGÓCIOS E NECESSIDADES</b><br>
 <sub>SITE INSTITUCIONAL · PORTAL INTERNO DA EQUIPE</sub></p>
 
 <p align="center">
-  <a href="https://vemax-app.kraazynino.workers.dev"><img alt="Produção" src="https://img.shields.io/website?url=https%3A%2F%2Fvemax-app.kraazynino.workers.dev&label=produ%C3%A7%C3%A3o&style=flat-square&labelColor=0A101C"></a>
-  <img alt="Projeto pessoal" src="https://img.shields.io/badge/projeto-pessoal-3B82F6?style=flat-square&labelColor=0A101C">
+  <a href="https://vemax-app.kraazynino.workers.dev"><img alt="Produção" src="https://img.shields.io/website?url=https%3A%2F%2Fvemax-app.kraazynino.workers.dev&label=produ%C3%A7%C3%A3o&style=flat-square&labelColor=11181F"></a>
+  <img alt="Projeto pessoal" src="https://img.shields.io/badge/projeto-pessoal-FF5A1F?style=flat-square&labelColor=11181F">
 </p>
 
 <p align="center">
-  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-0A101C?style=flat-square&logo=html5&logoColor=5B9DFF">
-  <img alt="CSS3" src="https://img.shields.io/badge/CSS3-0A101C?style=flat-square&logo=css3&logoColor=5B9DFF">
-  <img alt="JavaScript ES modules" src="https://img.shields.io/badge/JavaScript-ES%20modules-0A101C?style=flat-square&logo=javascript&logoColor=5B9DFF">
-  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-supabase--js%20v2-0A101C?style=flat-square&logo=supabase&logoColor=5B9DFF">
-  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-RLS-0A101C?style=flat-square&logo=postgresql&logoColor=5B9DFF">
-  <img alt="Deno" src="https://img.shields.io/badge/Deno-Edge%20Function-0A101C?style=flat-square&logo=deno&logoColor=5B9DFF">
-  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-pesquisa-0A101C?style=flat-square&logo=nodedotjs&logoColor=5B9DFF">
+  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-11181F?style=flat-square&logo=html5&logoColor=FFFFFF">
+  <img alt="CSS3" src="https://img.shields.io/badge/CSS3-11181F?style=flat-square&logo=css3&logoColor=FFFFFF">
+  <img alt="JavaScript ES modules" src="https://img.shields.io/badge/JavaScript-ES%20modules-11181F?style=flat-square&logo=javascript&logoColor=FFFFFF">
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-supabase--js%20v2-11181F?style=flat-square&logo=supabase&logoColor=FFFFFF">
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-RLS-11181F?style=flat-square&logo=postgresql&logoColor=FFFFFF">
+  <img alt="Deno" src="https://img.shields.io/badge/Deno-Edge%20Function-11181F?style=flat-square&logo=deno&logoColor=FFFFFF">
+  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-pesquisa-11181F?style=flat-square&logo=nodedotjs&logoColor=FFFFFF">
 </p>
 
 <p align="center">
-  <img alt="Sem build" src="https://img.shields.io/badge/build-nenhum-3B82F6?style=flat-square&labelColor=0A101C">
-  <img alt="RLS em todas as tabelas" src="https://img.shields.io/badge/seguran%C3%A7a-RLS%20em%20todas%20as%20tabelas-3B82F6?style=flat-square&labelColor=0A101C">
-  <img alt="Cadastro com aprovação" src="https://img.shields.io/badge/acesso-cadastro%20com%20aprova%C3%A7%C3%A3o-3B82F6?style=flat-square&labelColor=0A101C">
-  <img alt="Permissões por módulo" src="https://img.shields.io/badge/permiss%C3%B5es-por%20m%C3%B3dulo-3B82F6?style=flat-square&labelColor=0A101C">
-  <img alt="Log de atividades" src="https://img.shields.io/badge/auditoria-log%20de%20atividades-3B82F6?style=flat-square&labelColor=0A101C">
-  <img alt="Anti-spam" src="https://img.shields.io/badge/formul%C3%A1rio-anti--spam-3B82F6?style=flat-square&labelColor=0A101C">
-  <img alt="URL assinada de 2 minutos" src="https://img.shields.io/badge/downloads-URL%20assinada%202%20min-3B82F6?style=flat-square&labelColor=0A101C">
+  <img alt="Sem build" src="https://img.shields.io/badge/build-nenhum-FF5A1F?style=flat-square&labelColor=11181F">
+  <img alt="RLS em todas as tabelas" src="https://img.shields.io/badge/seguran%C3%A7a-RLS%20em%20todas%20as%20tabelas-FF5A1F?style=flat-square&labelColor=11181F">
+  <img alt="Cadastro com aprovação" src="https://img.shields.io/badge/acesso-cadastro%20com%20aprova%C3%A7%C3%A3o-FF5A1F?style=flat-square&labelColor=11181F">
+  <img alt="Permissões por módulo" src="https://img.shields.io/badge/permiss%C3%B5es-por%20m%C3%B3dulo-FF5A1F?style=flat-square&labelColor=11181F">
+  <img alt="Log de atividades" src="https://img.shields.io/badge/auditoria-log%20de%20atividades-FF5A1F?style=flat-square&labelColor=11181F">
+  <img alt="Anti-spam" src="https://img.shields.io/badge/formul%C3%A1rio-anti--spam-FF5A1F?style=flat-square&labelColor=11181F">
+  <img alt="URL assinada de 2 minutos" src="https://img.shields.io/badge/downloads-URL%20assinada%202%20min-FF5A1F?style=flat-square&labelColor=11181F">
 </p>
 
 A **VEMAX** é uma empresa de soluções digitais sob medida. Este repositório reúne o **site institucional** (uma página, sem build) e o **portal interno** onde a equipe acompanha contatos, projetos, base de conhecimento, pesquisa de mercado e o portfólio que aparece no site.
