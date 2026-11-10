@@ -484,9 +484,9 @@ feat: paleta fria, portfólio dinâmico, anti-spam, privacidade e práticas áge
 <a id="licenca"></a>
 ## 📄 Licença
 
-© 2026 VEMAX. Todos os direitos reservados. Este código é público para fins de portfólio; uso, cópia ou distribuição dependem de autorização da equipe.
+© 2026 VEMAX. Todos os direitos reservados. Uso, cópia ou distribuição dependem de autorização da equipe (ver [`LICENSE`](LICENSE)).
 
 ---
 
-<p align="center">Feito com 💙 pela equipe VEMAX · 2026</p>
+<p align="center">Feito com 🧡 pela equipe VEMAX · 2026</p>
 <p align="center"><a href="#topo">⬆ voltar ao topo</a></p>
